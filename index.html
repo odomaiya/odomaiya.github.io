@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Odòmáiyà Artigos Religiosos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Odòmáiyà Artigos Religiosos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0c2f4f">
-
-  <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 
 <body>
 
-<header class="header">
+<header>
   <h1>Odòmáiyà Artigos Religiosos</h1>
-  <p class="frase">Artigos com fundamento, axé e respeito à ancestralidade</p>
+  <p>Axé, fundamento e respeito à ancestralidade</p>
 </header>
 
-<nav class="topo">
+<div class="filtros">
   <select id="categoria">
-    <option value="todos">Todas categorias</option>
+    <option value="Todos">Todas categorias</option>
   </select>
 
   <select id="ordenar">
@@ -28,21 +26,17 @@
     <option value="menor">Menor preço</option>
     <option value="maior">Maior preço</option>
   </select>
-</nav>
-
-<main id="produtos" class="produtos">
-  <p class="aviso">Carregando produtos…</p>
-</main>
-
-<div class="carrinho-bar">
-  <span id="total">R$ 0,00</span>
-  <button id="finalizar">
-    <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png">
-    Finalizar no WhatsApp
-  </button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<main id="produtos">
+  <p id="loading">Carregando produtos…</p>
+</main>
+
+<footer class="carrinho">
+  <span id="total">R$ 0,00</span>
+  <button id="finalizar">💬 Finalizar no WhatsApp</button>
+</footer>
+
 <script src="js/app.js"></script>
 </body>
 </html>
