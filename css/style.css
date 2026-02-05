@@ -1,142 +1,160 @@
+:root {
+  --escuro: #0b1c2d;
+  --azul: #123a5e;
+  --dourado: #c9a14a;
+  --claro: #f4f5f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f2f4f7;
+  font-family: 'Inter', sans-serif;
+  background: var(--claro);
   color: #222;
 }
 
-/* HEADER */
-.header {
-  background: linear-gradient(135deg, #050f1f, #0c2f4f, #081d33);
+/* HERO */
+.hero {
+  height: 70vh;
+  background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.65)),
+              url("https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17");
+  background-size: cover;
+  background-position: center;
   color: white;
-  padding: 35px 20px;
+}
+
+.overlay {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
+  padding: 20px;
 }
 
-.header h1 {
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
   margin: 0;
-  font-size: 28px;
+  letter-spacing: 2px;
 }
 
-.header p {
-  margin: 8px 0;
-  opacity: 0.9;
+.hero h2 {
+  font-weight: 300;
+  margin: 5px 0 15px;
+}
+
+.hero p {
+  max-width: 500px;
+  opacity: .9;
 }
 
 .endereco {
+  margin-top: 10px;
   font-size: 14px;
-  opacity: 0.8;
+  opacity: .8;
 }
 
-.redes {
-  margin-top: 15px;
+.acoes {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
 }
 
-.redes a {
-  display: inline-block;
-  margin: 6px;
-  padding: 10px 16px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.15);
-  color: white;
+.btn {
+  padding: 12px 22px;
+  border-radius: 30px;
   text-decoration: none;
-  font-size: 14px;
+  font-weight: 500;
+}
+
+.insta {
+  background: rgba(255,255,255,.2);
+  color: white;
+}
+
+.whats {
+  background: #25d366;
+  color: #043b1a;
 }
 
 /* FILTRO */
 .filtros {
-  padding: 15px;
+  padding: 20px;
 }
 
 select {
   width: 100%;
-  padding: 12px;
-  border-radius: 14px;
+  padding: 14px;
+  border-radius: 16px;
   border: none;
   font-size: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,.15);
 }
 
 /* PRODUTOS */
 .produtos {
+  padding: 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
-  gap: 16px;
-  padding: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 22px;
 }
 
 .card {
   background: white;
-  border-radius: 18px;
-  padding: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  border-radius: 22px;
+  padding: 14px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.15);
+  transition: transform .3s;
+}
+
+.card:hover {
+  transform: translateY(-6px);
 }
 
 .card img {
   width: 100%;
-  height: 160px;
+  height: 190px;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 .card h4 {
-  margin: 10px 0 6px;
-  font-size: 15px;
+  margin: 12px 0 6px;
 }
 
 .preco {
-  font-weight: bold;
-  color: #0c2f4f;
+  color: var(--azul);
+  font-weight: 600;
 }
 
 .card button {
-  margin-top: 8px;
+  margin-top: 10px;
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: none;
-  border-radius: 14px;
-  background: #0c2f4f;
+  border-radius: 18px;
+  background: var(--azul);
   color: white;
+  font-size: 15px;
 }
 
-/* AVISO */
-.aviso {
-  grid-column: 1 / -1;
-  text-align: center;
-  opacity: 0.6;
-}
-
-/* FLUTUANTES */
+/* FLOAT */
 .float {
   position: fixed;
   right: 18px;
-  width: 56px;
-  height: 56px;
+  bottom: 22px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
+  background: #25d366;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 24px;
   color: white;
-  box-shadow: 0 8px 20px rgba(0,0,0,.35);
-}
-
-.whatsapp {
-  bottom: 20px;
-  background: #25d366;
-}
-
-.carrinho {
-  bottom: 90px;
-  background: #0c2f4f;
-}
-
-#contador {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: red;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 50%;
 }
