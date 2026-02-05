@@ -18,7 +18,8 @@ Papa.parse(CSV_URL, {
         nome: p.nome,
         preco: Number(String(p.preco).replace(",", ".")),
         imagem: p.imagem,
-        categoria: p.categoria || "Outros"
+        categoria: p.categoria || "Outros",
+        estoque: Number(p.estoque) || 0
       }));
 
     montarCategorias();
@@ -38,16 +39,24 @@ function render(lista) {
   area.innerHTML = "";
   lista.forEach(p => {
     const qtd = carrinho[p.nome]?.qtd || 0;
+    const disponivel = p.estoque - qtd;
+
     area.innerHTML += `
       <div class="card">
         <img src="${p.imagem}">
         <h4>${p.nome}</h4>
         <div class="preco">R$ ${p.preco.toFixed(2)}</div>
+        <small>Em estoque: ${disponivel}</small>
+
         <div class="qtd">
-          <button onclick="alterar('${p.nome}',-1)">-</button>
+          <button onclick="alterar('${p.nome}',-1)">−</button>
           <span>${qtd}</span>
-          <button onclick="alterar('${p.nome}',1)">+</button>
+          <button onclick="alterar('${p.nome}',1)" ${disponivel<=0?"disabled":""}>+</button>
         </div>
+
+        <button class="add" onclick="alterar('${p.nome}',1)" ${disponivel<=0?"disabled":""}>
+          Adicionar
+        </button>
       </div>
     `;
   });
@@ -57,7 +66,10 @@ function alterar(nome, delta) {
   const prod = produtos.find(p => p.nome === nome);
   if (!carrinho[nome]) carrinho[nome] = { qtd: 0, preco: prod.preco };
   carrinho[nome].qtd += delta;
+
   if (carrinho[nome].qtd <= 0) delete carrinho[nome];
+  if (carrinho[nome].qtd > prod.estoque) carrinho[nome].qtd = prod.estoque;
+
   atualizar();
 }
 
