@@ -9,17 +9,44 @@
 <body>
 
 <header class="topo">
-  <h1>Odòmáiyà</h1>
-  <p>Artigos religiosos com fundamento e tradição</p>
+  <h1>Odòmáiyà Artigos Religiosos</h1>
+  <p>Artigos com fundamento, respeito e tradição</p>
+  <p>📍 Rua Sete de Agosto, 28 – Passo Fundo/RS</p>
 </header>
 
-<div id="filtros"></div>
+<div class="barra">
+  <select id="ordenar">
+    <option value="">Ordenar</option>
+    <option value="menor">Mais barato</option>
+    <option value="maior">Mais caro</option>
+  </select>
+</div>
 
-<main id="conteudo"></main>
+<div id="produtos" class="grid"></div>
 
-<footer class="rodape">
-  © Odòmáiyà Artigos Religiosos
-</footer>
+<!-- Botão WhatsApp -->
+<a id="btn-whatsapp" href="#" target="_blank">💬</a>
+
+<!-- Botão Carrinho -->
+<div id="btn-carrinho">🛒 <span id="contador">0</span></div>
+
+<!-- Modal Carrinho -->
+<div id="carrinho-modal">
+  <div class="carrinho-box">
+    <h3>Seu carrinho</h3>
+    <div id="itens-carrinho"></div>
+    <p id="total"></p>
+
+    <button id="finalizar">Finalizar compra</button>
+
+    <div id="opcoes-entrega" style="display:none;">
+      <button id="retirada">Retirar na loja</button>
+      <button id="entrega">Entrega</button>
+    </div>
+
+    <button id="fechar">Fechar</button>
+  </div>
+</div>
 
 <script src="js/script.js"></script>
 </body>
