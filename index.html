@@ -4,41 +4,39 @@
 <meta charset="UTF-8">
 <title>Odòmáiyà Artigos Religiosos</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<header class="header">
-  <h1>Odòmáiyà Artigos Religiosos</h1>
-  <p>Artigos com fundamento, respeito e tradição</p>
-  <p class="endereco">📍 Rua Sete de Agosto, 28 – Passo Fundo/RS</p>
+<header class="hero">
+  <div class="overlay">
+    <h1>Odòmáiyà</h1>
+    <h2>Artigos Religiosos</h2>
+    <p>Fundamento, respeito e tradição ancestral</p>
 
-  <div class="redes">
-    <a href="https://www.instagram.com/odomaia_artigosreligiosos?igsh=MTg0ZjE0OWtmb3oyeQ==" target="_blank">
-      📸 Instagram
-    </a>
-    <a href="https://wa.me/5554996048808" target="_blank">
-      💬 WhatsApp
-    </a>
+    <span class="endereco">📍 Rua Sete de Agosto, 28 – Passo Fundo/RS</span>
+
+    <div class="acoes">
+      <a class="btn insta" href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
+      <a class="btn whats" href="https://wa.me/5554996048808" target="_blank">WhatsApp</a>
+    </div>
   </div>
 </header>
 
 <section class="filtros">
   <select id="ordenar">
-    <option value="">Ordenar por</option>
-    <option value="menor">Mais barato</option>
-    <option value="maior">Mais caro</option>
+    <option value="">Ordenar produtos</option>
+    <option value="menor">Mais baratos</option>
+    <option value="maior">Mais caros</option>
   </select>
 </section>
 
-<main id="produtos" class="produtos">
-  <p class="aviso">Os produtos aparecerão aqui assim que a lista carregar.</p>
-</main>
+<main id="produtos" class="produtos"></main>
 
-<!-- Botões flutuantes -->
 <a class="float whatsapp" href="https://wa.me/5554996048808" target="_blank">💬</a>
-<div class="float carrinho">🛒 <span id="contador">0</span></div>
 
 <script src="js/script.js"></script>
 </body>
