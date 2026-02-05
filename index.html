@@ -3,41 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <title>Odòmáiyà Artigos Religiosos</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#0c355a">
+
+<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="css/style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<header class="hero">
-  <div class="overlay">
-    <h1>Odòmáiyà</h1>
-    <h2>Artigos Religiosos</h2>
-    <p>Fundamento, respeito e tradição ancestral</p>
-
-    <span class="endereco">📍 Rua Sete de Agosto, 28 – Passo Fundo/RS</span>
-
-    <div class="acoes">
-      <a class="btn insta" href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
-      <a class="btn whats" href="https://wa.me/5554996048808" target="_blank">WhatsApp</a>
-    </div>
-  </div>
+<header class="topo">
+  <h1>Odòmáiyà</h1>
+  <p>Artigos Religiosos</p>
 </header>
 
-<section class="filtros">
-  <select id="ordenar">
-    <option value="">Ordenar produtos</option>
-    <option value="menor">Mais baratos</option>
-    <option value="maior">Mais caros</option>
-  </select>
+<section class="busca">
+  <input type="text" id="pesquisa" placeholder="Pesquisar produtos...">
 </section>
 
-<main id="produtos" class="produtos"></main>
+<main id="produtos" class="produtos">
+  <p class="loading">Carregando produtos...</p>
+</main>
 
-<a class="float whatsapp" href="https://wa.me/5554996048808" target="_blank">💬</a>
+<div class="carrinho">
+  <span id="total">R$ 0,00</span>
+  <button onclick="finalizar()">Finalizar no WhatsApp</button>
+</div>
 
-<script src="js/script.js"></script>
+<footer>
+  <p>© Odòmáiyà Artigos Religiosos</p>
+  <p>@odomaia_artigosreligiosos</p>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+</script>
+
 </body>
 </html>
