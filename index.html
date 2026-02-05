@@ -3,47 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <title>Odòmáiyà Artigos Religiosos</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#0c355a">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 
 <body>
 
-<header class="topo">
+<header id="topo">
   <h1>Odòmáiyà</h1>
-  <p>Artigos Religiosos</p>
+  <p class="sub">Artigos Religiosos</p>
+  <p class="frase">Axé, fundamento e respeito à ancestralidade</p>
 </header>
 
-<section class="busca">
-  <input type="text" id="pesquisa" placeholder="Pesquisar produtos...">
-</section>
+<div class="busca">
+  <input id="pesquisa" placeholder="Pesquisar produtos...">
+  <select id="ordenar">
+    <option value="">Ordenar</option>
+    <option value="menor">Menor preço</option>
+    <option value="maior">Maior preço</option>
+  </select>
+</div>
 
-<main id="produtos" class="produtos">
+<div id="categorias" class="categorias"></div>
+
+<main id="produtos">
   <p class="loading">Carregando produtos...</p>
 </main>
-
-<div class="carrinho">
-  <span id="total">R$ 0,00</span>
-  <button onclick="finalizar()">Finalizar no WhatsApp</button>
-</div>
 
 <footer>
   <p>© Odòmáiyà Artigos Religiosos</p>
   <p>@odomaia_artigosreligiosos</p>
 </footer>
 
-<script src="js/app.js"></script>
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
-  }
-</script>
+<div class="barra">
+  <span id="total">R$ 0,00</span>
+  <button onclick="finalizar()">
+    <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png">
+    Finalizar
+  </button>
+</div>
 
+<script src="app.js"></script>
 </body>
 </html>
