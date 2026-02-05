@@ -90,3 +90,46 @@ document.getElementById("retirada").onclick=()=>{
 document.getElementById("entrega").onclick=()=>{
   window.open(https://wa.me/${numeroWhats}?text=+montarMsg(%0AEntrega.%0AInforme seu endereço:));
 };
+const numeroWhats = "5554996048808";
+
+const produtos = [
+  {
+    nome: "Exemplo de Produto",
+    preco: 45,
+    imagem: "https://via.placeholder.com/300"
+  }
+];
+
+function renderizar(lista) {
+  const area = document.getElementById("produtos");
+  area.innerHTML = "";
+
+  lista.forEach(p => {
+    area.innerHTML += `
+      <div class="card">
+        <img src="${p.imagem}">
+        <h4>${p.nome}</h4>
+        <div class="preco">R$ ${p.preco.toFixed(2)}</div>
+        <button onclick="comprar('${p.nome}')">Comprar</button>
+      </div>
+    `;
+  });
+}
+
+function comprar(nome) {
+  const msg = encodeURIComponent(
+    Olá! Tenho interesse no produto: ${nome}
+  );
+  window.open(https://wa.me/${numeroWhats}?text=${msg});
+}
+
+document.getElementById("ordenar").onchange = e => {
+  if (e.target.value === "menor") {
+    renderizar([...produtos].sort((a,b)=>a.preco-b.preco));
+  }
+  if (e.target.value === "maior") {
+    renderizar([...produtos].sort((a,b)=>b.preco-a.preco));
+  }
+};
+
+renderizar(produtos);
