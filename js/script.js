@@ -1,3 +1,4 @@
+alert("SCRIPT CARREGADO");
 const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTfMSS4eNDSyxy558PIJ3SbMeGWolSWa3hi5yzomDK6XYALEcdPM6s-toS0SFaZL-e-QC7jQvJVVcxW/pub?gid=0&single=true&output=csv";
 
 fetch(csvUrl)
