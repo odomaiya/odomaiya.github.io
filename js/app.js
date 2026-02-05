@@ -49,17 +49,23 @@ function render(lista) {
 function alterar(id, v) {
   const s = document.getElementById("q" + id);
   let n = +s.innerText + v;
-  if (n < 1) n = 1;
+  if (n < 0) n = 0;
   s.innerText = n;
 }
 
 function adicionar(id) {
   const p = produtos.find(x => x.id === id);
   const q = +document.getElementById("q" + id).innerText;
-  if (!carrinho[id]) carrinho[id] = { ...p, qtd: 0 };
-  carrinho[id].qtd += q;
+
+  if (q === 0) {
+    delete carrinho[id];
+  } else {
+    carrinho[id] = { ...p, qtd: q };
+  }
+
   atualizarTotal();
 }
+
 
 function atualizarTotal() {
   let total = 0;
