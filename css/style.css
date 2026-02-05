@@ -1,23 +1,48 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f6fa;
+  font-family: Montserrat, Arial, sans-serif;
+  background: #f5f7fb;
 }
 
 .topo {
-  background: linear-gradient(135deg, #06192c, #0b2c4a);
+  background: linear-gradient(135deg,#06192c,#0b2c4a);
   color: white;
-  padding: 25px;
+  padding: 24px;
   text-align: center;
 }
 
+#filtros {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  overflow-x: auto;
+}
+
+#filtros button {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #ddd;
+  cursor: pointer;
+}
+
+#filtros button.ativo {
+  background: #0b2c4a;
+  color: white;
+}
+
 .categoria {
-  margin: 25px;
+  margin: 20px 15px;
+}
+
+.categoria h2 {
+  margin-bottom: 10px;
+  color: #0b2c4a;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
   gap: 15px;
 }
 
@@ -36,7 +61,7 @@ body {
   border-radius: 10px;
 }
 
-.promo {
+.badge {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -47,12 +72,23 @@ body {
   border-radius: 6px;
 }
 
+.preco {
+  margin-top: 8px;
+}
+
 .preco del {
   color: #999;
   font-size: 14px;
 }
 
 .preco strong {
-  font-size: 18px;
   color: #0b2c4a;
+  font-size: 18px;
+}
+
+.rodape {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 14px;
 }
