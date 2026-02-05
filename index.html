@@ -1,56 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Odòmáiyà Artigos Religiosos</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Odòmáiyà Artigos Religiosos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0c2f4f">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-
-<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<header id="topo">
-  <h1>Odòmáiyà</h1>
-  <p class="sub">Artigos Religiosos</p>
-  <p class="frase">Axé, fundamento e respeito à ancestralidade</p>
+<header class="header">
+  <h1>Odòmáiyà Artigos Religiosos</h1>
+  <p class="frase">Artigos com fundamento, axé e respeito à ancestralidade</p>
 </header>
 
-<div class="busca">
-  <input id="pesquisa" placeholder="Pesquisar produtos...">
+<nav class="topo">
+  <select id="categoria">
+    <option value="todos">Todas categorias</option>
+  </select>
+
   <select id="ordenar">
-    <option value="">Ordenar</option>
+    <option value="">Ordenar por</option>
     <option value="menor">Menor preço</option>
     <option value="maior">Maior preço</option>
   </select>
-</div>
+</nav>
 
-<div id="categorias" class="categorias"></div>
-
-<main id="produtos">
-  <p class="loading">Carregando produtos...</p>
+<main id="produtos" class="produtos">
+  <p class="aviso">Carregando produtos…</p>
 </main>
 
-<footer>
-  <p>© Odòmáiyà Artigos Religiosos</p>
-  <p>@odomaia_artigosreligiosos</p>
-</footer>
-
-<div class="barra">
+<div class="carrinho-bar">
   <span id="total">R$ 0,00</span>
-  <button onclick="finalizar()">
-    <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png">
+  <button id="finalizar">
+    <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png">
     Finalizar no WhatsApp
   </button>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
