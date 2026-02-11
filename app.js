@@ -6,19 +6,22 @@ let carrinho = [];
 async function carregarProdutos() {
   const res = await fetch(url);
   const text = await res.text();
+
   const linhas = text.split("\n").slice(1);
 
   produtos = linhas.map(l => {
     const c = l.split(",");
-    return {
-      nome: c[0],
-      preco: parseFloat(c[1]),
-      categoria: c[2],
-      imagens: c.slice(3).filter(i => i)
-    };
-  });
 
-  popularCategorias();
+    return {
+      id: c[0]?.trim(),
+      nome: c[1]?.trim(),
+      preco: parseFloat(c[2]?.replace(",", ".").trim()),
+      categoria: c[3]?.trim(),
+      estoque: parseInt(c[4]),
+      imagens: c.slice(5).filter(i => i)
+    };
+  }).filter(p => p.nome && !isNaN(p.preco));
+
   mostrarProdutos(produtos);
 }
 
@@ -29,97 +32,104 @@ function mostrarProdutos(lista) {
   lista.forEach(p => {
     container.innerHTML += `
       <div class="card">
-        <div class="slider">
-          ${p.imagens.map(img => 
-            `<img src="${img}" onclick="abrirModal('${img}')">`
-          ).join("")}
+        <div class="imagem-container">
+          <img src="${p.imagens[0] || 'https://via.placeholder.com/300'}" 
+               onclick="abrirModal('${p.imagens[0]}')">
         </div>
+
         <h3>${p.nome}</h3>
-        <p>R$ ${p.preco.toFixed(2)}</p>
-        <button onclick="adicionar('${p.nome}', ${p.preco})">Adicionar</button>
+        <p class="preco">R$ ${p.preco.toFixed(2)}</p>
+
+        <div class="controle">
+          <button onclick="alterarQtd('${p.id}', -1)">−</button>
+          <span id="qtd-${p.id}">0</span>
+          <button onclick="alterarQtd('${p.id}', 1)">+</button>
+        </div>
       </div>
     `;
   });
 }
 
-function buscarProduto() {
-  const termo = document.getElementById("busca").value.toLowerCase();
-  const filtrado = produtos.filter(p => 
-    p.nome.toLowerCase().includes(termo)
-  );
-  mostrarProdutos(filtrado);
+function alterarQtd(id, valor) {
+  const produto = produtos.find(p => p.id == id);
+  let item = carrinho.find(p => p.id == id);
+
+  if (!item && valor > 0) {
+    carrinho.push({ ...produto, qtd: 1 });
+  } else if (item) {
+    item.qtd += valor;
+    if (item.qtd <= 0) {
+      carrinho = carrinho.filter(p => p.id != id);
+    }
+  }
+
+  atualizarCarrinho();
+  atualizarCards();
 }
 
-function popularCategorias() {
-  const select = document.getElementById("categoriaFiltro");
-  const categorias = [...new Set(produtos.map(p => p.categoria))];
-
-  categorias.forEach(cat => {
-    select.innerHTML += `<option value="${cat}">${cat}</option>`;
+function atualizarCards() {
+  produtos.forEach(p => {
+    const item = carrinho.find(i => i.id == p.id);
+    const el = document.getElementById(`qtd-${p.id}`);
+    if (el) el.innerText = item ? item.qtd : 0;
   });
 }
 
-function filtrarCategoria() {
-  const valor = document.getElementById("categoriaFiltro").value;
-  if (valor === "todos") return mostrarProdutos(produtos);
-  const filtrado = produtos.filter(p => p.categoria === valor);
-  mostrarProdutos(filtrado);
-}
-
-function ordenarProdutos() {
-  const valor = document.getElementById("ordenar").value;
-  let lista = [...produtos];
-
-  if (valor === "menor") lista.sort((a,b)=>a.preco-b.preco);
-  if (valor === "maior") lista.sort((a,b)=>b.preco-a.preco);
-
-  mostrarProdutos(lista);
-}
-
-function adicionar(nome, preco) {
-  const item = carrinho.find(p=>p.nome===nome);
-  if(item) item.qtd++;
-  else carrinho.push({nome,preco,qtd:1});
-  atualizarCarrinho();
-}
-
-function atualizarCarrinho(){
+function atualizarCarrinho() {
   const container = document.getElementById("itensCarrinho");
-  const contador = document.getElementById("contador");
   const totalEl = document.getElementById("total");
 
-  container.innerHTML="";
-  let total=0, qtdTotal=0;
+  container.innerHTML = "";
+  let total = 0;
 
-  carrinho.forEach(i=>{
-    const sub=i.preco*i.qtd;
-    total+=sub;
-    qtdTotal+=i.qtd;
+  carrinho.forEach(i => {
+    const sub = i.preco * i.qtd;
+    total += sub;
 
-    container.innerHTML+=`
-      <p>${i.nome} (${i.qtd}) - R$ ${sub.toFixed(2)}</p>
+    container.innerHTML += `
+      <div class="item-carrinho">
+        <div>
+          <strong>${i.nome}</strong>
+          <p>${i.qtd}x R$ ${i.preco.toFixed(2)}</p>
+        </div>
+        <div class="acoes">
+          <button onclick="alterarQtd('${i.id}', -1)">−</button>
+          <button onclick="alterarQtd('${i.id}', 1)">+</button>
+        </div>
+      </div>
     `;
   });
 
-  contador.innerText=qtdTotal;
-  totalEl.innerText="Total: R$ "+total.toFixed(2);
+  totalEl.innerText = "Total: R$ " + total.toFixed(2);
 }
 
-function toggleCarrinho(){
-  document.getElementById("carrinho").classList.toggle("ativo");
+function finalizarPedido() {
+  if (carrinho.length === 0) return alert("Seu carrinho está vazio");
+
+  let mensagem = "🛍️ Pedido - Odòmáiyà\n\n";
+  let total = 0;
+
+  carrinho.forEach(i => {
+    const sub = i.preco * i.qtd;
+    total += sub;
+
+    mensagem += `${i.nome}\n`;
+    mensagem += `Qtd: ${i.qtd}\n`;
+    mensagem += `Subtotal: R$ ${sub.toFixed(2)}\n\n`;
+  });
+
+  mensagem += `Total: R$ ${total.toFixed(2)}`;
+
+  window.open(`https://wa.me/55SEUNUMERO?text=${encodeURIComponent(mensagem)}`);
 }
 
-function abrirModal(img){
-  document.getElementById("modalImg").src=img;
+function abrirModal(img) {
+  document.getElementById("modalImg").src = img;
   document.getElementById("modal").classList.add("ativo");
 }
 
-function fecharModal(){
+function fecharModal() {
   document.getElementById("modal").classList.remove("ativo");
-}
-
-function scrollToProdutos(){
-  document.getElementById("produtos").scrollIntoView({behavior:"smooth"});
 }
 
 carregarProdutos();
