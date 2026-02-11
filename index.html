@@ -1,25 +1,23 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Odòmáiyà Artigos Religiosos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odòmáiyà Artigos Religiosos</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<header>
+<header class="topo">
   <h1>Odòmáiyà Artigos Religiosos</h1>
-  <p>Axé, fundamento e respeito à ancestralidade</p>
+  <p class="frase">Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
 </header>
 
-<section class="controls">
-  <select id="categoriaFiltro">
-    <option value="Todos">Todas categorias</option>
-  </select>
-
+<section class="filtros">
   <select id="ordenar">
     <option value="">Ordenar por</option>
     <option value="menor">Menor preço</option>
@@ -27,21 +25,22 @@
   </select>
 </section>
 
-<main id="produtos">
-  <p class="loading">Carregando produtos...</p>
-</main>
+<main id="produtos" class="produtos"></main>
 
-<!-- Carrinho flutuante -->
-<div id="cart-button">🛒 <span id="cart-count">0</span></div>
-
-<div id="cart-modal">
-  <h2>Seu pedido</h2>
-  <ul id="cart-items"></ul>
-  <p id="cart-total">Total: R$ 0,00</p>
-  <button id="finalizar">Finalizar no WhatsApp</button>
-  <button id="fechar">Fechar</button>
+<!-- Carrinho -->
+<div class="cart-icon" onclick="abrirCarrinho()">
+  🛒 <span id="contador">0</span>
 </div>
 
-<script src="app.js"></script>
+<div id="carrinho" class="carrinho">
+  <h2>Seu Pedido</h2>
+  <div id="itensCarrinho"></div>
+  <h3 id="total">Total: R$ 0,00</h3>
+  <button class="finalizar" onclick="finalizarPedido()">
+    📲 Finalizar no WhatsApp
+  </button>
+</div>
+
+<script src="js/script.js"></script>
 </body>
 </html>
