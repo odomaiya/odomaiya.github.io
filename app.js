@@ -1,152 +1,114 @@
-const numeroWhats = "5554996048808";
-
-const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
+const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
 
 let produtos = [];
 let carrinho = [];
 
 async function carregarProdutos() {
-  try {
-    const response = await fetch(csvURL);
-    const texto = await response.text();
+  const resposta = await fetch(url);
+  const texto = await resposta.text();
+  const linhas = texto.split("\n").slice(1);
 
-    const linhas = texto.trim().split("\n");
-    linhas.shift(); // remove cabeçalho
+  produtos = linhas.map(linha => {
+    const colunas = linha.split(",");
+    return {
+      nome: colunas[0],
+      preco: parseFloat(colunas[1])
+    };
+  });
 
-    produtos = linhas.map(linha => {
-      const colunas = linha.split(",");
-
-      return {
-        id: colunas[0]?.trim(),
-        nome: colunas[1]?.trim(),
-        preco: parseFloat(colunas[2]) || 0,
-        estoque: parseInt(colunas[3]) || 0,
-        categoria: colunas[4]?.trim(),
-        imagem: colunas[5]?.trim()
-      };
-    });
-
-    renderizar(produtos);
-
-  } catch (erro) {
-    console.error("Erro ao carregar produtos:", erro);
-    document.getElementById("produtos").innerHTML =
-      "<p style='text-align:center'>Erro ao carregar produtos.</p>";
-  }
+  mostrarProdutos(produtos);
 }
 
-function renderizar(lista) {
-  const area = document.getElementById("produtos");
-  area.innerHTML = "";
+function mostrarProdutos(lista) {
+  const container = document.getElementById("produtos");
+  container.innerHTML = "";
 
-  if (!lista.length) {
-    area.innerHTML = "<p style='text-align:center'>Nenhum produto encontrado.</p>";
-    return;
-  }
-
-  lista.forEach(p => {
-    area.innerHTML += `
+  lista.forEach(produto => {
+    container.innerHTML += `
       <div class="card">
-        <img src="${p.imagem}" onerror="this.src='https://via.placeholder.com/300'">
-        <h4>${p.nome}</h4>
-        <div class="preco">R$ ${p.preco.toFixed(2)}</div>
-        <div class="estoque">Estoque: ${p.estoque}</div>
-        <button onclick="adicionar('${p.id}')">Adicionar</button>
+        <h3>${produto.nome}</h3>
+        <p>R$ ${produto.preco.toFixed(2)}</p>
+        <button class="btn-add" onclick="adicionar('${produto.nome}', ${produto.preco})">
+          Adicionar
+        </button>
       </div>
     `;
   });
 }
 
-function adicionar(id) {
-  const produto = produtos.find(p => p.id === id);
-  if (!produto) return;
-
-  const item = carrinho.find(i => i.id === id);
-
-  if (produto.estoque <= 0) {
-    alert("Produto sem estoque.");
-    return;
-  }
-
+function adicionar(nome, preco) {
+  const item = carrinho.find(p => p.nome === nome);
   if (item) {
-    if (item.qtd < produto.estoque) {
-      item.qtd++;
-    } else {
-      alert("Estoque máximo atingido.");
-    }
+    item.qtd++;
   } else {
-    carrinho.push({ ...produto, qtd: 1 });
+    carrinho.push({ nome, preco, qtd: 1 });
+  }
+  atualizarCarrinho();
+}
+
+function alterarQtd(nome, valor) {
+  const item = carrinho.find(p => p.nome === nome);
+  if (!item) return;
+
+  item.qtd += valor;
+  if (item.qtd <= 0) {
+    carrinho = carrinho.filter(p => p.nome !== nome);
   }
 
   atualizarCarrinho();
 }
 
 function atualizarCarrinho() {
-  const area = document.getElementById("itensCarrinho");
+  const container = document.getElementById("itensCarrinho");
   const contador = document.getElementById("contador");
+  const totalEl = document.getElementById("total");
 
-  area.innerHTML = "";
-
+  container.innerHTML = "";
   let total = 0;
   let quantidadeTotal = 0;
 
-  carrinho.forEach(i => {
-    const subtotal = i.qtd * i.preco;
-    total += subtotal;
-    quantidadeTotal += i.qtd;
+  carrinho.forEach(item => {
+    total += item.preco * item.qtd;
+    quantidadeTotal += item.qtd;
 
-    area.innerHTML += `
-      <p>
-        <strong>${i.nome}</strong><br>
-        Quantidade: ${i.qtd}<br>
-        Subtotal: R$ ${subtotal.toFixed(2)}
-      </p>
-      <hr>
+    container.innerHTML += `
+      <div class="item-carrinho">
+        <strong>${item.nome}</strong>
+        <div>R$ ${(item.preco * item.qtd).toFixed(2)}</div>
+        <div class="controls">
+          <button onclick="alterarQtd('${item.nome}', -1)">-</button>
+          <span>${item.qtd}</span>
+          <button onclick="alterarQtd('${item.nome}', 1)">+</button>
+        </div>
+      </div>
     `;
   });
 
   contador.innerText = quantidadeTotal;
-  document.getElementById("total").innerText =
-    "Total: R$ " + total.toFixed(2);
+  totalEl.innerText = "Total: R$ " + total.toFixed(2);
 }
 
-function abrirCarrinho() {
+function toggleCarrinho() {
   document.getElementById("carrinho").classList.toggle("ativo");
 }
 
 function finalizarPedido() {
-  if (carrinho.length === 0) {
-    alert("Seu carrinho está vazio.");
-    return;
-  }
+  if (carrinho.length === 0) return;
 
-  let total = 0;
   let mensagem = "✨ Pedido Odòmáiyà ✨\n\n🛍️ Itens:\n\n";
+  let total = 0;
 
-  carrinho.forEach(i => {
-    const subtotal = i.qtd * i.preco;
+  carrinho.forEach(item => {
+    const subtotal = item.preco * item.qtd;
     total += subtotal;
-
-    mensagem += `• ${i.nome}\n`;
-    mensagem += `   Quantidade: ${i.qtd}\n`;
-    mensagem += `   Valor unitário: R$ ${i.preco.toFixed(2)}\n`;
-    mensagem += `   Subtotal: R$ ${subtotal.toFixed(2)}\n\n`;
+    mensagem += `• ${item.nome}\nQuantidade: ${item.qtd}\nSubtotal: R$ ${subtotal.toFixed(2)}\n\n`;
   });
 
-  mensagem += `💰 Total do Pedido: R$ ${total.toFixed(2)}\n\n`;
-  mensagem += "Aguardo confirmação e forma de pagamento.";
+  mensagem += `💰 Total do Pedido: R$ ${total.toFixed(2)}\n\nAguardo confirmação e forma de pagamento.`;
 
-  const url = `https://wa.me/${numeroWhats}?text=${encodeURIComponent(mensagem)}`;
-  window.open(url, "_blank");
+  const numero = "55SEUNUMEROAQUI";
+  const link = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+  window.open(link, "_blank");
 }
-
-document.getElementById("ordenar").addEventListener("change", function(e) {
-  if (e.target.value === "menor") {
-    renderizar([...produtos].sort((a,b)=>a.preco-b.preco));
-  }
-  if (e.target.value === "maior") {
-    renderizar([...produtos].sort((a,b)=>b.preco-a.preco));
-  }
-});
 
 carregarProdutos();
