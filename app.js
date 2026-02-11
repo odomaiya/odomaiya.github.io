@@ -4,31 +4,48 @@ const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7j4_2qhc-W7Esc
 let produtos = [];
 let carrinho = [];
 
-fetch(csvURL)
-.then(res => res.text())
-.then(text => {
-  const linhas = text.split("\n").slice(1);
-  produtos = linhas.map(l => {
-    const c = l.split(",");
-    return {
-      id: c[0],
-      nome: c[1],
-      preco: parseFloat(c[2]),
-      estoque: parseInt(c[3]),
-      imagem: c[4]
-    };
-  });
-  renderizar(produtos);
-});
+async function carregarProdutos() {
+  try {
+    const response = await fetch(csvURL);
+    const data = await response.text();
 
-function renderizar(lista){
+    const linhas = data.trim().split("\n");
+    const cabecalho = linhas.shift();
+
+    produtos = linhas.map(linha => {
+      const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+
+      return {
+        id: colunas[0]?.trim(),
+        nome: colunas[1]?.trim(),
+        preco: parseFloat(colunas[2]) || 0,
+        estoque: parseInt(colunas[3]) || 0,
+        imagem: colunas[4]?.trim()
+      };
+    });
+
+    renderizar(produtos);
+
+  } catch (erro) {
+    console.error("Erro ao carregar CSV:", erro);
+    document.getElementById("produtos").innerHTML =
+      "<p style='text-align:center'>Erro ao carregar produtos.</p>";
+  }
+}
+
+function renderizar(lista) {
   const area = document.getElementById("produtos");
   area.innerHTML = "";
+
+  if (!lista.length) {
+    area.innerHTML = "<p style='text-align:center'>Nenhum produto encontrado.</p>";
+    return;
+  }
 
   lista.forEach(p => {
     area.innerHTML += `
       <div class="card">
-        <img src="${p.imagem}">
+        <img src="${p.imagem}" onerror="this.src='https://via.placeholder.com/300'">
         <h4>${p.nome}</h4>
         <div class="preco">R$ ${p.preco.toFixed(2)}</div>
         <div class="estoque">Estoque: ${p.estoque}</div>
@@ -38,22 +55,34 @@ function renderizar(lista){
   });
 }
 
-function adicionar(id){
-  const produto = produtos.find(p => p.id == id);
-  const item = carrinho.find(i => i.id == id);
+function adicionar(id) {
+  const produto = produtos.find(p => p.id === id);
+  if (!produto) return;
 
-  if(item){
-    item.qtd++;
+  const item = carrinho.find(i => i.id === id);
+
+  if (produto.estoque <= 0) {
+    alert("Produto sem estoque.");
+    return;
+  }
+
+  if (item) {
+    if (item.qtd < produto.estoque) {
+      item.qtd++;
+    } else {
+      alert("Estoque máximo atingido.");
+    }
   } else {
-    carrinho.push({...produto, qtd:1});
+    carrinho.push({ ...produto, qtd: 1 });
   }
 
   atualizarCarrinho();
 }
 
-function atualizarCarrinho(){
+function atualizarCarrinho() {
   const area = document.getElementById("itensCarrinho");
   const contador = document.getElementById("contador");
+
   area.innerHTML = "";
 
   let total = 0;
@@ -65,24 +94,26 @@ function atualizarCarrinho(){
     quantidadeTotal += i.qtd;
 
     area.innerHTML += `
-      <p><strong>${i.nome}</strong><br>
-      Quantidade: ${i.qtd}<br>
-      Subtotal: R$ ${subtotal.toFixed(2)}</p>
+      <p>
+        <strong>${i.nome}</strong><br>
+        Quantidade: ${i.qtd}<br>
+        Subtotal: R$ ${subtotal.toFixed(2)}
+      </p>
       <hr>
     `;
   });
 
   contador.innerText = quantidadeTotal;
-  document.getElementById("total").innerText = 
+  document.getElementById("total").innerText =
     "Total: R$ " + total.toFixed(2);
 }
 
-function abrirCarrinho(){
+function abrirCarrinho() {
   document.getElementById("carrinho").classList.toggle("ativo");
 }
 
-function finalizarPedido(){
-  if(carrinho.length === 0){
+function finalizarPedido() {
+  if (carrinho.length === 0) {
     alert("Seu carrinho está vazio.");
     return;
   }
@@ -106,3 +137,14 @@ function finalizarPedido(){
   const url = `https://wa.me/${numeroWhats}?text=${encodeURIComponent(mensagem)}`;
   window.open(url, "_blank");
 }
+
+document.getElementById("ordenar").addEventListener("change", function(e) {
+  if (e.target.value === "menor") {
+    renderizar([...produtos].sort((a,b)=>a.preco-b.preco));
+  }
+  if (e.target.value === "maior") {
+    renderizar([...produtos].sort((a,b)=>b.preco-a.preco));
+  }
+});
+
+carregarProdutos();
