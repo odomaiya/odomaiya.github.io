@@ -1,62 +1,74 @@
-:root {
-  --azul-principal: #355C7D;
-  --azul-medio: #4F7FA3;
-  --azul-claro: #DCEAF4;
-  --branco: #ffffff;
-  --cinza-fundo: #F4F7FA;
-}
-
 body {
-  font-family: 'Poppins', sans-serif;
   margin: 0;
-  background: var(--cinza-fundo);
+  font-family: 'Poppins', sans-serif;
+  background: #f4f8fb;
+  color: #1f3f5b;
 }
 
-/* Header */
-.topo {
-  background: var(--azul-principal);
-  color: var(--branco);
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #6fb3d2, #3f7ea6);
+  color: white;
+  padding: 80px 20px;
   text-align: center;
-  padding: 30px 20px;
 }
 
-.topo h1 {
+.hero h1 {
+  font-size: 48px;
   margin: 0;
   font-weight: 700;
 }
 
-.topo p {
-  margin-top: 8px;
-  font-weight: 300;
-  opacity: 0.9;
+.hero p {
+  margin: 20px 0;
+  font-size: 18px;
 }
 
-/* Filtros */
-.filtros {
-  padding: 20px;
-}
-
-select {
-  padding: 10px 15px;
-  border-radius: 8px;
+.hero button {
+  background: white;
+  color: #3f7ea6;
   border: none;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-/* Produtos */
+.hero button:hover {
+  transform: scale(1.05);
+}
+
+/* TOP BAR */
+.top-bar {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.top-bar input, .top-bar select {
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid #d3e3ef;
+}
+
+/* PRODUTOS */
 .produtos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 25px;
+  padding: 30px;
 }
 
 .card {
-  background: var(--branco);
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  background: white;
+  border-radius: 20px;
+  padding: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   transition: 0.3s;
+  animation: fadeUp 0.4s ease;
 }
 
 .card:hover {
@@ -64,53 +76,60 @@ select {
 }
 
 .card h3 {
-  margin: 0;
   font-size: 16px;
 }
 
 .card p {
-  margin: 8px 0;
   font-weight: 600;
-  color: var(--azul-principal);
 }
 
-.btn-add {
-  width: 100%;
-  padding: 10px;
+.card button {
+  background: #6fb3d2;
   border: none;
-  border-radius: 10px;
-  background: var(--azul-medio);
   color: white;
+  padding: 10px;
+  border-radius: 20px;
+  width: 100%;
   cursor: pointer;
-  transition: 0.3s;
 }
 
-.btn-add:hover {
-  background: var(--azul-principal);
+/* SLIDER */
+.slider {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-/* Carrinho */
+.slider img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+/* CARRINHO */
 .cart-icon {
   position: fixed;
-  right: 20px;
   bottom: 20px;
-  background: var(--azul-principal);
+  right: 20px;
+  background: #3f7ea6;
   color: white;
-  padding: 15px;
-  border-radius: 50px;
+  padding: 12px 18px;
+  border-radius: 30px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .carrinho {
   position: fixed;
-  right: -400px;
+  right: -100%;
   top: 0;
-  width: 350px;
+  width: 320px;
   height: 100%;
   background: white;
+  box-shadow: -5px 0 20px rgba(0,0,0,0.1);
   padding: 20px;
-  box-shadow: -5px 0 20px rgba(0,0,0,0.2);
   transition: 0.4s;
   overflow-y: auto;
 }
@@ -119,35 +138,27 @@ select {
   right: 0;
 }
 
-.item-carrinho {
-  margin-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
 }
 
-.controls {
+.modal img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 20px;
+}
+
+.modal.ativo {
   display: flex;
-  gap: 8px;
-  margin-top: 5px;
 }
 
-.controls button {
-  padding: 5px 10px;
-  border: none;
-  background: var(--azul-medio);
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.finalizar {
-  width: 100%;
-  padding: 12px;
-  margin-top: 15px;
-  border: none;
-  border-radius: 12px;
-  background: var(--azul-principal);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+@keyframes fadeUp {
+  from {opacity:0; transform:translateY(20px);}
+  to {opacity:1; transform:translateY(0);}
 }
