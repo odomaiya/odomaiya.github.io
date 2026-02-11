@@ -5,20 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Odòmáiyà Artigos Religiosos</title>
 
-<link rel="stylesheet" href="estilo.css">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<header class="topo">
-  <h1>Odòmáiyà Artigos Religiosos</h1>
-  <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
-</header>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Odòmáiyà</h1>
+    <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+    <button onclick="scrollToProdutos()">Explorar Produtos</button>
+  </div>
+</section>
 
-<section class="filtros">
-  <select id="ordenar">
-    <option value="">Ordenar por</option>
+<!-- BUSCA + FILTRO -->
+<section class="top-bar">
+  <input type="text" id="busca" placeholder="Buscar produtos..." onkeyup="buscarProduto()">
+
+  <select id="categoriaFiltro" onchange="filtrarCategoria()">
+    <option value="todos">Todas Categorias</option>
+  </select>
+
+  <select id="ordenar" onchange="ordenarProdutos()">
+    <option value="">Ordenar</option>
     <option value="menor">Menor preço</option>
     <option value="maior">Maior preço</option>
   </select>
@@ -26,20 +38,21 @@
 
 <main id="produtos" class="produtos"></main>
 
-<!-- Ícone Carrinho -->
+<!-- CARRINHO -->
 <div class="cart-icon" onclick="toggleCarrinho()">
   🛒 <span id="contador">0</span>
 </div>
 
-<!-- Carrinho -->
 <div id="carrinho" class="carrinho">
   <h2>Seu Pedido</h2>
   <div id="itensCarrinho"></div>
   <h3 id="total">Total: R$ 0,00</h3>
+  <button onclick="finalizarPedido()">📲 Finalizar no WhatsApp</button>
+</div>
 
-  <button class="finalizar" onclick="finalizarPedido()">
-    📲 Finalizar no WhatsApp
-  </button>
+<!-- MODAL IMAGEM -->
+<div id="modal" class="modal" onclick="fecharModal()">
+  <img id="modalImg">
 </div>
 
 <script src="app.js"></script>
