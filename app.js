@@ -1,5 +1,6 @@
 const numeroWhats = "5554996048808";
-const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7j4_2qhc-W7EscYgFNEoWX-jEUsfS8xPSnOkEGj7uf1xSUFKkANQ8YQ57UUZsPytia7Vq6iShxHGy/pub?gid=1004684059&single=true&output=csv";
+
+const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
 
 let produtos = [];
 let carrinho = [];
@@ -7,27 +8,28 @@ let carrinho = [];
 async function carregarProdutos() {
   try {
     const response = await fetch(csvURL);
-    const data = await response.text();
+    const texto = await response.text();
 
-    const linhas = data.trim().split("\n");
-    const cabecalho = linhas.shift();
+    const linhas = texto.trim().split("\n");
+    linhas.shift(); // remove cabeçalho
 
     produtos = linhas.map(linha => {
-      const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+      const colunas = linha.split(",");
 
       return {
         id: colunas[0]?.trim(),
         nome: colunas[1]?.trim(),
         preco: parseFloat(colunas[2]) || 0,
         estoque: parseInt(colunas[3]) || 0,
-        imagem: colunas[4]?.trim()
+        categoria: colunas[4]?.trim(),
+        imagem: colunas[5]?.trim()
       };
     });
 
     renderizar(produtos);
 
   } catch (erro) {
-    console.error("Erro ao carregar CSV:", erro);
+    console.error("Erro ao carregar produtos:", erro);
     document.getElementById("produtos").innerHTML =
       "<p style='text-align:center'>Erro ao carregar produtos.</p>";
   }
