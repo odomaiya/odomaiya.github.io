@@ -1,122 +1,117 @@
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to bottom, #e6f6fd, #ffffff);
-  color: #1F4E79;
+:root {
+  --azul-principal: #355C7D;
+  --azul-medio: #4F7FA3;
+  --azul-claro: #DCEAF4;
+  --branco: #ffffff;
+  --cinza-fundo: #F4F7FA;
 }
 
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background: var(--cinza-fundo);
+}
+
+/* Header */
 .topo {
+  background: var(--azul-principal);
+  color: var(--branco);
   text-align: center;
-  padding: 25px 15px;
-  background: #6EC1E4;
-  color: white;
+  padding: 30px 20px;
 }
 
 .topo h1 {
   margin: 0;
-  font-size: 22px;
+  font-weight: 700;
 }
 
-.frase {
-  font-size: 14px;
-  margin-top: 6px;
+.topo p {
+  margin-top: 8px;
+  font-weight: 300;
   opacity: 0.9;
 }
 
+/* Filtros */
 .filtros {
-  padding: 12px;
+  padding: 20px;
 }
 
 select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 12px;
+  padding: 10px 15px;
+  border-radius: 8px;
   border: none;
-  box-shadow: 0 3px 10px rgba(0,0,0,.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
+/* Produtos */
 .produtos {
   display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
-  gap: 14px;
-  padding: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 20px;
 }
 
 .card {
-  background: white;
+  background: var(--branco);
+  padding: 20px;
   border-radius: 16px;
-  padding: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.1);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: 0.3s;
 }
 
-.card img {
-  width: 100%;
-  border-radius: 12px;
+.card:hover {
+  transform: translateY(-5px);
 }
 
-.card h4 {
-  font-size: 14px;
+.card h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.card p {
   margin: 8px 0;
-}
-
-.preco {
   font-weight: 600;
-  color: #1F4E79;
+  color: var(--azul-principal);
 }
 
-.estoque {
-  font-size: 12px;
-  opacity: 0.6;
-}
-
-.card button {
+.btn-add {
   width: 100%;
-  padding: 8px;
-  margin-top: 6px;
+  padding: 10px;
   border: none;
-  border-radius: 12px;
-  background: #6EC1E4;
+  border-radius: 10px;
+  background: var(--azul-medio);
   color: white;
-  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
+.btn-add:hover {
+  background: var(--azul-principal);
+}
+
+/* Carrinho */
 .cart-icon {
   position: fixed;
-  bottom: 20px;
   right: 20px;
-  background: #1F4E79;
+  bottom: 20px;
+  background: var(--azul-principal);
   color: white;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.3);
-}
-
-#contador {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  background: red;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 50%;
+  padding: 15px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .carrinho {
   position: fixed;
-  right: -100%;
+  right: -400px;
   top: 0;
-  width: 85%;
-  max-width: 350px;
+  width: 350px;
   height: 100%;
   background: white;
-  box-shadow: -4px 0 15px rgba(0,0,0,.2);
   padding: 20px;
-  transition: .3s;
+  box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+  transition: 0.4s;
   overflow-y: auto;
 }
 
@@ -124,13 +119,35 @@ select {
   right: 0;
 }
 
+.item-carrinho {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.controls button {
+  padding: 5px 10px;
+  border: none;
+  background: var(--azul-medio);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 .finalizar {
   width: 100%;
   padding: 12px;
-  background: #6EC1E4;
+  margin-top: 15px;
   border: none;
   border-radius: 12px;
+  background: var(--azul-principal);
   color: white;
-  font-weight: 600;
-  margin-top: 10px;
+  font-weight: bold;
+  cursor: pointer;
 }
