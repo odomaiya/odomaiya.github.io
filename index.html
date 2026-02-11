@@ -7,16 +7,23 @@
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<meta name="theme-color" content="#0f2d4a">
 </head>
 
 <body>
 
+<!-- HEADER -->
 <header class="topo">
-  <h1>Odòmáiyà Artigos Religiosos</h1>
-  <p class="frase">Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+  <div class="topo-conteudo">
+    <h1>Odòmáiyà</h1>
+    <p class="subtitulo">Artigos Religiosos</p>
+    <p class="frase">Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+  </div>
 </header>
 
+<!-- FILTROS -->
 <section class="filtros">
   <select id="ordenar">
     <option value="">Ordenar por</option>
@@ -25,22 +32,36 @@
   </select>
 </section>
 
+<!-- LISTA PRODUTOS -->
 <main id="produtos" class="produtos"></main>
 
-<!-- Carrinho -->
-<div class="cart-icon" onclick="abrirCarrinho()">
-  🛒 <span id="contador">0</span>
+<!-- BOTÃO FLUTUANTE CARRINHO -->
+<div class="cart-float" onclick="abrirCarrinho()">
+  🛒
+  <span id="contador">0</span>
 </div>
 
+<!-- OVERLAY -->
+<div id="overlay" class="overlay" onclick="fecharCarrinho()"></div>
+
+<!-- CARRINHO LATERAL -->
 <div id="carrinho" class="carrinho">
-  <h2>Seu Pedido</h2>
-  <div id="itensCarrinho"></div>
-  <h3 id="total">Total: R$ 0,00</h3>
-  <button class="finalizar" onclick="finalizarPedido()">
-    📲 Finalizar no WhatsApp
-  </button>
+  <div class="carrinho-header">
+    <h2>Seu Pedido</h2>
+    <button onclick="fecharCarrinho()">✕</button>
+  </div>
+
+  <div id="itensCarrinho" class="itens-carrinho"></div>
+
+  <div class="carrinho-footer">
+    <h3 id="total">Total: R$ 0,00</h3>
+    <button class="finalizar" onclick="finalizarPedido()">
+      📲 Finalizar no WhatsApp
+    </button>
+  </div>
 </div>
 
 <script src="js/script.js"></script>
+
 </body>
 </html>
