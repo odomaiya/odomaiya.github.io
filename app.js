@@ -1,79 +1,108 @@
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7j4_2qhc-W7EscYgFNEoWX-jEUsfS8xPSnOkEGj7uf1xSUFKkANQ8YQ57UUZsPytia7Vq6iShxHGy/pub?output=csv";
+const numeroWhats = "5554996048808";
+const csvURL = "COLE_AQUI_SEU_LINK_CSV";
 
 let produtos = [];
-let carrinho = {};
+let carrinho = [];
 
-fetch(CSV_URL)
-  .then(res => res.text())
-  .then(text => {
-    const linhas = text.split("\n").slice(1);
-    linhas.forEach(l => {
-      const [nome, preco, categoria, imagem, estoque] = l.split(",");
-      produtos.push({ nome, preco: Number(preco), categoria, imagem, estoque: Number(estoque) });
-    });
-    renderProdutos();
-    carregarCategorias();
+fetch(csvURL)
+.then(res => res.text())
+.then(text => {
+  const linhas = text.split("\n").slice(1);
+  produtos = linhas.map(l => {
+    const c = l.split(",");
+    return {
+      id: c[0],
+      nome: c[1],
+      preco: parseFloat(c[2]),
+      estoque: parseInt(c[3]),
+      imagem: c[4]
+    };
   });
+  renderizar(produtos);
+});
 
-function renderProdutos(lista = produtos) {
+function renderizar(lista){
   const area = document.getElementById("produtos");
   area.innerHTML = "";
+
   lista.forEach(p => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <img src="${p.imagem}">
-      <h3>${p.nome}</h3>
-      <div class="price">R$ ${p.preco.toFixed(2)}</div>
-      <div class="stock">Em estoque: ${p.estoque}</div>
-      <div class="qty">
-        <button onclick="alterarQtd('${p.nome}', -1)">-</button>
-        <span>${carrinho[p.nome]?.qtd || 0}</span>
-        <button onclick="alterarQtd('${p.nome}', 1)">+</button>
+    area.innerHTML += `
+      <div class="card">
+        <img src="${p.imagem}">
+        <h4>${p.nome}</h4>
+        <div class="preco">R$ ${p.preco.toFixed(2)}</div>
+        <div class="estoque">Estoque: ${p.estoque}</div>
+        <button onclick="adicionar('${p.id}')">Adicionar</button>
       </div>
-      <button class="add" onclick="adicionar('${p.nome}')">Adicionar</button>
     `;
-    area.appendChild(card);
   });
 }
 
-function alterarQtd(nome, v) {
-  if (!carrinho[nome]) carrinho[nome] = { qtd: 0 };
-  carrinho[nome].qtd = Math.max(0, carrinho[nome].qtd + v);
+function adicionar(id){
+  const produto = produtos.find(p => p.id == id);
+  const item = carrinho.find(i => i.id == id);
+
+  if(item){
+    item.qtd++;
+  } else {
+    carrinho.push({...produto, qtd:1});
+  }
+
   atualizarCarrinho();
-  renderProdutos();
 }
 
-function adicionar(nome) {
-  if (!carrinho[nome]) carrinho[nome] = { qtd: 1 };
-  atualizarCarrinho();
-}
+function atualizarCarrinho(){
+  const area = document.getElementById("itensCarrinho");
+  const contador = document.getElementById("contador");
+  area.innerHTML = "";
 
-function atualizarCarrinho() {
   let total = 0;
-  let count = 0;
-  Object.keys(carrinho).forEach(n => {
-    const prod = produtos.find(p => p.nome === n);
-    total += carrinho[n].qtd * prod.preco;
-    count += carrinho[n].qtd;
+  let quantidadeTotal = 0;
+
+  carrinho.forEach(i => {
+    const subtotal = i.qtd * i.preco;
+    total += subtotal;
+    quantidadeTotal += i.qtd;
+
+    area.innerHTML += `
+      <p><strong>${i.nome}</strong><br>
+      Quantidade: ${i.qtd}<br>
+      Subtotal: R$ ${subtotal.toFixed(2)}</p>
+      <hr>
+    `;
   });
-  document.getElementById("cart-count").innerText = count;
+
+  contador.innerText = quantidadeTotal;
+  document.getElementById("total").innerText = 
+    "Total: R$ " + total.toFixed(2);
 }
 
-document.getElementById("cart-button").onclick = () =>
-  document.getElementById("cart-modal").style.display = "block";
+function abrirCarrinho(){
+  document.getElementById("carrinho").classList.toggle("ativo");
+}
 
-document.getElementById("fechar").onclick = () =>
-  document.getElementById("cart-modal").style.display = "none";
+function finalizarPedido(){
+  if(carrinho.length === 0){
+    alert("Seu carrinho está vazio.");
+    return;
+  }
 
-document.getElementById("finalizar").onclick = () => {
-  let msg = "🧾 Pedido Odòmáiyà\n\n";
   let total = 0;
-  Object.keys(carrinho).forEach(n => {
-    const p = produtos.find(x => x.nome === n);
-    msg += `${n} – ${carrinho[n].qtd} un\n`;
-    total += carrinho[n].qtd * p.preco;
+  let mensagem = "✨ Pedido Odòmáiyà ✨\n\n🛍️ Itens:\n\n";
+
+  carrinho.forEach(i => {
+    const subtotal = i.qtd * i.preco;
+    total += subtotal;
+
+    mensagem += `• ${i.nome}\n`;
+    mensagem += `   Quantidade: ${i.qtd}\n`;
+    mensagem += `   Valor unitário: R$ ${i.preco.toFixed(2)}\n`;
+    mensagem += `   Subtotal: R$ ${subtotal.toFixed(2)}\n\n`;
   });
-  msg += `\nTotal: R$ ${total.toFixed(2)}`;
-  window.open(`https://wa.me/SEUNUMERO?text=${encodeURIComponent(msg)}`);
-};
+
+  mensagem += `💰 Total do Pedido: R$ ${total.toFixed(2)}\n\n`;
+  mensagem += "Aguardo confirmação e forma de pagamento.";
+
+  const url = `https://wa.me/${numeroWhats}?text=${encodeURIComponent(mensagem)}`;
+  window.open(url, "_blank");
+}
