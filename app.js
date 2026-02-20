@@ -1,251 +1,96 @@
-// ===========================
-// TABELA CSV DINÂMICA
-// ===========================
+let products = [
+  {id:1,nome:"Guia Azul",preco:35,categoria:"Guias"},
+  {id:2,nome:"Vela Branca",preco:8,categoria:"Velas"},
+  {id:3,nome:"Bebida Ritual",preco:25,categoria:"Bebidas"}
+];
 
-const planilhaURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7j4_2qhc-W7EscYgFNEoWX-jEUsfS8xPSnOkEGj7uf1xSUFKkANQ8YQ57UUZsPytia7Vq6iShxHGy/pub?gid=1004684059&single=true&output=csv";
+let cart=[];
 
-let products = [];
-let cart = [];
-
-// buscar CSV e transformar em array
-fetch(planilhaURL)
-.then(res => res.text())
-.then(text => {
-  const linhas = text.split("\n").slice(1);
-  products = linhas.map(l => {
-    const c = l.split(",");
-    return {
-      id: c[0]?.trim(),
-      name: c[1]?.trim(),
-      price: parseFloat(c[2]) || 0,
-      stock: parseInt(c[3]) || 0,
-      category: c[4]?.trim() || "Geral"
-    };
-  });
-  renderProducts(products);
-});
-
-// ===========================
-// GERAR PRODUTOS
-// ===========================
-
-function renderProducts(list) {
-  const container = document.getElementById("product-list");
-  container.innerHTML = "";
-  list.forEach(p => {
-    container.innerHTML += `
-      <div class="product-card" data-category="${p.category}">
-        <h3>${p.name}</h3>
-        <p>R$ ${p.price.toFixed(2)}</p>
-        <p>Em estoque: ${p.stock}</p>
-
-        <div class="qty-controls">
-          <button onclick="changeQty('${p.id}', -1)">-</button>
-          <span id="qty-${p.id}">1</span>
-          <button onclick="changeQty('${p.id}', 1)">+</button>
+function renderProdutos(lista){
+  const div=document.getElementById("productList");
+  div.innerHTML="";
+  lista.forEach(p=>{
+    div.innerHTML+=`
+      <div class="card">
+        <h3>${p.nome}</h3>
+        <p>R$ ${p.preco.toFixed(2)}</p>
+        <div class="qty">
+          <button onclick="alterarQtd(${p.id},-1)">-</button>
+          <span id="qtd-${p.id}">1</span>
+          <button onclick="alterarQtd(${p.id},1)">+</button>
         </div>
-
-        <button class="add-btn" onclick="addToCart('${p.id}')">Adicionar</button>
+        <button class="btn-primary" onclick="addCarrinho(${p.id})">Adicionar</button>
       </div>
     `;
   });
 }
 
-// ===========================
-// FILTRO POR CATEGORIA
-// ===========================
-
-function filtrarCategoria(cat) {
-  if(cat === "Todos"){
-    renderProducts(products);
-    return;
-  }
-  const filtrados = products.filter(p=>p.category === cat);
-  renderProducts(filtrados);
+function alterarQtd(id,val){
+  let span=document.getElementById(`qtd-${id}`);
+  let qtd=parseInt(span.innerText)+val;
+  if(qtd<1)qtd=1;
+  span.innerText=qtd;
 }
 
-// ===========================
-// QUANTIDADE
-// ===========================
-
-function changeQty(id, change){
-  const span = document.getElementById(`qty-${id}`);
-  let value = parseInt(span.innerText);
-  value += change;
-  if(value < 1) value = 1;
-  span.innerText = value;
+function addCarrinho(id){
+  const prod=products.find(p=>p.id===id);
+  const qtd=parseInt(document.getElementById(`qtd-${id}`).innerText);
+  cart.push({...prod,qtd});
+  atualizarCarrinho();
 }
 
-// ===========================
-// ADICIONAR AO CARRINHO
-// ===========================
+function atualizarCarrinho(){
+  const div=document.getElementById("cartItems");
+  div.innerHTML="";
+  let total=0;
 
-function addToCart(id){
-  const prod = products.find(p=>p.id === id);
-  const qty = parseInt(document.getElementById(`qty-${id}`).innerText);
-
-  if(qty > prod.stock){
-    alert("Estoque insuficiente!");
-    return;
-  }
-
-  cart.push({...prod, qty});
-  prod.stock -= qty;
-
-  updateCart();
-  renderProducts(products);
-}
-
-// ===========================
-// ATUALIZAR CARRINHO
-// ===========================
-
-function updateCart(){
-  const container = document.getElementById("cart-items");
-  container.innerHTML = "";
-
-  let total = 0;
-  cart.forEach(item=>{
-    total += item.price * item.qty;
-    container.innerHTML += `<p>${item.name} x${item.qty}</p>`;
+  cart.forEach(p=>{
+    total+=p.preco*p.qtd;
+    div.innerHTML+=`<p>${p.nome} x${p.qtd}</p>`;
   });
 
-  document.getElementById("cart-total").innerText = total.toFixed(2);
-  document.getElementById("cart-count").innerText = cart.length;
+  document.getElementById("cartTotal").innerText=total.toFixed(2);
+  document.getElementById("cartCount").innerText=cart.length;
 }
 
-// ===========================
-// CHECKOUT
-// ===========================
-
-function openCheckout(){
-  if(cart.length === 0){
-    alert("Carrinho vazio!");
-    return;
-  }
-
-  const checkoutDiv = document.getElementById("checkout-step");
-  checkoutDiv.innerHTML = `
-
-    <h3>1️⃣ Dados do Cliente</h3>
-    <input type="text" id="nome" placeholder="Nome completo">
-    <input type="text" id="telefone" placeholder="Telefone">
-    <button onclick="checkoutStep2()">Continuar">
-
-  `;
-  document.getElementById("checkout").style.display = "flex";
+function toggleCart(){
+  document.getElementById("cart").classList.toggle("active");
 }
 
-function checkoutStep2(){
-  const nome = document.getElementById("nome").value;
-  const telefone = document.getElementById("telefone").value;
+function abrirCheckout(){
+  document.getElementById("checkout").style.display="flex";
 
-  if(!nome || !telefone){
-    alert("Preencha nome e telefone.");
-    return;
-  }
-
-  document.getElementById("checkout-step").innerHTML = `
-
-    <h3>2️⃣ Entrega ou Retirada</h3>
-    <select id="deliveryType" onchange="toggleAddress()">
+  document.getElementById("checkoutBox").innerHTML=`
+    <h3>Finalizar Pedido</h3>
+    <input id="nome" placeholder="Seu Nome" style="width:100%;margin:10px 0;padding:8px;">
+    
+    <select id="tipoEntrega" style="width:100%;margin:10px 0;padding:8px;">
       <option value="retirada">Retirada</option>
-      <option value="entrega">Entrega</option>
+      <option value="entrega">Entrega (taxa adicional)</option>
     </select>
 
-    <div id="address-input" style="display:none;">
-      <input type="text" id="cep" placeholder="CEP">
-      <input type="text" id="street" placeholder="Rua">
-      <input type="text" id="city" placeholder="Cidade">
-    </div>
+    <select id="pagamento" style="width:100%;margin:10px 0;padding:8px;">
+      <option>Crédito</option>
+      <option>Débito</option>
+      <option>Pix</option>
+      <option>Dinheiro</option>
+    </select>
 
-    <button onclick="checkoutStep3()">Continuar</button>
-
+    <button class="btn-primary" onclick="enviarPedido()">Enviar Pedido</button>
   `;
 }
 
-function toggleAddress(){
-  const type = document.getElementById("deliveryType").value;
-  document.getElementById("address-input").style.display =
-    type === "entrega" ? "block" : "none";
-}
+function enviarPedido(){
+  let nome=document.getElementById("nome").value;
+  let entrega=document.getElementById("tipoEntrega").value;
+  let pagamento=document.getElementById("pagamento").value;
 
-function checkoutStep3(){
+  let msg=`✨ Pedido Odòmáiyà ✨\n\nCliente: ${nome}\nEntrega: ${entrega}\nPagamento: ${pagamento}\n\nItens:\n`;
 
-  document.getElementById("checkout-step").innerHTML = `
-    <h3>3️⃣ Confirmação</h3>
-    <div id="order-summary"></div>
-    <button onclick="confirmOrder()">Finalizar no WhatsApp</button>
-  `;
-  generateSummary();
-}
-
-// ===========================
-// RESUMO E ENVIO
-// ===========================
-
-function generateSummary(){
-  let total = 0;
-  let summaryHTML = "";
-
-  cart.forEach(i => {
-    total += i.price * i.qty;
-    summaryHTML += `<p>${i.name} x${i.qty}</p>`;
+  cart.forEach(p=>{
+    msg+=`${p.nome} x${p.qtd}\n`;
   });
 
-  summaryHTML += `<h4>Total: R$ ${total.toFixed(2)}</h4>`;
-  document.getElementById("order-summary").innerHTML = summaryHTML;
+  window.open(`https://wa.me/555496048808?text=${encodeURIComponent(msg)}`,"_blank");
 }
-
-function confirmOrder(){
-
-  let message = `✨ Novo Pedido Odòmáiyà ✨%0A%0A`;
-
-  cart.forEach(i=>{
-    message += `• ${i.name} x${i.qty}%0A`;
-  });
-
-  message += `%0A📞 Enviar para atendimento`;
-
-  window.open(`https://wa.me/555496048808?text=${encodeURIComponent(message)}`,"_blank");
-}
-
-// ===========================
-// PARTICULAS
-// ===========================
-
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-canvas.width = innerWidth;
-canvas.height = innerHeight;
-
-let sparkles = [];
-
-for(let i=0;i<40;i++){
-  sparkles.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    size:Math.random()*1.5,
-    speed:Math.random()*0.3
-  });
-}
-
-function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="rgba(255,255,255,0.3)";
-
-  sparkles.forEach(s=>{
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fill();
-    s.y -= s.speed;
-    if(s.y < 0){
-      s.y = canvas.height;
-      s.x = Math.random()*canvas.width;
-    }
-  });
-
-  requestAnimationFrame(animate);
-}
-
-animate();
+renderProdutos(products);
