@@ -1,76 +1,76 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odòmáiyà Artigos Religiosos | Loja Oficial</title>
 
-<title>🧿 Odòmáiyà Artigos Religiosos</title>
+<meta name="description" content="Odòmáiyà Artigos Religiosos. Velas, Guias, Imagens, Roupas e muito mais. Loja oficial.">
 
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="estilo.css">
 </head>
 
 <body>
 
-<header class="topbar">
-<div class="logo">🧿 Odòmáiyà</div>
+<header>
+<div class="logo">
+🧿 <strong>Odòmáiyà</strong> Artigos Religiosos
+</div>
 
-<nav class="menu">
-<button onclick="filtrarCategoria('Todas')">Todas</button>
-<button onclick="filtrarCategoria('Bebidas')">Bebidas</button>
-<button onclick="filtrarCategoria('Charutos')">Charutos</button>
-<button onclick="filtrarCategoria('Guias')">Guias</button>
-<button onclick="filtrarCategoria('Imagens')">Imagens</button>
-<button onclick="filtrarCategoria('Roupas')">Roupas</button>
-<button onclick="filtrarCategoria('Velas')">Velas</button>
-</nav>
+<nav id="menuCategorias"></nav>
 
 <div class="busca-area">
-<input type="text" id="busca" placeholder="Buscar produtos..." onkeyup="buscarProduto()">
-<select onchange="ordenarProdutos(this.value)">
-<option value="">Ordenar</option>
-<option value="menor">Menor preço</option>
-<option value="maior">Maior preço</option>
-</select>
+<input type="text" id="busca" placeholder="Buscar produto...">
 </div>
 </header>
 
-<section class="hero">
-<h1>Artigos Religiosos</h1>
-<p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
-<button onclick="scrollToProdutos()">Explorar Coleção</button>
-</section>
+<main>
 
-<main id="produtos" class="produtos"></main>
+<section id="produtos" class="grid-produtos"></section>
 
-<!-- CARRINHO -->
 <aside class="carrinho">
-<h2>Seu Pedido</h2>
-<div id="itensCarrinho"></div>
-<h3 id="total">Total: R$ 0,00</h3>
+<h3>🛒 Seu Pedido</h3>
+<div id="listaCarrinho"></div>
+<div class="total">Total: R$ <span id="total">0.00</span></div>
+<button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
+</aside>
 
-<div class="formulario">
-<input type="text" id="nomeCliente" placeholder="Seu nome">
+</main>
+
+<!-- Modal Checkout -->
+<div id="checkoutModal" class="modal">
+<div class="modal-content">
+<h3>Finalizar Pedido</h3>
+
+<input type="text" id="nome" placeholder="Seu nome">
+
 <select id="tipoEntrega">
 <option value="Retirada na loja">Retirada na loja</option>
-<option value="Entrega">Entrega</option>
+<option value="Entrega (+ R$10)">Entrega (+ R$10)</option>
 </select>
-<input type="text" id="endereco" placeholder="Endereço completo (se entrega)">
+
+<textarea id="endereco" placeholder="Endereço completo (se entrega)"></textarea>
+
 <select id="pagamento">
-<option value="Pix">Pix</option>
-<option value="Crédito">Crédito</option>
-<option value="Débito">Débito</option>
-<option value="Dinheiro">Dinheiro</option>
+<option>Pix</option>
+<option>Crédito</option>
+<option>Débito</option>
+<option>Dinheiro</option>
 </select>
-<textarea id="obs" placeholder="Observações (opcional)"></textarea>
+
+<button onclick="enviarWhatsApp()">Enviar no WhatsApp</button>
+<button onclick="fecharCheckout()">Cancelar</button>
+</div>
 </div>
 
-<button class="finalizar" onclick="finalizarPedido()">
-Finalizar no WhatsApp
-</button>
-
-</aside>
+<footer>
+📍 <a href="https://share.google/7BJIGt0aFymXdavwy" target="_blank">
+Abrir localização no mapa
+</a>
+<br>
+© 2026 Odòmáiyà Artigos Religiosos
+</footer>
 
 <script src="app.js"></script>
 </body>
