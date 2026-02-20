@@ -1,77 +1,71 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmáiyà Artigos Religiosos | Loja Oficial</title>
 
-<meta name="description" content="Odòmáiyà Artigos Religiosos. Velas, Guias, Imagens, Roupas e muito mais. Loja oficial.">
+<title>🛍️ Odòmáiyà Artigos Religiosos | Loja Oficial</title>
+
+<meta name="description" content="Odòmáiyà Artigos Religiosos. Velas, Guias, Imagens e artigos espirituais com entrega rápida e atendimento personalizado.">
+<meta name="keywords" content="artigos religiosos, umbanda, candomblé, velas, guias, imagens espirituais">
+
+<!-- Google verificação -->
+<meta name="google-site-verification" content="COLE_SEU_CODIGO_AQUI" />
 
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="estilo.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
 </head>
 
 <body>
 
-<header>
-<div class="logo">
-🧿 <strong>Odòmáiyà</strong> Artigos Religiosos
-</div>
-
-<nav id="menuCategorias"></nav>
-
-<div class="busca-area">
-<input type="text" id="busca" placeholder="Buscar produto...">
+<header class="hero">
+<div class="hero-content">
+<h1>Odòmáiyà Artigos Religiosos</h1>
+<p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+<a href="#produtos" class="btn-hero">Explorar Coleção</a>
 </div>
 </header>
 
-<main>
+<nav class="menu-categorias">
+<a onclick="filtrarCategoria('Bebidas')">Bebidas</a>
+<a onclick="filtrarCategoria('Charutos')">Charutos</a>
+<a onclick="filtrarCategoria('Guias')">Guias</a>
+<a onclick="filtrarCategoria('Imagens')">Imagens</a>
+<a onclick="filtrarCategoria('Roupas')">Roupas</a>
+<a onclick="filtrarCategoria('Velas')">Velas</a>
+</nav>
 
-<section id="produtos" class="grid-produtos"></section>
-
-<aside class="carrinho">
-<h3>🛒 Seu Pedido</h3>
-<div id="listaCarrinho"></div>
-<div class="total">Total: R$ <span id="total">0.00</span></div>
-<button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
-</aside>
-
-</main>
-
-<!-- Modal Checkout -->
-<div id="checkoutModal" class="modal">
-<div class="modal-content">
-<h3>Finalizar Pedido</h3>
-
-<input type="text" id="nome" placeholder="Seu nome">
-
-<select id="tipoEntrega">
-<option value="Retirada na loja">Retirada na loja</option>
-<option value="Entrega (+ R$10)">Entrega (+ R$10)</option>
+<section class="filtros">
+<input type="text" id="busca" placeholder="Buscar produto...">
+<select id="ordenar">
+<option value="">Ordenar</option>
+<option value="menor">Menor preço</option>
+<option value="maior">Maior preço</option>
 </select>
+</section>
 
-<textarea id="endereco" placeholder="Endereço completo (se entrega)"></textarea>
+<main id="produtos" class="produtos"></main>
 
-<select id="pagamento">
-<option>Pix</option>
-<option>Crédito</option>
-<option>Débito</option>
-<option>Dinheiro</option>
-</select>
-
-<button onclick="enviarWhatsApp()">Enviar no WhatsApp</button>
-<button onclick="fecharCheckout()">Cancelar</button>
+<div class="cart-icon" onclick="abrirCarrinho()">
+🛒 <span id="contador">0</span>
 </div>
+
+<div id="carrinho" class="carrinho">
+<h2>Seu Pedido</h2>
+<div id="itensCarrinho"></div>
+<h3 id="total">Total: R$ 0,00</h3>
+<button onclick="finalizarPedido()">📲 Finalizar no WhatsApp</button>
 </div>
 
 <footer>
-📍 <a href="https://share.google/7BJIGt0aFymXdavwy" target="_blank">
-Abrir localização no mapa
-</a>
-<br>
-© 2026 Odòmáiyà Artigos Religiosos
+<p>📍 <a href="https://share.google/7BJIGt0aFymXdavwy" target="_blank">
+Rua Sete de Agosto, 28 – Passo Fundo/RS
+</a></p>
 </footer>
 
 <script src="app.js"></script>
+
 </body>
 </html>
