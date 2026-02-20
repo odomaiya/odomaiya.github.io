@@ -3,27 +3,30 @@ const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMi
 let produtos = [];
 let carrinho = [];
 
+// ======================
+// CARREGAR PRODUTOS
+// ======================
+
 async function carregarProdutos() {
   try {
     const response = await fetch(urlCSV);
     const texto = await response.text();
 
     const linhas = texto.trim().split("\n");
-    const cabecalho = linhas.shift().split(",");
+    linhas.shift(); // remove cabeçalho
 
     produtos = linhas.map(linha => {
-      const colunas = linha.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+      const colunas = linha.split(",");
 
       return {
-        nome: colunas[1]?.replace(/"/g, "") || "",
+        nome: colunas[1] || "",
         preco: parseFloat(colunas[2]) || 0,
-        categoria: colunas[3]?.replace(/"/g, "") || "Geral",
-        imagem: colunas[4]?.replace(/"/g, "") || ""
+        categoria: colunas[3] || "Geral",
+        imagem: colunas[4] || ""
       };
     });
 
     renderizar(produtos);
-    criarCategorias();
 
   } catch (erro) {
     document.getElementById("produtos").innerHTML =
@@ -32,7 +35,9 @@ async function carregarProdutos() {
   }
 }
 
-carregarProdutos();
+// ======================
+// RENDER
+// ======================
 
 function renderizar(lista) {
   const area = document.getElementById("produtos");
@@ -53,6 +58,10 @@ function renderizar(lista) {
     `;
   });
 }
+
+// ======================
+// CARRINHO
+// ======================
 
 function alterarQtd(nome, valor) {
   const item = carrinho.find(i => i.nome === nome);
@@ -103,55 +112,11 @@ function atualizarCarrinho() {
     "Total: R$ " + total.toFixed(2);
 }
 
-function abrirCarrinho() {
-  document.getElementById("carrinho").classList.add("ativo");
-}
+// ======================
+// FILTROS
+// ======================
 
-function fecharCarrinho() {
-  document.getElementById("carrinho").classList.remove("ativo");
-}
-
-function finalizarPedido() {
-  let mensagem = "✨ Pedido Odòmáiyà ✨\n\n🛍️ Itens:\n\n";
-  let total = 0;
-
-  carrinho.forEach(item => {
-    const subtotal = item.preco * item.qtd;
-    total += subtotal;
-
-    mensagem += `• ${item.nome}
-Quantidade: ${item.qtd}
-Valor unitário: R$ ${item.preco.toFixed(2)}
-Subtotal: R$ ${subtotal.toFixed(2)}
-
-`;
-  });
-
-  mensagem += `💰 Total do Pedido: R$ ${total.toFixed(2)}
-
-Aguardo confirmação e forma de pagamento.`;
-
-  window.open("https://wa.me/5554996048808?text=" + encodeURIComponent(mensagem));
-}
-
-function criarCategorias() {
-  const area = document.getElementById("categorias");
-  area.innerHTML = "";
-
-  const categorias = [...new Set(produtos.map(p => p.categoria))];
-
-  categorias.forEach(cat => {
-    area.innerHTML += `
-      <button onclick="filtrarCategoria('${cat}')">${cat}</button>
-    `;
-  });
-}
-
-function filtrarCategoria(cat) {
-  renderizar(produtos.filter(p => p.categoria === cat));
-}
-
-document.getElementById("ordenar").addEventListener("change", e => {
+document.getElementById("ordenar")?.addEventListener("change", e => {
   if (e.target.value === "menor") {
     renderizar([...produtos].sort((a, b) => a.preco - b.preco));
   }
@@ -160,9 +125,15 @@ document.getElementById("ordenar").addEventListener("change", e => {
   }
 });
 
-document.getElementById("busca").addEventListener("input", e => {
+document.getElementById("busca")?.addEventListener("input", e => {
   const termo = e.target.value.toLowerCase();
   renderizar(produtos.filter(p =>
     p.nome.toLowerCase().includes(termo)
   ));
 });
+
+// ======================
+// INICIAR
+// ======================
+
+carregarProdutos();
