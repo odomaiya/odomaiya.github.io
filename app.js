@@ -132,5 +132,5 @@ let lista=carrinho.map(p=>`- ${p.nome} x${p.qtd}`).join("%0A");
 
 let msg=`✨ Pedido Odòmáiyà ✨%0A👤 Nome: ${nome}%0A📦 ${tipo}%0A📍 ${endereco}%0A💳 ${pagamento}%0A🛒 ${lista}%0A💰 Total R$ ${total}`;
 
-window.open(`https://wa.me/55SEUNUMERO?text=${msg}`);
+window.open(`https://wa.me/555496048808?text=${msg}`);
 }
