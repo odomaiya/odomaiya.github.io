@@ -1,33 +1,45 @@
-// ANIMAÇÃO GSAP
-window.addEventListener("load",()=>{
-  gsap.from(".animar",{
-    y:40,
-    opacity:0,
-    duration:1.2,
-    stagger:.3,
-    ease:"power3.out"
-  });
-});
+// PRODUTOS EXEMPLO
+const produtos = [
+  {nome:"Vela Branca 7 Dias", preco:15, img:"https://images.unsplash.com/photo-1602874801006-79fce4c8d2c8"},
+  {nome:"Guia de Proteção", preco:35, img:"https://images.unsplash.com/photo-1617957740475-d3a53c91f2d3"},
+  {nome:"Imagem Exu", preco:120, img:"https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04"}
+];
 
-// PARTÍCULAS
+function carregarProdutos(){
+  const container=document.getElementById("listaProdutos");
+  container.innerHTML="";
+  produtos.forEach(p=>{
+    container.innerHTML+=`
+      <div class="card">
+        <img src="${p.img}">
+        <h3>${p.nome}</h3>
+        <p>R$ ${p.preco.toFixed(2)}</p>
+      </div>
+    `;
+  });
+}
+
+carregarProdutos();
+
+// PARTÍCULAS MENORES
 const canvas=document.getElementById("particulas");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
 let particulas=[];
-for(let i=0;i<50;i++){
+for(let i=0;i<30;i++){
   particulas.push({
     x:Math.random()*canvas.width,
     y:Math.random()*canvas.height,
-    r:Math.random()*2+1,
-    d:Math.random()*1
+    r:Math.random()*1.5,
+    d:Math.random()*0.3
   });
 }
 
-function draw(){
+function animar(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="rgba(255,255,255,.4)";
+  ctx.fillStyle="rgba(255,255,255,.3)";
   particulas.forEach(p=>{
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -39,41 +51,36 @@ function draw(){
     }
   });
 }
-setInterval(draw,30);
+setInterval(animar,40);
 
 // CHECKOUT
 function abrirCheckout(){
   document.getElementById("checkoutModal").style.display="flex";
 }
 
-function irParaEtapa2(){
+document.getElementById("tipoEntrega").addEventListener("change",function(){
+  const campo=document.getElementById("enderecoCliente");
+  campo.style.display=this.value==="entrega"?"block":"none";
+});
+
+function confirmarPedido(){
   const nome=document.getElementById("nomeCliente").value;
+  const tipo=document.getElementById("tipoEntrega").value;
+  const endereco=document.getElementById("enderecoCliente").value;
+  const pagamento=document.getElementById("pagamento").value;
+
   if(!nome){
     alert("Informe seu nome.");
     return;
   }
-  document.getElementById("etapa1").style.display="none";
-  document.getElementById("etapa2").style.display="block";
-}
 
-function confirmarPedidoCheckout(){
-  mostrarLoader();
-  setTimeout(()=>{
-    esconderLoader();
-    abrirWhatsApp();
-  },1500);
-}
+  let mensagem=`🧿 Pedido Odòmáiyà\nNome: ${nome}\nEntrega: ${tipo}\n`;
 
-function abrirWhatsApp(){
-  const nome=document.getElementById("nomeCliente").value;
-  const msg=`Pedido Odòmáiyà\nCliente: ${nome}`;
-  window.open(`https://wa.me/5554996048808?text=${encodeURIComponent(msg)}`,"_blank");
-}
+  if(tipo==="entrega"){
+    mensagem+=`Endereço: ${endereco}\n`;
+  }
 
-function mostrarLoader(){
-  document.getElementById("loaderOverlay").style.display="flex";
-}
+  mensagem+=`Pagamento: ${pagamento}`;
 
-function esconderLoader(){
-  document.getElementById("loaderOverlay").style.display="none";
+  window.open(`https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`,"_blank");
 }
