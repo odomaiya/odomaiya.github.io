@@ -1,71 +1,85 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>🛍️ Odòmáiyà Artigos Religiosos | Loja Oficial</title>
+<title>Odòmáiyà Artigos Religiosos | Loja Oficial</title>
+<meta name="description" content="Artigos religiosos com qualidade e respeito à ancestralidade. Velas, imagens, guias, roupas, bebidas, charutos e muito mais.">
+<meta name="keywords" content="artigos religiosos, umbanda, candomblé, velas, guias, imagens religiosas">
 
-<meta name="description" content="Odòmáiyà Artigos Religiosos. Velas, Guias, Imagens e artigos espirituais com entrega rápida e atendimento personalizado.">
-<meta name="keywords" content="artigos religiosos, umbanda, candomblé, velas, guias, imagens espirituais">
-
-<!-- Google verificação -->
-<meta name="google-site-verification" content="COLE_SEU_CODIGO_AQUI" />
-
-<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="estilo.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 </head>
-
 <body>
 
-<header class="hero">
-<div class="hero-content">
-<h1>Odòmáiyà Artigos Religiosos</h1>
-<p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
-<a href="#produtos" class="btn-hero">Explorar Coleção</a>
-</div>
+<header class="topo">
+  <div class="logo">Odòmáiyà</div>
+
+  <nav class="menu">
+    <a href="#" onclick="filtrar('Todos')">Todos</a>
+    <a href="#" onclick="filtrar('Bebidas')">Bebidas</a>
+    <a href="#" onclick="filtrar('Charutos')">Charutos</a>
+    <a href="#" onclick="filtrar('Guias')">Guias</a>
+    <a href="#" onclick="filtrar('Imagens')">Imagens</a>
+    <a href="#" onclick="filtrar('Roupas')">Roupas</a>
+    <a href="#" onclick="filtrar('Velas')">Velas</a>
+  </nav>
+
+  <div class="acoes">
+    <input type="text" id="busca" placeholder="Buscar produto..." onkeyup="buscar()">
+    <button onclick="abrirCarrinho()">🛒 <span id="contador">0</span></button>
+  </div>
 </header>
 
-<nav class="menu-categorias">
-<a onclick="filtrarCategoria('Bebidas')">Bebidas</a>
-<a onclick="filtrarCategoria('Charutos')">Charutos</a>
-<a onclick="filtrarCategoria('Guias')">Guias</a>
-<a onclick="filtrarCategoria('Imagens')">Imagens</a>
-<a onclick="filtrarCategoria('Roupas')">Roupas</a>
-<a onclick="filtrarCategoria('Velas')">Velas</a>
-</nav>
-
-<section class="filtros">
-<input type="text" id="busca" placeholder="Buscar produto...">
-<select id="ordenar">
-<option value="">Ordenar</option>
-<option value="menor">Menor preço</option>
-<option value="maior">Maior preço</option>
-</select>
+<section class="banner">
+  <h1>Artigos Religiosos</h1>
+  <p>Conectando fé, ancestralidade e força espiritual.</p>
 </section>
 
-<main id="produtos" class="produtos"></main>
+<section id="produtos" class="grid"></section>
 
-<div class="cart-icon" onclick="abrirCarrinho()">
-🛒 <span id="contador">0</span>
-</div>
-
+<!-- CARRINHO -->
 <div id="carrinho" class="carrinho">
-<h2>Seu Pedido</h2>
-<div id="itensCarrinho"></div>
-<h3 id="total">Total: R$ 0,00</h3>
-<button onclick="finalizarPedido()">📲 Finalizar no WhatsApp</button>
+  <h3>Seu Pedido</h3>
+  <div id="itensCarrinho"></div>
+  <h4 id="total">Total: R$ 0,00</h4>
+
+  <input id="clienteNome" placeholder="Seu nome">
+  <select id="tipoEntrega">
+    <option>Retirada na loja</option>
+    <option>Entrega</option>
+  </select>
+
+  <input id="endereco" placeholder="Endereço completo (se entrega)">
+  <select id="pagamento">
+    <option>Pix</option>
+    <option>Crédito</option>
+    <option>Débito</option>
+    <option>Dinheiro</option>
+  </select>
+
+  <button onclick="finalizarPedido()">Finalizar no WhatsApp</button>
 </div>
 
 <footer>
-<p>📍 <a href="https://share.google/7BJIGt0aFymXdavwy" target="_blank">
-Rua Sete de Agosto, 28 – Passo Fundo/RS
-</a></p>
+  <p>📍 <a href="https://share.google/7BJIGt0aFymXdavwy" target="_blank">
+  Abrir localização no mapa
+  </a></p>
+  <p>© 2026 Odòmáiyà Artigos Religiosos</p>
 </footer>
 
 <script src="app.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker.register('service-worker.js');
+}
+</script>
 
 </body>
 </html>
