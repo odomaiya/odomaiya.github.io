@@ -3,49 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🧿 Odòmáiyà Artigos Religiosos</title>
+<title>Odòmáiyà Artigos Religiosos</title>
 
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- Tipografia Premium -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 
 <body>
 
-<header class="topo">
-  <h1>🧿 Odòmáiyà Artigos Religiosos</h1>
-  <p class="frase">Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+<canvas id="particulas"></canvas>
+
+<header class="header">
+  <div class="header-container">
+    <div>
+      <h1 class="logo animar">🧿 Odòmáiyà</h1>
+      <p class="sub animar">Artigos Religiosos</p>
+    </div>
+
+    <nav class="menu-desktop">
+      <a href="#produtos">Produtos</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#contato">Contato</a>
+    </nav>
+  </div>
 </header>
 
-<main id="produtos" class="produtos"></main>
+<section class="hero">
+  <div class="hero-text animar">
+    <h2>Conectando fé, ancestralidade e força espiritual</h2>
+    <p>Produtos selecionados com respeito às tradições de matriz africana.</p>
+    <button class="btn-principal brilho" onclick="abrirCheckout()">Finalizar Pedido</button>
+  </div>
+</section>
 
-<div class="cart-icon" onclick="abrirCarrinho()">
-  🛒 <span id="contador">0</span>
-</div>
+<section id="produtos" class="produtos-container">
+  <h2 class="titulo-secao">Produtos em Destaque</h2>
+  <div class="produtos-grid" id="listaProdutos"></div>
+</section>
 
-<div id="carrinho" class="carrinho">
-  <h2>Seu Pedido</h2>
-  <div id="itensCarrinho"></div>
-  <h3 id="total">Total: R$ 0,00</h3>
-  <button class="finalizar" onclick="abrirCheckout()">Finalizar Pedido</button>
-</div>
+<section id="contato" class="contato">
+  <h2>Localização</h2>
+  <p>
+    <a class="link-endereco" target="_blank"
+    href="https://www.google.com/maps/search/?api=1&query=Odomaiya+Artigos+Religiosos+R.+Sete+de+Agosto,+28+-+Centro,+Passo+Fundo+-+RS,+99025-030">
+    Odòmáiyà Artigos Religiosos  
+    R. Sete de Agosto, 28 - Centro  
+    Passo Fundo - RS, 99025-030
+    </a>
+  </p>
+</section>
 
 <!-- CHECKOUT -->
 <div id="checkoutModal" class="checkout-modal">
-  <div class="checkout-container">
-    <h2>Finalizar Pedido</h2>
+  <div class="checkout-box">
+    <div id="etapa1">
+      <h2>Seus Dados</h2>
+      <input type="text" id="nomeCliente" placeholder="Nome completo">
+      <button class="btn-confirmar brilho" onclick="irParaEtapa2()">Continuar</button>
+    </div>
 
-    <input type="text" id="nomeCliente" placeholder="Seu nome completo">
-
-    <button class="btn-confirmar" onclick="confirmarPedidoCheckout()">
-      Confirmar Pedido no WhatsApp
-    </button>
+    <div id="etapa2" style="display:none;">
+      <h2>Confirmar Pedido</h2>
+      <button class="btn-confirmar brilho" onclick="confirmarPedidoCheckout()">Confirmar</button>
+    </div>
   </div>
 </div>
 
-<!-- LOADER -->
 <div id="loaderOverlay" class="loader-overlay">
   <div class="loader-circle"></div>
-  <div class="loader-text">Enviando seu pedido...</div>
+  <p>Preparando seu pedido...</p>
 </div>
 
 <script src="app.js"></script>
