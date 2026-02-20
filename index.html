@@ -6,24 +6,22 @@
 <title>🧿 Odòmáiyà Artigos Religiosos</title>
 
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
 <header class="topo">
   <div class="logo">🧿 Odòmáiyà</div>
-  <nav>
-    <input type="text" id="busca" placeholder="Buscar produto...">
-    <select id="categoriaFiltro">
-      <option value="">Categorias</option>
-    </select>
+  <div class="menu">
+    <input type="text" id="busca" placeholder="Buscar produtos...">
+    <select id="categoriaFiltro"></select>
     <select id="ordenar">
       <option value="">Ordenar</option>
       <option value="menor">Menor preço</option>
       <option value="maior">Maior preço</option>
     </select>
-  </nav>
+  </div>
 </header>
 
 <section class="hero">
@@ -34,22 +32,56 @@
   </div>
 </section>
 
-<main id="produtos" class="grid"></main>
+<section class="produtos-section">
+  <h2>Coleção Sagrada</h2>
+  <main id="produtos" class="grid"></main>
+</section>
 
 <div class="cart-icon" onclick="toggleCarrinho()">
 🛒 <span id="contador">0</span>
 </div>
 
 <div id="carrinho" class="carrinho">
-<h2>Seu Pedido</h2>
-<div id="itensCarrinho"></div>
-<h3 id="total">Total: R$ 0,00</h3>
-<button onclick="finalizarPedido()">Finalizar no WhatsApp</button>
+  <h2>Seu Pedido</h2>
+
+  <div id="itensCarrinho"></div>
+  <h3 id="total">Total: R$ 0,00</h3>
+
+  <div class="form-pedido">
+    <input type="text" id="clienteNome" placeholder="Seu nome">
+
+    <select id="tipoEntrega" onchange="toggleEndereco()">
+      <option value="">Tipo de pedido</option>
+      <option value="Retirada na loja">Retirada na loja</option>
+      <option value="Entrega">Entrega</option>
+    </select>
+
+    <div id="campoEndereco" style="display:none;">
+      <input type="text" id="clienteEndereco" placeholder="Endereço completo">
+      <small>Lembre-se: a taxa de entrega será confirmada no atendimento.</small>
+    </div>
+
+    <select id="formaPagamento">
+      <option value="">Forma de pagamento</option>
+      <option value="Pix">Pix</option>
+      <option value="Crédito">Cartão de Crédito</option>
+      <option value="Débito">Cartão de Débito</option>
+      <option value="Dinheiro">Dinheiro</option>
+    </select>
+
+    <textarea id="observacoes" placeholder="Observações (opcional)"></textarea>
+  </div>
+
+  <button class="btn-finalizar" onclick="finalizarPedido()">
+    📲 Finalizar no WhatsApp
+  </button>
 </div>
 
 <div id="modal" class="modal" onclick="fecharModal()">
-<img id="modalImg">
+  <img id="modalImg">
 </div>
+
+<div id="popupCompra" class="popup-compra"></div>
 
 <script src="app.js"></script>
 </body>
