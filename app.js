@@ -1,113 +1,136 @@
-const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
 
 let produtos = [];
 let carrinho = [];
 
-fetch(csvURL)
-.then(res => res.text())
-.then(data => {
-const linhas = data.split("\n").slice(1);
-produtos = linhas.map(l => {
+fetch(sheetURL)
+.then(res=>res.text())
+.then(csv=>{
+const linhas = csv.split("\n").slice(1);
+produtos = linhas.map(l=>{
 const col = l.split(",");
-return {
+return{
 nome: col[0],
-categoria: col[1],
-preco: parseFloat(col[2]),
-imagem: col[3]
+preco: parseFloat(col[1]),
+categoria: col[2],
+imagem: col[3],
+estoque: parseInt(col[4])
 }
 });
-renderProdutos(produtos);
+renderProdutos();
+criarCategorias();
 });
 
-function renderProdutos(lista){
+function renderProdutos(filtro=""){
 const container = document.getElementById("produtos");
 container.innerHTML="";
-lista.forEach((p,i)=>{
+produtos
+.filter(p=>p.nome.toLowerCase().includes(filtro.toLowerCase()))
+.forEach(p=>{
 container.innerHTML+=`
 <div class="card">
-<img src="${p.imagem}">
+<img src="${p.imagem}" alt="${p.nome}">
 <h4>${p.nome}</h4>
-<div class="preco">R$ ${p.preco.toFixed(2)}</div>
-<div class="qtd">
-<button onclick="alterarQtd(${i},-1)">-</button>
-<span>${getQtd(p.nome)}</span>
-<button onclick="alterarQtd(${i},1)">+</button>
-</div>
-</div>
-`;
+<p>R$ ${p.preco.toFixed(2)}</p>
+<div class="estoque">Restam ${p.estoque} unidades</div>
+<button class="btn-add" onclick="addCarrinho('${p.nome}')">Adicionar</button>
+</div>`;
 });
 }
 
-function alterarQtd(index,valor){
-const produto = produtos[index];
-let item = carrinho.find(i=>i.nome===produto.nome);
-
-if(!item && valor>0){
-carrinho.push({...produto,quantidade:1});
-}
-else if(item){
-item.quantidade+=valor;
-if(item.quantidade<=0){
-carrinho = carrinho.filter(i=>i.nome!==produto.nome);
-}
-}
-renderCarrinho();
-renderProdutos(produtos);
+function criarCategorias(){
+let categorias = [...new Set(produtos.map(p=>p.categoria))].sort();
+let menu = document.getElementById("menuCategorias");
+categorias.forEach(cat=>{
+menu.innerHTML+=`<a href="#" onclick="filtrarCategoria('${cat}')">${cat}</a>`;
+});
 }
 
-function getQtd(nome){
+function filtrarCategoria(cat){
+renderProdutos("");
+produtos = produtos.filter(p=>p.categoria===cat);
+renderProdutos();
+}
+
+function addCarrinho(nome){
+let prod = produtos.find(p=>p.nome===nome);
+if(prod.estoque<=0) return alert("Produto esgotado");
+
 let item = carrinho.find(i=>i.nome===nome);
-return item?item.quantidade:0;
+if(item){
+item.qtd++;
+}else{
+carrinho.push({nome:prod.nome,preco:prod.preco,qtd:1});
+}
+prod.estoque--;
+renderProdutos();
+renderCarrinho();
 }
 
 function renderCarrinho(){
+let lista = document.getElementById("listaCarrinho");
+lista.innerHTML="";
 let total=0;
-const div=document.getElementById("itensCarrinho");
-div.innerHTML="";
-carrinho.forEach(p=>{
-let subtotal=p.preco*p.quantidade;
-total+=subtotal;
-div.innerHTML+=`
-<p>${p.nome} x${p.quantidade}<br>
-R$ ${subtotal.toFixed(2)}</p>
-`;
+carrinho.forEach(item=>{
+total+=item.preco*item.qtd;
+lista.innerHTML+=`
+<div class="item-carrinho">
+${item.nome} x${item.qtd}
+<div class="controls">
+<button onclick="alterarQtd('${item.nome}',-1)">-</button>
+<button onclick="alterarQtd('${item.nome}',1)">+</button>
+<button onclick="remover('${item.nome}')">x</button>
+</div>
+</div>`;
 });
-document.getElementById("total").innerText="Total: R$ "+total.toFixed(2);
+document.getElementById("total").innerText=total.toFixed(2);
 }
 
-function finalizarPedido(){
-if(carrinho.length===0)return alert("Seu carrinho está vazio.");
+function alterarQtd(nome,delta){
+let item = carrinho.find(i=>i.nome===nome);
+let prod = produtos.find(p=>p.nome===nome);
+if(!item) return;
 
-let nome=document.getElementById("nomeCliente").value;
-let entrega=document.getElementById("tipoEntrega").value;
+if(delta===1 && prod.estoque<=0) return;
+item.qtd+=delta;
+prod.estoque-=delta;
+
+if(item.qtd<=0) remover(nome);
+
+renderProdutos();
+renderCarrinho();
+}
+
+function remover(nome){
+let item = carrinho.find(i=>i.nome===nome);
+let prod = produtos.find(p=>p.nome===nome);
+prod.estoque+=item.qtd;
+carrinho=carrinho.filter(i=>i.nome!==nome);
+renderProdutos();
+renderCarrinho();
+}
+
+document.getElementById("busca").addEventListener("input",e=>{
+renderProdutos(e.target.value);
+});
+
+function abrirCheckout(){
+document.getElementById("checkoutModal").style.display="flex";
+}
+function fecharCheckout(){
+document.getElementById("checkoutModal").style.display="none";
+}
+
+function enviarWhatsApp(){
+let nome=document.getElementById("nome").value;
+let tipo=document.getElementById("tipoEntrega").value;
 let endereco=document.getElementById("endereco").value;
 let pagamento=document.getElementById("pagamento").value;
-let obs=document.getElementById("obs").value;
+let total=document.getElementById("total").innerText;
 
-let mensagem="✨ Pedido Odòmáiyà ✨\n\n🛍️ Itens:\n\n";
+let lista=carrinho.map(p=>`- ${p.nome} x${p.qtd}`).join("%0A");
 
-let total=0;
+let msg=`✨ Pedido Odòmáiyà ✨%0A👤 Nome: ${nome}%0A📦 ${tipo}%0A📍 ${endereco}%0A💳 ${pagamento}%0A🛒 ${lista}%0A💰 Total R$ ${total}`;
 
-carrinho.forEach(p=>{
-let subtotal=p.preco*p.quantidade;
-total+=subtotal;
-mensagem+=`• ${p.nome}\nQuantidade: ${p.quantidade}\nSubtotal: R$ ${subtotal.toFixed(2)}\n\n`;
-});
-
-mensagem+=`💰 Total do Pedido: R$ ${total.toFixed(2)}\n\n`;
-mensagem+=`👤 Cliente: ${nome}\n`;
-mensagem+=`📦 Entrega: ${entrega}\n`;
-
-if(entrega==="Entrega"){
-mensagem+=`🏠 Endereço: ${endereco}\n`;
-mensagem+="🚚 Lembrar: valor da taxa de entrega será informado.\n";
-}
-
-mensagem+=`💳 Pagamento: ${pagamento}\n`;
-
-if(obs){
-mensagem+=`📝 Observações: ${obs}\n`;
-}
-
-window.open(`https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`,"_blank");
+window.open(`https://wa.me/55SEUNUMERO?text=${msg}`);
 }
