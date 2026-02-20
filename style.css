@@ -1,108 +1,198 @@
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg,#0f3d5c,#1f6c9b);
-  color: #fff;
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:#0f3d5c;
+  color:#fff;
+  overflow-x:hidden;
 }
 
-.topo {
-  text-align: center;
-  padding: 30px 20px;
+/* HEADER */
+.header{
+  background:#0c2f47;
+  padding:20px 40px;
 }
 
-.frase {
-  font-size: 14px;
-  opacity: .85;
+.header-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  max-width:1200px;
+  margin:auto;
 }
 
-.produtos {
-  padding: 20px;
+.logo{
+  font-family:'Playfair Display',serif;
+  font-size:28px;
+  margin:0;
 }
 
-.cart-icon {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  background: #fff;
-  color: #0f3d5c;
-  padding: 12px 16px;
-  border-radius: 50px;
-  font-weight: bold;
-  cursor: pointer;
+.sub{
+  font-size:14px;
+  opacity:.8;
 }
 
-.carrinho {
-  display: none;
+.menu-desktop{
+  display:flex;
+  gap:30px;
 }
 
-.checkout-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  display: none;
-  align-items: center;
-  justify-content: center;
+.menu-desktop a{
+  text-decoration:none;
+  color:#fff;
+  font-weight:500;
 }
 
-.checkout-container {
-  background: #fff;
-  color: #000;
-  padding: 30px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 400px;
+/* HERO */
+.hero{
+  padding:80px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,#0f3d5c,#1f6c9b);
 }
 
-.btn-confirmar {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg,#0f3d5c,#1f6c9b);
-  color: #fff;
-  cursor: pointer;
-  margin-top: 15px;
+.hero h2{
+  font-family:'Playfair Display',serif;
+  font-size:36px;
+  max-width:700px;
+  margin:auto;
 }
 
-.loader-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(255,255,255,.95);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+.hero p{
+  margin-top:15px;
+  opacity:.85;
 }
 
-.loader-circle {
-  width: 60px;
-  height: 60px;
-  border: 6px solid #eee;
-  border-top: 6px solid #0f3d5c;
-  border-radius: 50%;
-  animation: girar 1s linear infinite;
+/* BOTÕES */
+.btn-principal,.btn-confirmar{
+  background:#d4af37;
+  border:none;
+  padding:14px 30px;
+  border-radius:50px;
+  cursor:pointer;
+  font-weight:600;
+  margin-top:20px;
+  transition:.3s;
 }
 
-@keyframes girar {
-  to { transform: rotate(360deg); }
+.btn-principal:hover,.btn-confirmar:hover{
+  transform:scale(1.05);
 }
 
-.loader-text {
-  margin-top: 15px;
-  color: #0f3d5c;
+/* PRODUTOS */
+.produtos-container{
+  max-width:1200px;
+  margin:auto;
+  padding:60px 20px;
 }
 
-.confete {
-  position: fixed;
-  width: 8px;
-  height: 12px;
-  top: -10px;
-  animation: cair 3s linear forwards;
+.titulo-secao{
+  text-align:center;
+  font-family:'Playfair Display',serif;
+  margin-bottom:40px;
 }
 
-@keyframes cair {
-  to {
-    transform: translateY(110vh) rotate(720deg);
-    opacity: 0;
+.produtos-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:#ffffff10;
+  border-radius:20px;
+  padding:20px;
+  text-align:center;
+  backdrop-filter:blur(8px);
+  transition:.4s;
+}
+
+.card:hover{
+  transform:translateY(-10px);
+}
+
+.card img{
+  width:100%;
+  border-radius:15px;
+}
+
+.card h3{
+  margin:15px 0 5px;
+}
+
+.card p{
+  opacity:.8;
+}
+
+/* CONTATO */
+.contato{
+  text-align:center;
+  padding:60px 20px;
+  background:#0c2f47;
+}
+
+.link-endereco{
+  color:#d4af37;
+  text-decoration:none;
+  font-weight:500;
+}
+
+/* CHECKOUT */
+.checkout-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+.checkout-box{
+  background:#fff;
+  color:#000;
+  padding:30px;
+  border-radius:20px;
+  width:90%;
+  max-width:400px;
+}
+
+.checkout-box input{
+  width:100%;
+  padding:12px;
+  margin:15px 0;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+
+/* LOADER */
+.loader-overlay{
+  position:fixed;
+  inset:0;
+  background:#ffffffee;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
+
+.loader-circle{
+  width:60px;
+  height:60px;
+  border:6px solid #ddd;
+  border-top:6px solid #0f3d5c;
+  border-radius:50%;
+  animation:girar 1s linear infinite;
+}
+
+@keyframes girar{
+  to{transform:rotate(360deg)}
+}
+
+/* RESPONSIVO */
+@media(max-width:768px){
+  .menu-desktop{
+    display:none;
+  }
+
+  .hero h2{
+    font-size:26px;
   }
 }
