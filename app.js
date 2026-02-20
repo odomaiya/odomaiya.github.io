@@ -1,92 +1,191 @@
-const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7j4_2qhc-W7EscYgFNEoWX-jEUsfS8xPSnOkEGj7uf1xSUFKkANQ8YQ57UUZsPytia7Vq6iShxHGy/pub?gid=1004684059&single=true&output=csv";
+// ===============================
+// CONFIGURAÇÃO
+// ===============================
+
+const numeroWhatsApp = "5599999999999"; // COLOQUE SEU NÚMERO COM DDI
+
+const enderecoLoja = "Odòmáiyà Artigos Religiosos - R. Sete de Agosto, 28 - Centro, Passo Fundo - RS, 99025-030";
 
 let produtos = [];
 let carrinho = [];
 
-fetch(csvUrl)
-.then(res=>res.text())
-.then(text=>{
-const linhas=text.split("\n").slice(1);
+// ===============================
+// CARREGAR PRODUTOS DA PLANILHA
+// ===============================
 
-produtos=linhas.map(l=>{
-const c=l.split(";");
-return{
-nome:c[0],
-preco:parseFloat(c[1].replace(",",".")),
-categoria:c[2],
-estoque:parseInt(c[3]),
-imagem:c[4]
-};
-});
+async function carregarProdutos() {
+  const url = "COLE_AQUI_SEU_LINK_CSV";
 
-renderizar(produtos);
-});
+  try {
+    const resposta = await fetch(url);
+    const texto = await resposta.text();
+    const linhas = texto.split("\n").slice(1);
 
-function renderizar(lista){
-const area=document.getElementById("produtos");
-area.innerHTML="";
-lista.forEach(p=>{
-area.innerHTML+=`
-<div class="card">
-<img src="${p.imagem}" loading="lazy">
-<h4>${p.nome}</h4>
-<p>Restam ${p.estoque} unidades</p>
-<p>R$ ${p.preco.toFixed(2)}</p>
-<button onclick="adicionar('${p.nome}')">Adicionar</button>
-</div>
-`;
-});
+    produtos = linhas.map(linha => {
+      const colunas = linha.split(",");
+      return {
+        id: colunas[0],
+        nome: colunas[1],
+        preco: parseFloat(colunas[2]),
+        categoria: colunas[3],
+        imagem: colunas[4],
+        estoque: parseInt(colunas[5])
+      };
+    });
+
+    renderizarProdutos();
+  } catch (erro) {
+    document.getElementById("produtos").innerHTML = "Erro ao carregar produtos.";
+  }
 }
 
-function adicionar(nome){
-const prod=produtos.find(p=>p.nome===nome);
-let item=carrinho.find(i=>i.nome===nome);
-if(item){item.qtd++}else{
-carrinho.push({nome:prod.nome,preco:prod.preco,qtd:1});
-}
-atualizar();
-}
+// ===============================
+// RENDER PRODUTOS
+// ===============================
 
-function atualizar(){
-let total=0;
-const area=document.getElementById("itensCarrinho");
-area.innerHTML="";
-carrinho.forEach(i=>{
-const sub=i.qtd*i.preco;
-total+=sub;
-area.innerHTML+=`
-<p>${i.nome} (${i.qtd}) - R$ ${sub.toFixed(2)}
-<button onclick="remover('${i.nome}')">❌</button></p>
-`;
-});
-document.getElementById("total").innerText="Total: R$ "+total.toFixed(2);
-document.getElementById("contador").innerText=carrinho.reduce((a,b)=>a+b.qtd,0);
+function renderizarProdutos(lista = produtos) {
+  const container = document.getElementById("produtos");
+  container.innerHTML = "";
+
+  lista.forEach(prod => {
+    container.innerHTML += `
+      <div class="card">
+        <img src="${prod.imagem}" alt="${prod.nome}" loading="lazy">
+        <h3>${prod.nome}</h3>
+        <p class="preco">R$ ${prod.preco.toFixed(2)}</p>
+        <p class="estoque">Restam ${prod.estoque} unidades</p>
+        <button onclick="adicionarCarrinho('${prod.id}')">Adicionar</button>
+      </div>
+    `;
+  });
 }
 
-function remover(nome){
-carrinho=carrinho.filter(i=>i.nome!==nome);
-atualizar();
+// ===============================
+// CARRINHO
+// ===============================
+
+function adicionarCarrinho(id) {
+  const produto = produtos.find(p => p.id === id);
+
+  const item = carrinho.find(p => p.id === id);
+
+  if (item) {
+    item.qtd++;
+  } else {
+    carrinho.push({ ...produto, qtd: 1 });
+  }
+
+  atualizarCarrinho();
 }
 
-function abrirCarrinho(){
-document.getElementById("carrinho").style.display="block";
+function alterarQuantidade(id, delta) {
+  const item = carrinho.find(p => p.id === id);
+  if (!item) return;
+
+  item.qtd += delta;
+
+  if (item.qtd <= 0) {
+    carrinho = carrinho.filter(p => p.id !== id);
+  }
+
+  atualizarCarrinho();
 }
 
-function finalizarPedido(){
-let nome=document.getElementById("clienteNome").value;
-let entrega=document.getElementById("tipoEntrega").value;
-let endereco=document.getElementById("endereco").value;
-let pagamento=document.getElementById("pagamento").value;
+function atualizarCarrinho() {
+  const container = document.getElementById("itensCarrinho");
+  container.innerHTML = "";
 
-let msg=`✨ Pedido Odòmáiyà ✨%0A`;
-msg+=`👤 Nome: ${nome}%0A`;
-msg+=`🚚 Entrega: ${entrega}%0A`;
-if(entrega==="Entrega"){msg+=`📍 Endereço: ${endereco}%0A`;}
-msg+=`💳 Pagamento: ${pagamento}%0A%0A🛍️ Itens:%0A`;
+  let total = 0;
 
-carrinho.forEach(i=>{
-msg+=`• ${i.nome} (${i.qtd})%0A`;
-});
+  carrinho.forEach(item => {
+    const subtotal = item.preco * item.qtd;
+    total += subtotal;
 
-window.open(`https://wa.me/5554996048808?text=${msg}`);
+    container.innerHTML += `
+      <div class="item-carrinho">
+        <strong>${item.nome}</strong>
+        <div class="controle">
+          <button onclick="alterarQuantidade('${item.id}', -1)">-</button>
+          <span>${item.qtd}</span>
+          <button onclick="alterarQuantidade('${item.id}', 1)">+</button>
+        </div>
+        <p>R$ ${subtotal.toFixed(2)}</p>
+      </div>
+    `;
+  });
+
+  document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
+  document.getElementById("contador").innerText = carrinho.length;
 }
+
+// ===============================
+// FORMULÁRIO DINÂMICO
+// ===============================
+
+function alternarEntrega(valor) {
+  const campoEndereco = document.getElementById("campoEndereco");
+  const infoRetirada = document.getElementById("infoRetirada");
+
+  if (valor === "entrega") {
+    campoEndereco.style.display = "block";
+    infoRetirada.style.display = "none";
+  } else {
+    campoEndereco.style.display = "none";
+    infoRetirada.style.display = "block";
+  }
+}
+
+// ===============================
+// FINALIZAR PEDIDO
+// ===============================
+
+function finalizarPedido() {
+  if (carrinho.length === 0) {
+    alert("Seu carrinho está vazio.");
+    return;
+  }
+
+  const nome = document.getElementById("nomeCliente").value;
+  const tipo = document.getElementById("tipoEntrega").value;
+  const endereco = document.getElementById("enderecoCliente").value;
+  const pagamento = document.getElementById("formaPagamento").value;
+  const obs = document.getElementById("observacoes").value;
+
+  let mensagem = "✨ Pedido Odòmáiyà ✨\n\n";
+  mensagem += "🛍️ Itens:\n\n";
+
+  let total = 0;
+
+  carrinho.forEach(item => {
+    const subtotal = item.preco * item.qtd;
+    total += subtotal;
+
+    mensagem += `• ${item.nome}\n`;
+    mensagem += `Quantidade: ${item.qtd}\n`;
+    mensagem += `Subtotal: R$ ${subtotal.toFixed(2)}\n\n`;
+  });
+
+  mensagem += `💰 Total: R$ ${total.toFixed(2)}\n\n`;
+  mensagem += `👤 Cliente: ${nome}\n`;
+
+  if (tipo === "entrega") {
+    mensagem += `🚚 Entrega no endereço:\n${endereco}\n`;
+    mensagem += `⚠️ Lembrar que há taxa de entrega.\n`;
+  } else {
+    mensagem += `🏬 Retirada na loja:\n${enderecoLoja}\n`;
+  }
+
+  mensagem += `💳 Pagamento: ${pagamento}\n`;
+
+  if (obs) {
+    mensagem += `📝 Observações: ${obs}\n`;
+  }
+
+  mensagem += "\nAguardo confirmação. 🙏";
+
+  const link = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+  window.open(link, "_blank");
+}
+
+// ===============================
+carregarProdutos();
