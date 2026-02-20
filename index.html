@@ -3,32 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> 🧿 Odòmáiyà Artigos Religiosos</title>
+<title>🧿 Odòmáiyà Artigos Religiosos</title>
+
 <link rel="stylesheet" href="style.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
 <body>
 
-<canvas id="particles"></canvas>
-
 <header>
   <div class="logo">🧿 Odòmáiyà Artigos Religiosos</div>
-  <nav class="menu-categories">
-    <button onclick="filtrarCategoria('Todos')">Todos</button>
-    <button onclick="filtrarCategoria('Bebidas')">Bebidas</button>
-    <button onclick="filtrarCategoria('Charutos')">Charutos</button>
-    <button onclick="filtrarCategoria('Guias')">Guias</button>
-    <button onclick="filtrarCategoria('Imagens')">Imagens</button>
-    <button onclick="filtrarCategoria('Roupas')">Roupas</button>
-    <button onclick="filtrarCategoria('Velas')">Velas</button>
+
+  <nav class="filters">
+    <button onclick="filtrar('Todos')" class="filter-btn active">Todos</button>
+    <button onclick="filtrar('Bebidas')" class="filter-btn">Bebidas</button>
+    <button onclick="filtrar('Guias')" class="filter-btn">Guias</button>
+    <button onclick="filtrar('Velas')" class="filter-btn">Velas</button>
   </nav>
+
   <div class="cart-icon" onclick="toggleCart()">
-    🛒 <span id="cart-count">0</span>
+    🛒 <span id="cartCount">0</span>
   </div>
 </header>
 
@@ -38,25 +35,23 @@
 </section>
 
 <section class="products">
-  <div id="product-list"></div>
+  <div id="productList"></div>
 </section>
 
-<!-- CART -->
+<!-- CARRINHO -->
 <div class="cart" id="cart">
   <h3>Seu Carrinho</h3>
-  <div id="cart-items"></div>
-  <h4>Total: R$ <span id="cart-total">0.00</span></h4>
-  <button onclick="openCheckout()">Finalizar Pedido</button>
+  <div id="cartItems"></div>
+  <div class="cartTotal">
+    Total: R$ <span id="cartTotal">0.00</span>
+  </div>
+  <button class="btn-primary" onclick="abrirCheckout()">Finalizar Pedido</button>
 </div>
 
 <!-- CHECKOUT -->
-<div class="checkout-overlay" id="checkout">
-  <div class="checkout-box">
-    <div id="checkout-step"></div>
-  </div>
+<div class="checkout" id="checkout">
+  <div class="checkout-box" id="checkoutBox"></div>
 </div>
-
-<audio id="spiritualSound" src="https://assets.mixkit.co/sfx/preview/mixkit-magic-sparkles-871.mp3"></audio>
 
 <script src="app.js"></script>
 </body>
