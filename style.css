@@ -1,75 +1,87 @@
 body{
 margin:0;
-font-family:Poppins,sans-serif;
-background:#f4f8ff;
-color:#0E2A47;
-}
-
-.hero{
-height:60vh;
-background:linear-gradient(135deg,#0E2A47,#1F4E79,#4A90E2);
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
+font-family: 'Segoe UI', sans-serif;
+background: linear-gradient(180deg,#0E2A47,#1F4E79);
 color:white;
 }
 
-.btn-hero{
-padding:12px 30px;
-background:white;
-color:#0E2A47;
-border-radius:30px;
-text-decoration:none;
-}
-
-.menu-categorias{
+.topo{
 display:flex;
-justify-content:center;
-gap:20px;
-padding:15px;
-background:white;
+justify-content:space-between;
+align-items:center;
+padding:15px 30px;
+background:#0E2A47;
 position:sticky;
 top:0;
-z-index:100;
 }
 
-.produtos{
+.logo{
+font-size:22px;
+font-weight:bold;
+}
+
+.menu a{
+color:white;
+margin:0 10px;
+text-decoration:none;
+font-weight:500;
+}
+
+.menu a:hover{
+color:#FFD700;
+}
+
+.acoes input{
+padding:6px;
+border-radius:5px;
+border:none;
+}
+
+.banner{
+text-align:center;
+padding:80px 20px;
+background:linear-gradient(135deg,#1F4E79,#0E2A47);
+}
+
+.banner h1{
+font-size:42px;
+}
+
+.grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 gap:20px;
-padding:20px;
+padding:30px;
 }
 
 .card{
 background:white;
+color:black;
+border-radius:12px;
 padding:15px;
-border-radius:15px;
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
-transition:.3s;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+transition:0.3s;
 }
 
 .card:hover{
 transform:translateY(-8px);
 }
 
-.preco{
-font-weight:bold;
+.card img{
+width:100%;
+height:200px;
+object-fit:cover;
+border-radius:10px;
 }
 
-.controle button{
-padding:5px 12px;
-margin:5px;
-}
-
-.cart-icon{
-position:fixed;
-bottom:20px;
-right:20px;
+.card button{
 background:#1F4E79;
 color:white;
-padding:15px;
-border-radius:50%;
+border:none;
+padding:10px;
+width:100%;
+border-radius:8px;
 cursor:pointer;
 }
 
@@ -77,17 +89,18 @@ cursor:pointer;
 position:fixed;
 right:0;
 top:0;
-width:300px;
+width:350px;
 height:100%;
 background:white;
+color:black;
 padding:20px;
-overflow:auto;
 display:none;
+overflow:auto;
 }
 
 footer{
+background:#0E2A47;
 text-align:center;
 padding:20px;
-background:#0E2A47;
-color:white;
+margin-top:40px;
 }
