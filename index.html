@@ -64,7 +64,30 @@
     <option>Débito</option>
     <option>Dinheiro</option>
   </select>
+<input type="text" id="nomeCliente" placeholder="Seu nome">
 
+<select id="tipoEntrega" onchange="alternarEntrega(this.value)">
+  <option value="retirada">Retirar na loja</option>
+  <option value="entrega">Entrega</option>
+</select>
+
+<div id="campoEndereco" style="display:none;">
+  <input type="text" id="enderecoCliente" placeholder="Digite seu endereço completo">
+</div>
+
+<div id="infoRetirada" style="display:block; font-size:14px; margin:8px 0;">
+  📍 R. Sete de Agosto, 28 - Centro, Passo Fundo - RS
+</div>
+
+<select id="formaPagamento">
+  <option>Pix</option>
+  <option>Crédito</option>
+  <option>Débito</option>
+  <option>Dinheiro</option>
+</select>
+
+<textarea id="observacoes" placeholder="Observações (opcional)"></textarea>
+  
   <button onclick="finalizarPedido()">Finalizar no WhatsApp</button>
 </div>
 
