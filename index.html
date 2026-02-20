@@ -5,33 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Odòmáiyà Artigos Religiosos | Loja Oficial</title>
-<meta name="description" content="Artigos religiosos com qualidade e respeito à ancestralidade. Velas, imagens, guias, roupas, bebidas, charutos e muito mais.">
-<meta name="keywords" content="artigos religiosos, umbanda, candomblé, velas, guias, imagens religiosas">
 
-<link rel="stylesheet" href="style.css">
+<meta name="description" content="Odòmáiyà Artigos Religiosos em Passo Fundo - RS. Velas, guias, imagens, roupas, bebidas e artigos espirituais com qualidade e respeito à ancestralidade.">
+
+<link rel="stylesheet" href="estilo.css">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
 </head>
+
 <body>
 
 <header class="topo">
   <div class="logo">Odòmáiyà</div>
 
-  <nav class="menu">
-    <a href="#" onclick="filtrar('Todos')">Todos</a>
-    <a href="#" onclick="filtrar('Bebidas')">Bebidas</a>
-    <a href="#" onclick="filtrar('Charutos')">Charutos</a>
-    <a href="#" onclick="filtrar('Guias')">Guias</a>
-    <a href="#" onclick="filtrar('Imagens')">Imagens</a>
-    <a href="#" onclick="filtrar('Roupas')">Roupas</a>
-    <a href="#" onclick="filtrar('Velas')">Velas</a>
-  </nav>
-
-  <div class="acoes">
+  <div class="mobile-busca">
     <input type="text" id="busca" placeholder="Buscar produto..." onkeyup="buscar()">
+  </div>
+
+  <div class="categorias-scroll">
+    <button onclick="filtrar('Todos')">Todos</button>
+    <button onclick="filtrar('Bebidas')">Bebidas</button>
+    <button onclick="filtrar('Charutos')">Charutos</button>
+    <button onclick="filtrar('Guias')">Guias</button>
+    <button onclick="filtrar('Imagens')">Imagens</button>
+    <button onclick="filtrar('Roupas')">Roupas</button>
+    <button onclick="filtrar('Velas')">Velas</button>
+  </div>
+
+  <div class="carrinho-topo">
     <button onclick="abrirCarrinho()">🛒 <span id="contador">0</span></button>
   </div>
 </header>
@@ -43,7 +46,6 @@
 
 <section id="produtos" class="grid"></section>
 
-<!-- CARRINHO -->
 <div id="carrinho" class="carrinho">
   <h3>Seu Pedido</h3>
   <div id="itensCarrinho"></div>
@@ -67,9 +69,18 @@
 </div>
 
 <footer>
-  <p>📍 <a href="https://share.google/7BJIGt0aFymXdavwy" target="_blank">
-  Abrir localização no mapa
-  </a></p>
+  <div class="rodape-info">
+    <strong>Odòmáiyà Artigos Religiosos</strong><br><br>
+
+    <a class="endereco"
+    href="https://www.google.com/maps/search/?api=1&query=Odomaiya+Artigos+Religiosos+R.+Sete+de+Agosto,+28+-+Centro,+Passo+Fundo+-+RS,+99025-030"
+    target="_blank">
+    📍 Odomaiya Artigos Religiosos  
+    R. Sete de Agosto, 28 - Centro  
+    Passo Fundo - RS, 99025-030
+    </a>
+  </div>
+
   <p>© 2026 Odòmáiyà Artigos Religiosos</p>
 </footer>
 
