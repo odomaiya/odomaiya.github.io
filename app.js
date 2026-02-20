@@ -1,136 +1,100 @@
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
+const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
 
 let produtos = [];
 let carrinho = [];
 
-fetch(sheetURL)
-.then(res=>res.text())
-.then(csv=>{
-const linhas = csv.split("\n").slice(1);
-produtos = linhas.map(l=>{
-const col = l.split(",");
-return{
-nome: col[0],
-preco: parseFloat(col[1]),
-categoria: col[2],
-imagem: col[3],
-estoque: parseInt(col[4])
-}
+fetch(csvUrl)
+.then(res => res.text())
+.then(text => {
+const linhas = text.split("\n").slice(1);
+produtos = linhas.map(l => {
+const c = l.split(",");
+return {
+nome: c[0],
+preco: parseFloat(c[1]),
+categoria: c[2],
+estoque: parseInt(c[3]),
+imagem: c[4]
+};
 });
-renderProdutos();
-criarCategorias();
+renderizar(produtos);
 });
 
-function renderProdutos(filtro=""){
-const container = document.getElementById("produtos");
-container.innerHTML="";
-produtos
-.filter(p=>p.nome.toLowerCase().includes(filtro.toLowerCase()))
-.forEach(p=>{
-container.innerHTML+=`
+function renderizar(lista){
+const area = document.getElementById("produtos");
+area.innerHTML = "";
+
+lista.forEach(p=>{
+area.innerHTML += `
 <div class="card">
-<img src="${p.imagem}" alt="${p.nome}">
+<img src="${p.imagem}" loading="lazy">
 <h4>${p.nome}</h4>
-<p>R$ ${p.preco.toFixed(2)}</p>
-<div class="estoque">Restam ${p.estoque} unidades</div>
-<button class="btn-add" onclick="addCarrinho('${p.nome}')">Adicionar</button>
-</div>`;
+<p class="estoque">Restam ${p.estoque} unidades</p>
+<p class="preco">R$ ${p.preco.toFixed(2)}</p>
+<div class="controle">
+<button onclick="alterarQtd('${p.nome}',-1)">-</button>
+<button onclick="alterarQtd('${p.nome}',1)">+</button>
+</div>
+</div>
+`;
 });
+
+gsap.from(".card",{opacity:0,y:30,stagger:0.1});
 }
 
-function criarCategorias(){
-let categorias = [...new Set(produtos.map(p=>p.categoria))].sort();
-let menu = document.getElementById("menuCategorias");
-categorias.forEach(cat=>{
-menu.innerHTML+=`<a href="#" onclick="filtrarCategoria('${cat}')">${cat}</a>`;
-});
-}
-
-function filtrarCategoria(cat){
-renderProdutos("");
-produtos = produtos.filter(p=>p.categoria===cat);
-renderProdutos();
-}
-
-function addCarrinho(nome){
-let prod = produtos.find(p=>p.nome===nome);
-if(prod.estoque<=0) return alert("Produto esgotado");
+function alterarQtd(nome,qtd){
+const prod = produtos.find(p=>p.nome===nome);
+if(!prod) return;
 
 let item = carrinho.find(i=>i.nome===nome);
-if(item){
-item.qtd++;
-}else{
+
+if(!item && qtd>0){
 carrinho.push({nome:prod.nome,preco:prod.preco,qtd:1});
 }
-prod.estoque--;
-renderProdutos();
-renderCarrinho();
+else if(item){
+item.qtd += qtd;
+if(item.qtd<=0){
+carrinho = carrinho.filter(i=>i.nome!==nome);
+}
 }
 
-function renderCarrinho(){
-let lista = document.getElementById("listaCarrinho");
-lista.innerHTML="";
+atualizarCarrinho();
+}
+
+function atualizarCarrinho(){
+const area = document.getElementById("itensCarrinho");
+area.innerHTML="";
 let total=0;
-carrinho.forEach(item=>{
-total+=item.preco*item.qtd;
-lista.innerHTML+=`
-<div class="item-carrinho">
-${item.nome} x${item.qtd}
-<div class="controls">
-<button onclick="alterarQtd('${item.nome}',-1)">-</button>
-<button onclick="alterarQtd('${item.nome}',1)">+</button>
-<button onclick="remover('${item.nome}')">x</button>
-</div>
-</div>`;
-});
-document.getElementById("total").innerText=total.toFixed(2);
-}
 
-function alterarQtd(nome,delta){
-let item = carrinho.find(i=>i.nome===nome);
-let prod = produtos.find(p=>p.nome===nome);
-if(!item) return;
-
-if(delta===1 && prod.estoque<=0) return;
-item.qtd+=delta;
-prod.estoque-=delta;
-
-if(item.qtd<=0) remover(nome);
-
-renderProdutos();
-renderCarrinho();
-}
-
-function remover(nome){
-let item = carrinho.find(i=>i.nome===nome);
-let prod = produtos.find(p=>p.nome===nome);
-prod.estoque+=item.qtd;
-carrinho=carrinho.filter(i=>i.nome!==nome);
-renderProdutos();
-renderCarrinho();
-}
-
-document.getElementById("busca").addEventListener("input",e=>{
-renderProdutos(e.target.value);
+carrinho.forEach(i=>{
+const sub = i.qtd*i.preco;
+total+=sub;
+area.innerHTML+=`
+<p>${i.nome} (${i.qtd}) - R$ ${sub.toFixed(2)}
+<button onclick="removerItem('${i.nome}')">❌</button></p>
+`;
 });
 
-function abrirCheckout(){
-document.getElementById("checkoutModal").style.display="flex";
-}
-function fecharCheckout(){
-document.getElementById("checkoutModal").style.display="none";
+document.getElementById("total").innerText="Total: R$ "+total.toFixed(2);
+document.getElementById("contador").innerText=carrinho.reduce((a,b)=>a+b.qtd,0);
 }
 
-function enviarWhatsApp(){
-let nome=document.getElementById("nome").value;
-let tipo=document.getElementById("tipoEntrega").value;
-let endereco=document.getElementById("endereco").value;
-let pagamento=document.getElementById("pagamento").value;
-let total=document.getElementById("total").innerText;
+function removerItem(nome){
+carrinho = carrinho.filter(i=>i.nome!==nome);
+atualizarCarrinho();
+}
 
-let lista=carrinho.map(p=>`- ${p.nome} x${p.qtd}`).join("%0A");
+function finalizarPedido(){
+let mensagem="✨ Pedido Odòmáiyà ✨%0A%0A🛍️ Itens:%0A%0A";
+let total=0;
 
-let msg=`✨ Pedido Odòmáiyà ✨%0A👤 Nome: ${nome}%0A📦 ${tipo}%0A📍 ${endereco}%0A💳 ${pagamento}%0A🛒 ${lista}%0A💰 Total R$ ${total}`;
+carrinho.forEach(i=>{
+const sub=i.qtd*i.preco;
+total+=sub;
+mensagem+=`• ${i.nome}%0A   Quantidade: ${i.qtd}%0A   Subtotal: R$ ${sub.toFixed(2)}%0A%0A`;
+});
 
-window.open(`https://wa.me/555496048808?text=${msg}`);
+mensagem+=`💰 Total: R$ ${total.toFixed(2)}%0A%0A📲 Aguardo confirmação e forma de pagamento.`;
+
+window.open(`https://wa.me/5554996048808?text=${mensagem}`);
 }
