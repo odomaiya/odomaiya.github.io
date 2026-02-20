@@ -6,23 +6,38 @@
 <title>🧿 Odòmáiyà Artigos Religiosos</title>
 
 <link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
-<header class="hero">
-  <h1>🧿 Odòmáiyà Artigos Religiosos</h1>
-  <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
-  <button onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">
-    Explorar Coleção
-  </button>
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    🧿 <span>Odòmáiyà</span>
+  </div>
+  <nav>
+    <button onclick="abrirCarrinho()" class="cart-btn">
+      🛒 <span id="contador">0</span>
+    </button>
+  </nav>
 </header>
 
-<section class="barra-filtros">
-  <input type="text" id="busca" placeholder="🔍 Buscar produto...">
+<!-- HERO -->
+<section class="hero">
+  <h1>Odòmáiyà Artigos Religiosos</h1>
+  <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+  <a href="#produtos" class="hero-btn">Explorar Coleção</a>
+</section>
+
+<!-- FILTROS -->
+<section class="filtros">
+  <input type="text" id="busca" placeholder="🔎 Buscar produto...">
   
+  <select id="categoriaFiltro">
+    <option value="">Todas Categorias</option>
+  </select>
+
   <select id="ordenar">
     <option value="">Ordenar por</option>
     <option value="menor">Menor preço</option>
@@ -30,29 +45,20 @@
   </select>
 </section>
 
-<section id="categorias" class="categorias"></section>
+<!-- PRODUTOS -->
+<main id="produtos" class="grid"></main>
 
-<main id="produtos" class="produtos"></main>
+<!-- CARRINHO LATERAL -->
+<div id="overlay" onclick="fecharCarrinho()"></div>
 
-<!-- Carrinho -->
-<div class="cart-icon" onclick="abrirCarrinho()">
-  🛒 <span id="contador">0</span>
-</div>
-
-<div id="carrinho" class="carrinho">
-  <div class="carrinho-header">
-    <h2>Seu Pedido</h2>
-    <span onclick="fecharCarrinho()">✖</span>
-  </div>
-
+<aside id="carrinho" class="carrinho">
+  <h2>Seu Pedido</h2>
   <div id="itensCarrinho"></div>
-
   <h3 id="total">Total: R$ 0,00</h3>
-
-  <button class="finalizar" onclick="finalizarPedido()">
+  <button onclick="finalizarPedido()" class="btn-finalizar">
     📲 Finalizar no WhatsApp
   </button>
-</div>
+</aside>
 
 <script src="app.js"></script>
 </body>
