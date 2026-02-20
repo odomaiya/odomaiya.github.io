@@ -1,208 +1,134 @@
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
-background:#f4f8fb;
+background:#F6F1E8;
 color:#0f2c3f;
 }
 
-.topo{
+.topbar{
+position:fixed;
+top:0;
+width:100%;
+background:#ffffff;
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:20px 40px;
-background:white;
+padding:15px 40px;
 box-shadow:0 4px 20px rgba(0,0,0,0.05);
-position:sticky;
-top:0;
-z-index:1000;
+z-index:999;
 }
 
 .logo{
 font-family:'Playfair Display',serif;
-font-size:26px;
-font-weight:700;
+font-size:22px;
 }
 
-.menu input,.menu select{
-padding:8px 12px;
-border-radius:10px;
-border:1px solid #ddd;
+.menu button{
+background:none;
+border:none;
+margin:0 8px;
+cursor:pointer;
+font-weight:500;
+}
+
+.busca-area input, .busca-area select{
+padding:8px;
 margin-left:10px;
+border-radius:8px;
+border:1px solid #ddd;
 }
 
 .hero{
-height:60vh;
-background:linear-gradient(135deg,#0f2c3f,#1b4f72);
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
+margin-top:100px;
+padding:120px 20px;
 text-align:center;
+background:linear-gradient(135deg,#0f2c3f,#154a6b);
+color:white;
 }
 
 .hero h1{
 font-family:'Playfair Display',serif;
-font-size:48px;
-margin:0;
-}
-
-.hero p{
-margin-top:15px;
-font-size:18px;
-opacity:0.9;
+font-size:42px;
 }
 
 .hero button{
-margin-top:25px;
+margin-top:20px;
 padding:12px 30px;
+background:#c6a23a;
 border:none;
-background:#d4af37;
-color:#0f2c3f;
-border-radius:40px;
-font-weight:600;
+border-radius:25px;
 cursor:pointer;
 }
 
-.produtos-section{
-padding:60px 40px;
-}
-
-.grid{
+.produtos{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:40px;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:25px;
+padding:60px;
 }
 
 .card{
 background:white;
-border-radius:20px;
-overflow:hidden;
-box-shadow:0 10px 30px rgba(0,0,0,0.08);
-transition:0.4s;
+padding:15px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+transition:0.3s;
 }
 
 .card:hover{
-transform:translateY(-8px);
+transform:translateY(-5px);
 }
 
 .card img{
 width:100%;
-height:260px;
+height:200px;
 object-fit:cover;
-cursor:pointer;
-}
-
-.card-content{
-padding:20px;
+border-radius:10px;
 }
 
 .preco{
-margin-top:10px;
+color:#c6a23a;
 font-weight:600;
-color:#1b4f72;
+margin:10px 0;
 }
 
-.estoque{
-font-size:12px;
-color:#c0392b;
-margin-top:6px;
-}
-
-.qtd-controls{
+.qtd{
 display:flex;
+justify-content:center;
 align-items:center;
 gap:10px;
-margin-top:15px;
+margin-top:10px;
 }
 
-.qtd-controls button{
-background:#0f2c3f;
-color:white;
+.qtd button{
+width:28px;
+height:28px;
 border:none;
-padding:6px 12px;
-border-radius:8px;
-cursor:pointer;
-}
-
-.cart-icon{
-position:fixed;
-bottom:30px;
-right:30px;
 background:#0f2c3f;
 color:white;
-padding:18px;
 border-radius:50%;
 cursor:pointer;
-box-shadow:0 8px 25px rgba(0,0,0,0.2);
 }
 
 .carrinho{
 position:fixed;
-right:-400px;
+right:0;
 top:0;
-width:380px;
+width:320px;
 height:100%;
 background:white;
-box-shadow:-8px 0 40px rgba(0,0,0,0.15);
-padding:30px;
-transition:0.5s;
-display:flex;
-flex-direction:column;
-overflow-y:auto;
+padding:20px;
+box-shadow:-5px 0 20px rgba(0,0,0,0.05);
+overflow:auto;
 }
 
-.carrinho.ativo{
-right:0;
-}
-
-.form-pedido{
-margin-top:20px;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.form-pedido input,
-.form-pedido select,
-.form-pedido textarea{
-padding:10px;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-.btn-finalizar{
-margin-top:20px;
-padding:14px;
-background:#d4af37;
+.finalizar{
+width:100%;
+padding:12px;
+background:#c6a23a;
 border:none;
-border-radius:12px;
-font-weight:600;
+border-radius:8px;
+margin-top:15px;
 cursor:pointer;
-}
-
-.modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.9);
-justify-content:center;
-align-items:center;
-}
-
-.modal img{
-max-width:85%;
-max-height:85%;
-border-radius:20px;
-}
-
-.popup-compra{
-position:fixed;
-bottom:20px;
-left:20px;
-background:white;
-padding:12px 18px;
-border-radius:12px;
-box-shadow:0 8px 20px rgba(0,0,0,0.15);
-font-size:14px;
-display:none;
+font-weight:600;
 }
