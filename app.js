@@ -1,86 +1,251 @@
-// PRODUTOS EXEMPLO
-const produtos = [
-  {nome:"Vela Branca 7 Dias", preco:15, img:"https://images.unsplash.com/photo-1602874801006-79fce4c8d2c8"},
-  {nome:"Guia de Proteção", preco:35, img:"https://images.unsplash.com/photo-1617957740475-d3a53c91f2d3"},
-  {nome:"Imagem Exu", preco:120, img:"https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04"}
-];
+// ===========================
+// TABELA CSV DINÂMICA
+// ===========================
 
-function carregarProdutos(){
-  const container=document.getElementById("listaProdutos");
-  container.innerHTML="";
-  produtos.forEach(p=>{
-    container.innerHTML+=`
-      <div class="card">
-        <img src="${p.img}">
-        <h3>${p.nome}</h3>
-        <p>R$ ${p.preco.toFixed(2)}</p>
+const planilhaURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7j4_2qhc-W7EscYgFNEoWX-jEUsfS8xPSnOkEGj7uf1xSUFKkANQ8YQ57UUZsPytia7Vq6iShxHGy/pub?gid=1004684059&single=true&output=csv";
+
+let products = [];
+let cart = [];
+
+// buscar CSV e transformar em array
+fetch(planilhaURL)
+.then(res => res.text())
+.then(text => {
+  const linhas = text.split("\n").slice(1);
+  products = linhas.map(l => {
+    const c = l.split(",");
+    return {
+      id: c[0]?.trim(),
+      name: c[1]?.trim(),
+      price: parseFloat(c[2]) || 0,
+      stock: parseInt(c[3]) || 0,
+      category: c[4]?.trim() || "Geral"
+    };
+  });
+  renderProducts(products);
+});
+
+// ===========================
+// GERAR PRODUTOS
+// ===========================
+
+function renderProducts(list) {
+  const container = document.getElementById("product-list");
+  container.innerHTML = "";
+  list.forEach(p => {
+    container.innerHTML += `
+      <div class="product-card" data-category="${p.category}">
+        <h3>${p.name}</h3>
+        <p>R$ ${p.price.toFixed(2)}</p>
+        <p>Em estoque: ${p.stock}</p>
+
+        <div class="qty-controls">
+          <button onclick="changeQty('${p.id}', -1)">-</button>
+          <span id="qty-${p.id}">1</span>
+          <button onclick="changeQty('${p.id}', 1)">+</button>
+        </div>
+
+        <button class="add-btn" onclick="addToCart('${p.id}')">Adicionar</button>
       </div>
     `;
   });
 }
 
-carregarProdutos();
+// ===========================
+// FILTRO POR CATEGORIA
+// ===========================
 
-// PARTÍCULAS MENORES
-const canvas=document.getElementById("particulas");
-const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let particulas=[];
-for(let i=0;i<30;i++){
-  particulas.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    r:Math.random()*1.5,
-    d:Math.random()*0.3
-  });
+function filtrarCategoria(cat) {
+  if(cat === "Todos"){
+    renderProducts(products);
+    return;
+  }
+  const filtrados = products.filter(p=>p.category === cat);
+  renderProducts(filtrados);
 }
 
-function animar(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="rgba(255,255,255,.3)";
-  particulas.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fill();
-    p.y+=p.d;
-    if(p.y>canvas.height){
-      p.y=0;
-      p.x=Math.random()*canvas.width;
-    }
-  });
-}
-setInterval(animar,40);
+// ===========================
+// QUANTIDADE
+// ===========================
 
-// CHECKOUT
-function abrirCheckout(){
-  document.getElementById("checkoutModal").style.display="flex";
+function changeQty(id, change){
+  const span = document.getElementById(`qty-${id}`);
+  let value = parseInt(span.innerText);
+  value += change;
+  if(value < 1) value = 1;
+  span.innerText = value;
 }
 
-document.getElementById("tipoEntrega").addEventListener("change",function(){
-  const campo=document.getElementById("enderecoCliente");
-  campo.style.display=this.value==="entrega"?"block":"none";
-});
+// ===========================
+// ADICIONAR AO CARRINHO
+// ===========================
 
-function confirmarPedido(){
-  const nome=document.getElementById("nomeCliente").value;
-  const tipo=document.getElementById("tipoEntrega").value;
-  const endereco=document.getElementById("enderecoCliente").value;
-  const pagamento=document.getElementById("pagamento").value;
+function addToCart(id){
+  const prod = products.find(p=>p.id === id);
+  const qty = parseInt(document.getElementById(`qty-${id}`).innerText);
 
-  if(!nome){
-    alert("Informe seu nome.");
+  if(qty > prod.stock){
+    alert("Estoque insuficiente!");
     return;
   }
 
-  let mensagem=`🧿 Pedido Odòmáiyà\nNome: ${nome}\nEntrega: ${tipo}\n`;
+  cart.push({...prod, qty});
+  prod.stock -= qty;
 
-  if(tipo==="entrega"){
-    mensagem+=`Endereço: ${endereco}\n`;
+  updateCart();
+  renderProducts(products);
+}
+
+// ===========================
+// ATUALIZAR CARRINHO
+// ===========================
+
+function updateCart(){
+  const container = document.getElementById("cart-items");
+  container.innerHTML = "";
+
+  let total = 0;
+  cart.forEach(item=>{
+    total += item.price * item.qty;
+    container.innerHTML += `<p>${item.name} x${item.qty}</p>`;
+  });
+
+  document.getElementById("cart-total").innerText = total.toFixed(2);
+  document.getElementById("cart-count").innerText = cart.length;
+}
+
+// ===========================
+// CHECKOUT
+// ===========================
+
+function openCheckout(){
+  if(cart.length === 0){
+    alert("Carrinho vazio!");
+    return;
   }
 
-  mensagem+=`Pagamento: ${pagamento}`;
+  const checkoutDiv = document.getElementById("checkout-step");
+  checkoutDiv.innerHTML = `
 
-  window.open(`https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`,"_blank");
+    <h3>1️⃣ Dados do Cliente</h3>
+    <input type="text" id="nome" placeholder="Nome completo">
+    <input type="text" id="telefone" placeholder="Telefone">
+    <button onclick="checkoutStep2()">Continuar">
+
+  `;
+  document.getElementById("checkout").style.display = "flex";
 }
+
+function checkoutStep2(){
+  const nome = document.getElementById("nome").value;
+  const telefone = document.getElementById("telefone").value;
+
+  if(!nome || !telefone){
+    alert("Preencha nome e telefone.");
+    return;
+  }
+
+  document.getElementById("checkout-step").innerHTML = `
+
+    <h3>2️⃣ Entrega ou Retirada</h3>
+    <select id="deliveryType" onchange="toggleAddress()">
+      <option value="retirada">Retirada</option>
+      <option value="entrega">Entrega</option>
+    </select>
+
+    <div id="address-input" style="display:none;">
+      <input type="text" id="cep" placeholder="CEP">
+      <input type="text" id="street" placeholder="Rua">
+      <input type="text" id="city" placeholder="Cidade">
+    </div>
+
+    <button onclick="checkoutStep3()">Continuar</button>
+
+  `;
+}
+
+function toggleAddress(){
+  const type = document.getElementById("deliveryType").value;
+  document.getElementById("address-input").style.display =
+    type === "entrega" ? "block" : "none";
+}
+
+function checkoutStep3(){
+
+  document.getElementById("checkout-step").innerHTML = `
+    <h3>3️⃣ Confirmação</h3>
+    <div id="order-summary"></div>
+    <button onclick="confirmOrder()">Finalizar no WhatsApp</button>
+  `;
+  generateSummary();
+}
+
+// ===========================
+// RESUMO E ENVIO
+// ===========================
+
+function generateSummary(){
+  let total = 0;
+  let summaryHTML = "";
+
+  cart.forEach(i => {
+    total += i.price * i.qty;
+    summaryHTML += `<p>${i.name} x${i.qty}</p>`;
+  });
+
+  summaryHTML += `<h4>Total: R$ ${total.toFixed(2)}</h4>`;
+  document.getElementById("order-summary").innerHTML = summaryHTML;
+}
+
+function confirmOrder(){
+
+  let message = `✨ Novo Pedido Odòmáiyà ✨%0A%0A`;
+
+  cart.forEach(i=>{
+    message += `• ${i.name} x${i.qty}%0A`;
+  });
+
+  message += `%0A📞 Enviar para atendimento`;
+
+  window.open(`https://wa.me/555496048808?text=${encodeURIComponent(message)}`,"_blank");
+}
+
+// ===========================
+// PARTICULAS
+// ===========================
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let sparkles = [];
+
+for(let i=0;i<40;i++){
+  sparkles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    size:Math.random()*1.5,
+    speed:Math.random()*0.3
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(255,255,255,0.3)";
+
+  sparkles.forEach(s=>{
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fill();
+    s.y -= s.speed;
+    if(s.y < 0){
+      s.y = canvas.height;
+      s.x = Math.random()*canvas.width;
+    }
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
