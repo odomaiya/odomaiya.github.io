@@ -3,56 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmáiyà Artigos Religiosos</title>
+<title>🧿 Odòmáiyà Artigos Religiosos</title>
 
 <link rel="stylesheet" href="style.css">
-<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-</head>
+<link rel="manifest" href="manifest.json">
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
 <body>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-content">
-    <h1>Odòmáiyà</h1>
-    <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
-    <button onclick="scrollToProdutos()">Explorar Produtos</button>
-  </div>
-</section>
+<header class="hero">
+  <h1>🧿 Odòmáiyà Artigos Religiosos</h1>
+  <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+  <button onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">
+    Explorar Coleção
+  </button>
+</header>
 
-<!-- BUSCA + FILTRO -->
-<section class="top-bar">
-  <input type="text" id="busca" placeholder="Buscar produtos..." onkeyup="buscarProduto()">
-
-  <select id="categoriaFiltro" onchange="filtrarCategoria()">
-    <option value="todos">Todas Categorias</option>
-  </select>
-
-  <select id="ordenar" onchange="ordenarProdutos()">
-    <option value="">Ordenar</option>
+<section class="barra-filtros">
+  <input type="text" id="busca" placeholder="🔍 Buscar produto...">
+  
+  <select id="ordenar">
+    <option value="">Ordenar por</option>
     <option value="menor">Menor preço</option>
     <option value="maior">Maior preço</option>
   </select>
 </section>
 
+<section id="categorias" class="categorias"></section>
+
 <main id="produtos" class="produtos"></main>
 
-<!-- CARRINHO -->
-<div class="cart-icon" onclick="toggleCarrinho()">
+<!-- Carrinho -->
+<div class="cart-icon" onclick="abrirCarrinho()">
   🛒 <span id="contador">0</span>
 </div>
 
 <div id="carrinho" class="carrinho">
-  <h2>Seu Pedido</h2>
-  <div id="itensCarrinho"></div>
-  <h3 id="total">Total: R$ 0,00</h3>
-  <button onclick="finalizarPedido()">📲 Finalizar no WhatsApp</button>
-</div>
+  <div class="carrinho-header">
+    <h2>Seu Pedido</h2>
+    <span onclick="fecharCarrinho()">✖</span>
+  </div>
 
-<!-- MODAL IMAGEM -->
-<div id="modal" class="modal" onclick="fecharModal()">
-  <img id="modalImg">
+  <div id="itensCarrinho"></div>
+
+  <h3 id="total">Total: R$ 0,00</h3>
+
+  <button class="finalizar" onclick="finalizarPedido()">
+    📲 Finalizar no WhatsApp
+  </button>
 </div>
 
 <script src="app.js"></script>
