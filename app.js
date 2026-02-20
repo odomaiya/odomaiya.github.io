@@ -1,135 +1,133 @@
-const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
+const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
 
 let produtos = [];
 let carrinho = [];
 
-async function carregarProdutos() {
-  const res = await fetch(url);
-  const text = await res.text();
-
+fetch(urlCSV)
+.then(res => res.text())
+.then(text => {
   const linhas = text.split("\n").slice(1);
-
-  produtos = linhas.map(l => {
-    const c = l.split(",");
-
+  produtos = linhas.map(linha => {
+    const col = linha.split(",");
     return {
-      id: c[0]?.trim(),
-      nome: c[1]?.trim(),
-      preco: parseFloat(c[2]?.replace(",", ".").trim()),
-      categoria: c[3]?.trim(),
-      estoque: parseInt(c[4]),
-      imagens: c.slice(5).filter(i => i)
+      nome: col[1],
+      preco: parseFloat(col[2]),
+      categoria: col[3],
+      imagem: col[4]
     };
-  }).filter(p => p.nome && !isNaN(p.preco));
+  });
+  renderizar(produtos);
+  criarCategorias();
+});
 
-  mostrarProdutos(produtos);
-}
+function renderizar(lista){
+  const area = document.getElementById("produtos");
+  area.innerHTML = "";
 
-function mostrarProdutos(lista) {
-  const container = document.getElementById("produtos");
-  container.innerHTML = "";
-
-  lista.forEach(p => {
-    container.innerHTML += `
+  lista.forEach(p=>{
+    area.innerHTML += `
       <div class="card">
-        <div class="imagem-container">
-          <img src="${p.imagens[0] || 'https://via.placeholder.com/300'}" 
-               onclick="abrirModal('${p.imagens[0]}')">
-        </div>
-
-        <h3>${p.nome}</h3>
-        <p class="preco">R$ ${p.preco.toFixed(2)}</p>
-
+        <img src="${p.imagem}">
+        <h4>${p.nome}</h4>
+        <div class="preco">R$ ${p.preco.toFixed(2)}</div>
         <div class="controle">
-          <button onclick="alterarQtd('${p.id}', -1)">−</button>
-          <span id="qtd-${p.id}">0</span>
-          <button onclick="alterarQtd('${p.id}', 1)">+</button>
+          <button onclick="alterarQtd('${p.nome}',-1)">-</button>
+          <span>${quantidadeNoCarrinho(p.nome)}</span>
+          <button onclick="alterarQtd('${p.nome}',1)">+</button>
         </div>
       </div>
     `;
   });
 }
 
-function alterarQtd(id, valor) {
-  const produto = produtos.find(p => p.id == id);
-  let item = carrinho.find(p => p.id == id);
-
-  if (!item && valor > 0) {
-    carrinho.push({ ...produto, qtd: 1 });
-  } else if (item) {
+function alterarQtd(nome,valor){
+  const item = carrinho.find(i=>i.nome===nome);
+  if(item){
     item.qtd += valor;
-    if (item.qtd <= 0) {
-      carrinho = carrinho.filter(p => p.id != id);
-    }
+    if(item.qtd<=0) carrinho = carrinho.filter(i=>i.nome!==nome);
+  } else if(valor>0){
+    const prod = produtos.find(p=>p.nome===nome);
+    carrinho.push({...prod,qtd:1});
   }
-
   atualizarCarrinho();
-  atualizarCards();
+  renderizar(produtos);
 }
 
-function atualizarCards() {
-  produtos.forEach(p => {
-    const item = carrinho.find(i => i.id == p.id);
-    const el = document.getElementById(`qtd-${p.id}`);
-    if (el) el.innerText = item ? item.qtd : 0;
-  });
+function quantidadeNoCarrinho(nome){
+  const item = carrinho.find(i=>i.nome===nome);
+  return item ? item.qtd : 0;
 }
 
-function atualizarCarrinho() {
-  const container = document.getElementById("itensCarrinho");
-  const totalEl = document.getElementById("total");
+function atualizarCarrinho(){
+  const area = document.getElementById("itensCarrinho");
+  const contador = document.getElementById("contador");
+  area.innerHTML = "";
+  let total=0;
+  let itensTotal=0;
 
-  container.innerHTML = "";
-  let total = 0;
+  carrinho.forEach(i=>{
+    const subtotal = i.preco*i.qtd;
+    total+=subtotal;
+    itensTotal+=i.qtd;
 
-  carrinho.forEach(i => {
-    const sub = i.preco * i.qtd;
-    total += sub;
-
-    container.innerHTML += `
-      <div class="item-carrinho">
-        <div>
-          <strong>${i.nome}</strong>
-          <p>${i.qtd}x R$ ${i.preco.toFixed(2)}</p>
-        </div>
-        <div class="acoes">
-          <button onclick="alterarQtd('${i.id}', -1)">−</button>
-          <button onclick="alterarQtd('${i.id}', 1)">+</button>
-        </div>
-      </div>
+    area.innerHTML+=`
+      <p>${i.nome}<br>
+      ${i.qtd}x R$ ${i.preco.toFixed(2)}<br>
+      Subtotal: R$ ${subtotal.toFixed(2)}</p>
     `;
   });
 
-  totalEl.innerText = "Total: R$ " + total.toFixed(2);
+  contador.innerText=itensTotal;
+  document.getElementById("total").innerText=`Total: R$ ${total.toFixed(2)}`;
 }
 
-function finalizarPedido() {
-  if (carrinho.length === 0) return alert("Seu carrinho está vazio");
+function abrirCarrinho(){
+  document.getElementById("carrinho").classList.add("ativo");
+}
 
-  let mensagem = "🛍️ Pedido - Odòmáiyà\n\n";
-  let total = 0;
+function fecharCarrinho(){
+  document.getElementById("carrinho").classList.remove("ativo");
+}
 
-  carrinho.forEach(i => {
-    const sub = i.preco * i.qtd;
-    total += sub;
+function finalizarPedido(){
+  let mensagem="✨ Pedido Odòmáiyà ✨\n\n🛍️ Itens:\n\n";
+  let total=0;
 
-    mensagem += `${i.nome}\n`;
-    mensagem += `Qtd: ${i.qtd}\n`;
-    mensagem += `Subtotal: R$ ${sub.toFixed(2)}\n\n`;
+  carrinho.forEach(i=>{
+    const subtotal=i.preco*i.qtd;
+    total+=subtotal;
+
+    mensagem+=`• ${i.nome}\nQuantidade: ${i.qtd}\nValor unitário: R$ ${i.preco.toFixed(2)}\nSubtotal: R$ ${subtotal.toFixed(2)}\n\n`;
   });
 
-  mensagem += `Total: R$ ${total.toFixed(2)}`;
+  mensagem+=`💰 Total do Pedido: R$ ${total.toFixed(2)}\n\nAguardo confirmação e forma de pagamento.`;
 
-  window.open(`https://wa.me/55SEUNUMERO?text=${encodeURIComponent(mensagem)}`);
+  window.open(`https://wa.me/5554996048808?text=${encodeURIComponent(mensagem)}`);
 }
 
-function abrirModal(img) {
-  document.getElementById("modalImg").src = img;
-  document.getElementById("modal").classList.add("ativo");
+function criarCategorias(){
+  const categorias = [...new Set(produtos.map(p=>p.categoria))];
+  const area = document.getElementById("categorias");
+
+  categorias.forEach(cat=>{
+    area.innerHTML+=`<button onclick="filtrarCategoria('${cat}')">${cat}</button>`;
+  });
 }
 
-function fecharModal() {
-  document.getElementById("modal").classList.remove("ativo");
+function filtrarCategoria(cat){
+  renderizar(produtos.filter(p=>p.categoria===cat));
 }
 
-carregarProdutos();
+document.getElementById("ordenar").onchange = e=>{
+  if(e.target.value==="menor"){
+    renderizar([...produtos].sort((a,b)=>a.preco-b.preco));
+  }
+  if(e.target.value==="maior"){
+    renderizar([...produtos].sort((a,b)=>b.preco-a.preco));
+  }
+};
+
+document.getElementById("busca").oninput = e=>{
+  const termo=e.target.value.toLowerCase();
+  renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(termo)));
+};
