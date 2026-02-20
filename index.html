@@ -3,85 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>🧿 Odòmáiyà Artigos Religiosos</title>
 
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
 
-<header class="topo">
-  <div class="logo">🧿 Odòmáiyà</div>
-  <div class="menu">
-    <input type="text" id="busca" placeholder="Buscar produtos...">
-    <select id="categoriaFiltro"></select>
-    <select id="ordenar">
-      <option value="">Ordenar</option>
-      <option value="menor">Menor preço</option>
-      <option value="maior">Maior preço</option>
-    </select>
-  </div>
+<header class="topbar">
+<div class="logo">🧿 Odòmáiyà</div>
+
+<nav class="menu">
+<button onclick="filtrarCategoria('Todas')">Todas</button>
+<button onclick="filtrarCategoria('Bebidas')">Bebidas</button>
+<button onclick="filtrarCategoria('Charutos')">Charutos</button>
+<button onclick="filtrarCategoria('Guias')">Guias</button>
+<button onclick="filtrarCategoria('Imagens')">Imagens</button>
+<button onclick="filtrarCategoria('Roupas')">Roupas</button>
+<button onclick="filtrarCategoria('Velas')">Velas</button>
+</nav>
+
+<div class="busca-area">
+<input type="text" id="busca" placeholder="Buscar produtos..." onkeyup="buscarProduto()">
+<select onchange="ordenarProdutos(this.value)">
+<option value="">Ordenar</option>
+<option value="menor">Menor preço</option>
+<option value="maior">Maior preço</option>
+</select>
+</div>
 </header>
 
 <section class="hero">
-  <div class="hero-content">
-    <h1>Luxo Espiritual</h1>
-    <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
-    <button onclick="scrollProdutos()">Explorar Coleção</button>
-  </div>
+<h1>Artigos Religiosos</h1>
+<p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+<button onclick="scrollToProdutos()">Explorar Coleção</button>
 </section>
 
-<section class="produtos-section">
-  <h2>Coleção Sagrada</h2>
-  <main id="produtos" class="grid"></main>
-</section>
+<main id="produtos" class="produtos"></main>
 
-<div class="cart-icon" onclick="toggleCarrinho()">
-🛒 <span id="contador">0</span>
+<!-- CARRINHO -->
+<aside class="carrinho">
+<h2>Seu Pedido</h2>
+<div id="itensCarrinho"></div>
+<h3 id="total">Total: R$ 0,00</h3>
+
+<div class="formulario">
+<input type="text" id="nomeCliente" placeholder="Seu nome">
+<select id="tipoEntrega">
+<option value="Retirada na loja">Retirada na loja</option>
+<option value="Entrega">Entrega</option>
+</select>
+<input type="text" id="endereco" placeholder="Endereço completo (se entrega)">
+<select id="pagamento">
+<option value="Pix">Pix</option>
+<option value="Crédito">Crédito</option>
+<option value="Débito">Débito</option>
+<option value="Dinheiro">Dinheiro</option>
+</select>
+<textarea id="obs" placeholder="Observações (opcional)"></textarea>
 </div>
 
-<div id="carrinho" class="carrinho">
-  <h2>Seu Pedido</h2>
+<button class="finalizar" onclick="finalizarPedido()">
+Finalizar no WhatsApp
+</button>
 
-  <div id="itensCarrinho"></div>
-  <h3 id="total">Total: R$ 0,00</h3>
-
-  <div class="form-pedido">
-    <input type="text" id="clienteNome" placeholder="Seu nome">
-
-    <select id="tipoEntrega" onchange="toggleEndereco()">
-      <option value="">Tipo de pedido</option>
-      <option value="Retirada na loja">Retirada na loja</option>
-      <option value="Entrega">Entrega</option>
-    </select>
-
-    <div id="campoEndereco" style="display:none;">
-      <input type="text" id="clienteEndereco" placeholder="Endereço completo">
-      <small>Lembre-se: a taxa de entrega será confirmada no atendimento.</small>
-    </div>
-
-    <select id="formaPagamento">
-      <option value="">Forma de pagamento</option>
-      <option value="Pix">Pix</option>
-      <option value="Crédito">Cartão de Crédito</option>
-      <option value="Débito">Cartão de Débito</option>
-      <option value="Dinheiro">Dinheiro</option>
-    </select>
-
-    <textarea id="observacoes" placeholder="Observações (opcional)"></textarea>
-  </div>
-
-  <button class="btn-finalizar" onclick="finalizarPedido()">
-    📲 Finalizar no WhatsApp
-  </button>
-</div>
-
-<div id="modal" class="modal" onclick="fecharModal()">
-  <img id="modalImg">
-</div>
-
-<div id="popupCompra" class="popup-compra"></div>
+</aside>
 
 <script src="app.js"></script>
 </body>
