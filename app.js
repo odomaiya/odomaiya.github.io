@@ -1,181 +1,113 @@
-const csvURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
+const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpaTmNJYzoenrMirgFZ0mUTchuxEborCjS-z2xOSE-AHxTKlqGFlsVxth1DxKqp34QTFQO68PLGBWB/pub?gid=1234312483&single=true&output=csv";
 
-let produtos=[];
-let carrinho=[];
+let produtos = [];
+let carrinho = [];
 
-async function carregarProdutos(){
-const res=await fetch(csvURL);
-const texto=await res.text();
-const linhas=texto.split("\n").slice(1);
-
-produtos=linhas.map(l=>{
-const col=l.split(",");
-return{
-nome:col[0],
-preco:parseFloat(col[1]),
-imagem:col[2],
-categoria:col[3],
-estoque:parseInt(col[4])
+fetch(csvURL)
+.then(res => res.text())
+.then(data => {
+const linhas = data.split("\n").slice(1);
+produtos = linhas.map(l => {
+const col = l.split(",");
+return {
+nome: col[0],
+categoria: col[1],
+preco: parseFloat(col[2]),
+imagem: col[3]
 }
 });
+renderProdutos(produtos);
+});
 
-renderizar();
-popularCategorias();
-}
-
-function renderizar(lista=produtos){
-const container=document.getElementById("produtos");
+function renderProdutos(lista){
+const container = document.getElementById("produtos");
 container.innerHTML="";
-
-lista.forEach(p=>{
+lista.forEach((p,i)=>{
 container.innerHTML+=`
 <div class="card">
-<img src="${p.imagem}" onclick="abrirModal('${p.imagem}')">
-<div class="card-content">
-<h3>${p.nome}</h3>
+<img src="${p.imagem}">
+<h4>${p.nome}</h4>
 <div class="preco">R$ ${p.preco.toFixed(2)}</div>
-<div class="estoque">${p.estoque<=3?"🔥 Restam poucas unidades":"Em estoque"}</div>
-<div class="qtd-controls">
-<button onclick="alterarQtd('${p.nome}',-1)">-</button>
-<button onclick="alterarQtd('${p.nome}',1)">+</button>
-</div>
+<div class="qtd">
+<button onclick="alterarQtd(${i},-1)">-</button>
+<span>${getQtd(p.nome)}</span>
+<button onclick="alterarQtd(${i},1)">+</button>
 </div>
 </div>
 `;
 });
 }
 
-function alterarQtd(nome,delta){
-let item=carrinho.find(i=>i.nome===nome);
-const prod=produtos.find(p=>p.nome===nome);
+function alterarQtd(index,valor){
+const produto = produtos[index];
+let item = carrinho.find(i=>i.nome===produto.nome);
 
-if(!prod) return;
-
-if(item){
-item.qtd+=delta;
-if(item.qtd<=0){
-carrinho=carrinho.filter(i=>i.nome!==nome);
+if(!item && valor>0){
+carrinho.push({...produto,quantidade:1});
 }
-}else if(delta>0){
-carrinho.push({nome,preco:prod.preco,qtd:1});
+else if(item){
+item.quantidade+=valor;
+if(item.quantidade<=0){
+carrinho = carrinho.filter(i=>i.nome!==produto.nome);
+}
+}
+renderCarrinho();
+renderProdutos(produtos);
 }
 
-atualizarCarrinho();
+function getQtd(nome){
+let item = carrinho.find(i=>i.nome===nome);
+return item?item.quantidade:0;
 }
 
-function atualizarCarrinho(){
-document.getElementById("contador").innerText=
-carrinho.reduce((a,b)=>a+b.qtd,0);
-
-let html="";
+function renderCarrinho(){
 let total=0;
-
-carrinho.forEach(i=>{
-total+=i.preco*i.qtd;
-html+=`<p>${i.nome} x${i.qtd} - R$ ${(i.preco*i.qtd).toFixed(2)}</p>`;
+const div=document.getElementById("itensCarrinho");
+div.innerHTML="";
+carrinho.forEach(p=>{
+let subtotal=p.preco*p.quantidade;
+total+=subtotal;
+div.innerHTML+=`
+<p>${p.nome} x${p.quantidade}<br>
+R$ ${subtotal.toFixed(2)}</p>
+`;
 });
-
-document.getElementById("itensCarrinho").innerHTML=html;
-document.getElementById("total").innerText=`Total: R$ ${total.toFixed(2)}`;
-}
-
-function toggleCarrinho(){
-document.getElementById("carrinho").classList.toggle("ativo");
-}
-
-function toggleEndereco(){
-const tipo=document.getElementById("tipoEntrega").value;
-document.getElementById("campoEndereco").style.display=
-tipo==="Entrega"?"block":"none";
+document.getElementById("total").innerText="Total: R$ "+total.toFixed(2);
 }
 
 function finalizarPedido(){
-if(carrinho.length===0){
-alert("Seu carrinho está vazio.");
-return;
-}
+if(carrinho.length===0)return alert("Seu carrinho está vazio.");
 
-const nome=document.getElementById("clienteNome").value.trim();
-const tipoEntrega=document.getElementById("tipoEntrega").value;
-const endereco=document.getElementById("clienteEndereco").value.trim();
-const pagamento=document.getElementById("formaPagamento").value;
-const obs=document.getElementById("observacoes").value.trim();
+let nome=document.getElementById("nomeCliente").value;
+let entrega=document.getElementById("tipoEntrega").value;
+let endereco=document.getElementById("endereco").value;
+let pagamento=document.getElementById("pagamento").value;
+let obs=document.getElementById("obs").value;
 
-if(!nome || !tipoEntrega || !pagamento){
-alert("Preencha nome, tipo de pedido e forma de pagamento.");
-return;
-}
+let mensagem="✨ Pedido Odòmáiyà ✨\n\n🛍️ Itens:\n\n";
 
-if(tipoEntrega==="Entrega" && !endereco){
-alert("Informe o endereço completo.");
-return;
-}
-
-let texto="✨ Pedido Odòmáiyà ✨\n\n🛍️ Itens:\n\n";
 let total=0;
 
-carrinho.forEach(i=>{
-const subtotal=i.preco*i.qtd;
+carrinho.forEach(p=>{
+let subtotal=p.preco*p.quantidade;
 total+=subtotal;
-
-texto+=`• ${i.nome}\n   Quantidade: ${i.qtd}\n   Valor unitário: R$ ${i.preco.toFixed(2)}\n   Subtotal: R$ ${subtotal.toFixed(2)}\n\n`;
+mensagem+=`• ${p.nome}\nQuantidade: ${p.quantidade}\nSubtotal: R$ ${subtotal.toFixed(2)}\n\n`;
 });
 
-texto+=`💰 Total dos itens: R$ ${total.toFixed(2)}\n\n`;
-texto+=`👤 Cliente: ${nome}\n`;
-texto+=`📦 Tipo: ${tipoEntrega}\n`;
+mensagem+=`💰 Total do Pedido: R$ ${total.toFixed(2)}\n\n`;
+mensagem+=`👤 Cliente: ${nome}\n`;
+mensagem+=`📦 Entrega: ${entrega}\n`;
 
-if(tipoEntrega==="Entrega"){
-texto+=`📍 Endereço: ${endereco}\n🚚 Taxa será confirmada.\n`;
+if(entrega==="Entrega"){
+mensagem+=`🏠 Endereço: ${endereco}\n`;
+mensagem+="🚚 Lembrar: valor da taxa de entrega será informado.\n";
 }
 
-texto+=`💳 Pagamento: ${pagamento}\n`;
+mensagem+=`💳 Pagamento: ${pagamento}\n`;
 
 if(obs){
-texto+=`📝 Observações: ${obs}\n`;
+mensagem+=`📝 Observações: ${obs}\n`;
 }
 
-texto+="\nAguardo confirmação. 🧿";
-
-window.open("https://wa.me/5554996048808?text="+encodeURIComponent(texto));
+window.open(`https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`,"_blank");
 }
-
-function abrirModal(src){
-document.getElementById("modal").style.display="flex";
-document.getElementById("modalImg").src=src;
-}
-
-function fecharModal(){
-document.getElementById("modal").style.display="none";
-}
-
-function scrollProdutos(){
-document.querySelector(".produtos-section").scrollIntoView({behavior:"smooth"});
-}
-
-function popularCategorias(){
-let select=document.getElementById("categoriaFiltro");
-select.innerHTML="<option value=''>Categorias</option>";
-let cats=[...new Set(produtos.map(p=>p.categoria))];
-cats.forEach(c=>{
-select.innerHTML+=`<option value="${c}">${c}</option>`;
-});
-}
-
-document.getElementById("busca").addEventListener("input",e=>{
-let v=e.target.value.toLowerCase();
-renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(v)));
-});
-
-document.getElementById("categoriaFiltro").addEventListener("change",e=>{
-let v=e.target.value;
-if(!v) renderizar();
-else renderizar(produtos.filter(p=>p.categoria===v));
-});
-
-document.getElementById("ordenar").addEventListener("change",e=>{
-if(e.target.value==="menor") renderizar([...produtos].sort((a,b)=>a.preco-b.preco));
-if(e.target.value==="maior") renderizar([...produtos].sort((a,b)=>b.preco-a.preco));
-});
-
-carregarProdutos();
