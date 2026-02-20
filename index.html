@@ -3,87 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmáiyà Artigos Religiosos</title>
-
+<title> 🧿 Odòmáiyà Artigos Religiosos</title>
 <link rel="stylesheet" href="style.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
 <body>
 
-<canvas id="particulas"></canvas>
+<canvas id="particles"></canvas>
 
-<header class="header">
-  <div class="header-container">
-    <div>
-      <h1 class="logo">🧿 Odòmáiyà</h1>
-      <p class="sub">Artigos Religiosos</p>
-    </div>
+<header>
+  <div class="logo">🧿 Odòmáiyà</div>
+  <nav class="menu-categories">
+    <button onclick="filtrarCategoria('Todos')">Todos</button>
+    <button onclick="filtrarCategoria('Bebidas')">Bebidas</button>
+    <button onclick="filtrarCategoria('Charutos')">Charutos</button>
+    <button onclick="filtrarCategoria('Guias')">Guias</button>
+    <button onclick="filtrarCategoria('Imagens')">Imagens</button>
+    <button onclick="filtrarCategoria('Roupas')">Roupas</button>
+    <button onclick="filtrarCategoria('Velas')">Velas</button>
+  </nav>
+  <div class="cart-icon" onclick="toggleCart()">
+    🛒 <span id="cart-count">0</span>
   </div>
 </header>
 
 <section class="hero">
-  <div class="hero-text">
-    <h2>Conectando fé, ancestralidade e força espiritual</h2>
-    <p>Produtos selecionados com respeito às tradições de matriz africana.</p>
-    <button class="btn-principal" onclick="abrirCheckout()">Finalizar Pedido</button>
-  </div>
+  <h1>Conectando fé, ancestralidade e força espiritual</h1>
+  <p>Produtos selecionados com respeito às tradições de matriz africana.</p>
 </section>
 
-<section class="produtos-container">
-  <h2 class="titulo-secao">Produtos em Destaque</h2>
-  <div class="produtos-grid" id="listaProdutos"></div>
+<section class="products">
+  <div id="product-list"></div>
 </section>
 
-<section class="contato">
-  <h2>Contato e Localização</h2>
-
-  <p>
-    <a class="link-endereco" target="_blank"
-    href="https://www.google.com/maps/search/?api=1&query=Odomaiya+Artigos+Religiosos+R.+Sete+de+Agosto,+28+-+Centro,+Passo+Fundo+-+RS,+99025-030">
-    📍 Odòmáiyà Artigos Religiosos  
-    R. Sete de Agosto, 28 - Centro  
-    Passo Fundo - RS, 99025-030
-    </a>
-  </p>
-
-  <p>📞 WhatsApp: <a class="link-endereco" target="_blank"
-  href="https://wa.me/555496048808">54 9604-8808</a></p>
-
-  <p>📸 Instagram:
-  <a class="link-endereco" target="_blank"
-  href="https://www.instagram.com/odomaia_artigosreligiosos">
-  @odomaia_artigosreligiosos
-  </a></p>
-
-</section>
+<!-- CART -->
+<div class="cart" id="cart">
+  <h3>Seu Carrinho</h3>
+  <div id="cart-items"></div>
+  <h4>Total: R$ <span id="cart-total">0.00</span></h4>
+  <button onclick="openCheckout()">Finalizar Pedido</button>
+</div>
 
 <!-- CHECKOUT -->
-<div id="checkoutModal" class="checkout-modal">
+<div class="checkout-overlay" id="checkout">
   <div class="checkout-box">
-    <h2>Finalizar Pedido</h2>
-
-    <input type="text" id="nomeCliente" placeholder="Seu nome">
-
-    <select id="tipoEntrega">
-      <option value="retirada">Retirada na loja</option>
-      <option value="entrega">Entrega</option>
-    </select>
-
-    <input type="text" id="enderecoCliente" placeholder="Endereço completo" style="display:none;">
-
-    <select id="pagamento">
-      <option>Pix</option>
-      <option>Cartão</option>
-      <option>Dinheiro</option>
-    </select>
-
-    <button class="btn-confirmar" onclick="confirmarPedido()">Confirmar no WhatsApp</button>
+    <div id="checkout-step"></div>
   </div>
 </div>
+
+<audio id="spiritualSound" src="https://assets.mixkit.co/sfx/preview/mixkit-magic-sparkles-871.mp3"></audio>
 
 <script src="app.js"></script>
 </body>
