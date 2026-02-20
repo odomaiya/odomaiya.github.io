@@ -6,67 +6,41 @@ body{
   overflow-x:hidden;
 }
 
-/* HEADER */
-.header{
-  background:#0c2f47;
-  padding:20px 40px;
+#particulas{
+  position:fixed;
+  inset:0;
+  z-index:-1;
 }
 
-.header-container{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  max-width:1200px;
-  margin:auto;
+/* HEADER */
+.header{
+  padding:20px 40px;
+  background:#0c2f47;
 }
 
 .logo{
   font-family:'Playfair Display',serif;
-  font-size:28px;
   margin:0;
-}
-
-.sub{
-  font-size:14px;
-  opacity:.8;
-}
-
-.menu-desktop{
-  display:flex;
-  gap:30px;
-}
-
-.menu-desktop a{
-  text-decoration:none;
-  color:#fff;
-  font-weight:500;
 }
 
 /* HERO */
 .hero{
-  padding:80px 20px;
+  padding:60px 20px;
   text-align:center;
   background:linear-gradient(135deg,#0f3d5c,#1f6c9b);
 }
 
 .hero h2{
   font-family:'Playfair Display',serif;
-  font-size:36px;
-  max-width:700px;
-  margin:auto;
-}
-
-.hero p{
-  margin-top:15px;
-  opacity:.85;
+  font-size:32px;
 }
 
 /* BOTÕES */
 .btn-principal,.btn-confirmar{
   background:#d4af37;
   border:none;
-  padding:14px 30px;
-  border-radius:50px;
+  padding:12px 28px;
+  border-radius:40px;
   cursor:pointer;
   font-weight:600;
   margin-top:20px;
@@ -79,60 +53,44 @@ body{
 
 /* PRODUTOS */
 .produtos-container{
+  padding:60px 20px;
   max-width:1200px;
   margin:auto;
-  padding:60px 20px;
-}
-
-.titulo-secao{
-  text-align:center;
-  font-family:'Playfair Display',serif;
-  margin-bottom:40px;
 }
 
 .produtos-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:30px;
+  gap:25px;
 }
 
 .card{
-  background:#ffffff10;
-  border-radius:20px;
+  background:#ffffff15;
   padding:20px;
-  text-align:center;
+  border-radius:20px;
   backdrop-filter:blur(8px);
-  transition:.4s;
-}
-
-.card:hover{
-  transform:translateY(-10px);
+  text-align:center;
 }
 
 .card img{
   width:100%;
-  border-radius:15px;
+  border-radius:12px;
 }
 
 .card h3{
-  margin:15px 0 5px;
-}
-
-.card p{
-  opacity:.8;
+  margin:10px 0 5px;
 }
 
 /* CONTATO */
 .contato{
   text-align:center;
-  padding:60px 20px;
+  padding:50px 20px;
   background:#0c2f47;
 }
 
 .link-endereco{
   color:#d4af37;
   text-decoration:none;
-  font-weight:500;
 }
 
 /* CHECKOUT */
@@ -152,47 +110,13 @@ body{
   border-radius:20px;
   width:90%;
   max-width:400px;
-}
-
-.checkout-box input{
-  width:100%;
-  padding:12px;
-  margin:15px 0;
-  border-radius:10px;
-  border:1px solid #ccc;
-}
-
-/* LOADER */
-.loader-overlay{
-  position:fixed;
-  inset:0;
-  background:#ffffffee;
-  display:none;
-  align-items:center;
-  justify-content:center;
+  display:flex;
   flex-direction:column;
 }
 
-.loader-circle{
-  width:60px;
-  height:60px;
-  border:6px solid #ddd;
-  border-top:6px solid #0f3d5c;
-  border-radius:50%;
-  animation:girar 1s linear infinite;
-}
-
-@keyframes girar{
-  to{transform:rotate(360deg)}
-}
-
-/* RESPONSIVO */
-@media(max-width:768px){
-  .menu-desktop{
-    display:none;
-  }
-
-  .hero h2{
-    font-size:26px;
-  }
+.checkout-box input,.checkout-box select{
+  margin:10px 0;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #ccc;
 }
