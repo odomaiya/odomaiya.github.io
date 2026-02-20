@@ -1,119 +1,53 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧿 Odòmáiyà Artigos Religiosos</title>
 
-<title>Odòmáiyà Artigos Religiosos | Loja Oficial</title>
-
-<meta name="description" content="Odòmáiyà Artigos Religiosos em Passo Fundo - RS. Velas, guias, imagens, roupas, bebidas e artigos espirituais com qualidade e respeito à ancestralidade.">
-
-<link rel="stylesheet" href="estilo.css">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
 <header class="topo">
-  <div class="logo">Odòmáiyà</div>
-
-  <div class="mobile-busca">
-    <input type="text" id="busca" placeholder="Buscar produto..." onkeyup="buscar()">
-  </div>
-
-  <div class="categorias-scroll">
-    <button onclick="filtrar('Todos')">Todos</button>
-    <button onclick="filtrar('Bebidas')">Bebidas</button>
-    <button onclick="filtrar('Charutos')">Charutos</button>
-    <button onclick="filtrar('Guias')">Guias</button>
-    <button onclick="filtrar('Imagens')">Imagens</button>
-    <button onclick="filtrar('Roupas')">Roupas</button>
-    <button onclick="filtrar('Velas')">Velas</button>
-  </div>
-
-  <div class="carrinho-topo">
-    <button onclick="abrirCarrinho()">🛒 <span id="contador">0</span></button>
-  </div>
+  <h1>🧿 Odòmáiyà Artigos Religiosos</h1>
+  <p class="frase">Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
 </header>
 
-<section class="banner">
-  <h1>Artigos Religiosos</h1>
-  <p>Conectando fé, ancestralidade e força espiritual.</p>
-</section>
+<main id="produtos" class="produtos"></main>
 
-<section id="produtos" class="grid"></section>
+<div class="cart-icon" onclick="abrirCarrinho()">
+  🛒 <span id="contador">0</span>
+</div>
 
 <div id="carrinho" class="carrinho">
-  <h3>Seu Pedido</h3>
+  <h2>Seu Pedido</h2>
   <div id="itensCarrinho"></div>
-  <h4 id="total">Total: R$ 0,00</h4>
-
-  <input id="clienteNome" placeholder="Seu nome">
-  <select id="tipoEntrega">
-    <option>Retirada na loja</option>
-    <option>Entrega</option>
-  </select>
-
-  <input id="endereco" placeholder="Endereço completo (se entrega)">
-  <select id="pagamento">
-    <option>Pix</option>
-    <option>Crédito</option>
-    <option>Débito</option>
-    <option>Dinheiro</option>
-  </select>
-<input type="text" id="nomeCliente" placeholder="Seu nome">
-
-<select id="tipoEntrega" onchange="alternarEntrega(this.value)">
-  <option value="retirada">Retirar na loja</option>
-  <option value="entrega">Entrega</option>
-</select>
-
-<div id="campoEndereco" style="display:none;">
-  <input type="text" id="enderecoCliente" placeholder="Digite seu endereço completo">
+  <h3 id="total">Total: R$ 0,00</h3>
+  <button class="finalizar" onclick="abrirCheckout()">Finalizar Pedido</button>
 </div>
 
-<div id="infoRetirada" style="display:block; font-size:14px; margin:8px 0;">
-  📍 R. Sete de Agosto, 28 - Centro, Passo Fundo - RS
-</div>
+<!-- CHECKOUT -->
+<div id="checkoutModal" class="checkout-modal">
+  <div class="checkout-container">
+    <h2>Finalizar Pedido</h2>
 
-<select id="formaPagamento">
-  <option>Pix</option>
-  <option>Crédito</option>
-  <option>Débito</option>
-  <option>Dinheiro</option>
-</select>
+    <input type="text" id="nomeCliente" placeholder="Seu nome completo">
 
-<textarea id="observacoes" placeholder="Observações (opcional)"></textarea>
-  
-  <button onclick="finalizarPedido()">Finalizar no WhatsApp</button>
-</div>
-
-<footer>
-  <div class="rodape-info">
-    <strong>Odòmáiyà Artigos Religiosos</strong><br><br>
-
-    <a class="endereco"
-    href="https://www.google.com/maps/search/?api=1&query=Odomaiya+Artigos+Religiosos+R.+Sete+de+Agosto,+28+-+Centro,+Passo+Fundo+-+RS,+99025-030"
-    target="_blank">
-    📍 Odomaiya Artigos Religiosos  
-    R. Sete de Agosto, 28 - Centro  
-    Passo Fundo - RS, 99025-030
-    </a>
+    <button class="btn-confirmar" onclick="confirmarPedidoCheckout()">
+      Confirmar Pedido no WhatsApp
+    </button>
   </div>
+</div>
 
-  <p>© 2026 Odòmáiyà Artigos Religiosos</p>
-</footer>
+<!-- LOADER -->
+<div id="loaderOverlay" class="loader-overlay">
+  <div class="loader-circle"></div>
+  <div class="loader-text">Enviando seu pedido...</div>
+</div>
 
 <script src="app.js"></script>
-
-<script>
-if ('serviceWorker' in navigator) {
-navigator.serviceWorker.register('service-worker.js');
-}
-</script>
-
 </body>
 </html>
