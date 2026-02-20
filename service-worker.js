@@ -4,7 +4,7 @@ caches.open('odomaia-v1').then(cache=>{
 return cache.addAll([
 '/',
 '/index.html',
-'/estilo.css',
+'/style.css',
 '/app.js'
 ]);
 })
