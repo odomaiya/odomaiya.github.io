@@ -1,247 +1,255 @@
+/* ============================
+   CONFIGURAÇÕES
+============================ */
+const CONFIG = {
+  planilhaCSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7j4_2qhc-W7EscYgFNEoWX-jEUsfS8xPSnOkEGj7uf1xSUFKkANQ8YQ57UUZsPytia7Vq6iShxHGy/pub?gid=1004684059&single=true&output=csv",
+  whatsapp: "555496048808"
+};
+
 let produtos = [];
 let carrinho = [];
-let etapaCheckout = 1;
+let etapa = 1;
 
-/* =========================
+/* ============================
    CARREGAR PRODUTOS CSV
-========================= */
+============================ */
 async function carregarProdutos() {
-  try {
-    const res = await fetch(CONFIG.planilhaCSV);
-    const texto = await res.text();
-    const linhas = texto.split("\n").slice(1);
+  const res = await fetch(CONFIG.planilhaCSV);
+  const texto = await res.text();
 
-    produtos = linhas.map(linha => {
-      const [nome, preco, categoria, imagem, estoque] = linha.split(",");
-      return {
-        nome: nome?.trim(),
-        preco: parseFloat(preco),
-        categoria: categoria?.trim(),
-        imagem: imagem?.trim(),
-        estoque: parseInt(estoque)
-      };
-    }).filter(p => p.nome);
+  const linhas = texto.split("\n").slice(1);
 
-    renderCategorias();
-    renderProdutos(produtos);
+  produtos = linhas.map(linha => {
+    const [nome, preco, categoria, imagem, estoque] = linha.split(",");
 
-  } catch (e) {
-    console.error("Erro ao carregar CSV:", e);
-  }
+    return {
+      nome: nome?.trim(),
+      preco: parseFloat(preco),
+      categoria: categoria?.trim(),
+      imagem: imagem?.trim(),
+      estoque: parseInt(estoque)
+    };
+  }).filter(p => p.nome);
+
+  renderCategorias();
+  renderProdutos(produtos);
 }
 
-/* =========================
-   RENDER CATEGORIAS
-========================= */
+/* ============================
+   CATEGORIAS
+============================ */
 function renderCategorias() {
   const categorias = [...new Set(produtos.map(p => p.categoria))].sort();
   const container = document.getElementById("categorias");
+
   container.innerHTML = `<button onclick="filtrarCategoria('')">Todos</button>`;
 
   categorias.forEach(cat => {
-    container.innerHTML += `<button onclick="filtrarCategoria('${cat}')">${cat}</button>`;
+    container.innerHTML += `
+      <button onclick="filtrarCategoria('${cat}')">${cat}</button>
+    `;
   });
 }
 
 function filtrarCategoria(cat) {
   if (!cat) return renderProdutos(produtos);
-  renderProdutos(produtos.filter(p => p.categoria === cat));
+  const filtrado = produtos.filter(p => p.categoria === cat);
+  renderProdutos(filtrado);
 }
 
-/* =========================
+/* ============================
    RENDER PRODUTOS
-========================= */
+============================ */
 function renderProdutos(lista) {
   const container = document.getElementById("produtos");
   container.innerHTML = "";
 
-  lista.forEach((p, index) => {
+  lista.forEach(produto => {
+    const qtd = carrinho.find(i => i.nome === produto.nome)?.qtd || 0;
+
     container.innerHTML += `
       <div class="card">
-        <img src="${p.imagem}" loading="lazy">
-        <h3>${p.nome}</h3>
-        <div class="preco">R$ ${p.preco.toFixed(2)}</div>
+        <img src="${produto.imagem}" loading="lazy">
+        <h3>${produto.nome}</h3>
+        <div class="preco">R$ ${produto.preco.toFixed(2)}</div>
         <div class="estoque">
-          ${p.estoque > 0 ? `Restam ${p.estoque} unidades` : "Indisponível"}
+          ${produto.estoque > 0 
+            ? `Restam ${produto.estoque} unidades` 
+            : "Indisponível"}
         </div>
+
         <div class="controle">
-          <button onclick="alterarQtd(${index}, -1)">−</button>
-          <span id="qtd-${index}">0</span>
-          <button onclick="alterarQtd(${index}, 1)">+</button>
+          <button onclick="alterarQtd('${produto.nome}', -1)">−</button>
+          <span id="qtd-${produto.nome}">${qtd}</span>
+          <button onclick="alterarQtd('${produto.nome}', 1)">+</button>
         </div>
       </div>
     `;
   });
 }
 
-/* =========================
+/* ============================
    ALTERAR QUANTIDADE
-========================= */
-function alterarQtd(index, valor) {
-  const produto = produtos[index];
-  let item = carrinho.find(i => i.nome === produto.nome);
+============================ */
+function alterarQtd(nome, delta) {
+  const produto = produtos.find(p => p.nome === nome);
+  let item = carrinho.find(i => i.nome === nome);
 
-  if (!item && valor > 0) {
+  if (!item && delta > 0) {
     carrinho.push({ ...produto, qtd: 1 });
   } else if (item) {
-    item.qtd += valor;
+    item.qtd += delta;
     if (item.qtd <= 0) {
-      carrinho = carrinho.filter(i => i.nome !== produto.nome);
+      carrinho = carrinho.filter(i => i.nome !== nome);
     }
   }
 
   atualizarCarrinho();
+  renderProdutos(produtos);
 }
 
-/* =========================
+/* ============================
    ATUALIZAR CARRINHO
-========================= */
+============================ */
 function atualizarCarrinho() {
-  const container = document.getElementById("itensCarrinho");
-  const totalEl = document.getElementById("totalCarrinho");
-  container.innerHTML = "";
+  const lista = document.getElementById("listaCarrinho");
+  const totalEl = document.getElementById("total");
+  const contador = document.getElementById("contador");
 
+  if (!lista) return;
+
+  lista.innerHTML = "";
   let total = 0;
 
-  carrinho.forEach((item, i) => {
-    const subtotal = item.preco * item.qtd;
-    total += subtotal;
+  carrinho.forEach(item => {
+    total += item.preco * item.qtd;
 
-    container.innerHTML += `
-      <div style="margin-bottom:10px">
-        <strong>${item.nome}</strong><br>
-        ${item.qtd}x R$ ${item.preco.toFixed(2)}
-        <button onclick="removerItem(${i})">❌</button>
+    lista.innerHTML += `
+      <div class="item-carrinho">
+        <span>${item.nome} x${item.qtd}</span>
+        <span>R$ ${(item.preco * item.qtd).toFixed(2)}</span>
       </div>
     `;
   });
 
   totalEl.innerText = `R$ ${total.toFixed(2)}`;
-  document.getElementById("contadorCarrinho").innerText = carrinho.reduce((s,i)=>s+i.qtd,0);
+  contador.innerText = carrinho.reduce((s, i) => s + i.qtd, 0);
 }
 
-/* =========================
-   REMOVER ITEM
-========================= */
-function removerItem(i){
-  carrinho.splice(i,1);
-  atualizarCarrinho();
+/* ============================
+   ABRIR CHECKOUT
+============================ */
+function abrirCheckout() {
+  if (carrinho.length === 0) {
+    alert("Seu carrinho está vazio.");
+    return;
+  }
+
+  document.getElementById("checkout").classList.add("ativo");
+  etapa = 1;
+  mostrarEtapa();
 }
 
-/* =========================
-   BUSCA
-========================= */
-document.getElementById("busca").addEventListener("input", e=>{
-  const termo = e.target.value.toLowerCase();
-  renderProdutos(produtos.filter(p => p.nome.toLowerCase().includes(termo)));
-});
-
-/* =========================
-   FILTRO PREÇO
-========================= */
-document.getElementById("filtroPreco").addEventListener("change", e=>{
-  let lista = [...produtos];
-  if(e.target.value==="menor") lista.sort((a,b)=>a.preco-b.preco);
-  if(e.target.value==="maior") lista.sort((a,b)=>b.preco-a.preco);
-  renderProdutos(lista);
-});
-
-/* =========================
-   CARRINHO UI
-========================= */
-function abrirCarrinho(){
-  document.getElementById("carrinho").style.right="0";
-  document.getElementById("overlay").style.display="block";
+function fecharCheckout() {
+  document.getElementById("checkout").classList.remove("ativo");
 }
 
-function fecharCarrinho(){
-  document.getElementById("carrinho").style.right="-400px";
-  document.getElementById("overlay").style.display="none";
+/* ============================
+   ETAPAS CHECKOUT
+============================ */
+function mostrarEtapa() {
+  document.querySelectorAll(".etapa").forEach(e => e.style.display = "none");
+  document.getElementById(`etapa-${etapa}`).style.display = "block";
 }
 
-/* =========================
-   CHECKOUT ETAPAS
-========================= */
-function iniciarCheckout(){
-  if(carrinho.length===0) return alert("Adicione produtos ao carrinho.");
-  document.getElementById("checkoutOverlay").style.display="block";
-  document.getElementById("checkout").style.display="block";
-}
-
-function proximaEtapa(){
-  document.querySelector(`#etapa${etapaCheckout}`).classList.add("hidden");
-  etapaCheckout++;
-  document.querySelector(`#etapa${etapaCheckout}`).classList.remove("hidden");
-}
-
-function finalizarPedido(){
-  document.getElementById("loader").classList.remove("hidden");
-
-  setTimeout(()=>{
-    const nome = document.getElementById("nomeCliente").value;
-    const tipo = document.getElementById("tipoEntrega").value;
-    const pagamento = document.getElementById("pagamento").value;
-    const endereco = document.getElementById("endereco").value;
-
-    let total = carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);
-
-    let mensagem = `✨ *Pedido Odòmáiyà* ✨\n\n`;
-    mensagem += `👤 Cliente: ${nome}\n\n🛍️ Itens:\n`;
-
-    carrinho.forEach(item=>{
-      mensagem += `• ${item.nome}\n   ${item.qtd}x R$ ${item.preco.toFixed(2)}\n`;
-    });
-
-    mensagem += `\n💰 Total: R$ ${total.toFixed(2)}\n`;
-    mensagem += `🚚 Tipo: ${tipo}\n`;
-
-    if(tipo==="Entrega") mensagem += `📍 Endereço: ${endereco}\n`;
-    mensagem += `💳 Pagamento: ${pagamento}\n`;
-    mensagem += `📦 Taxa de entrega será informada.\n`;
-
-    const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensagem)}`;
-
-    document.getElementById("loader").classList.add("hidden");
-    document.getElementById("sucesso").classList.remove("hidden");
-
-    soltarConfete();
-    tocarSom();
-
-    setTimeout(()=>{
-      window.open(url,"_blank");
-    },2000);
-
-  },1500);
-}
-
-/* =========================
-   CONFETE BRANCO
-========================= */
-function soltarConfete(){
-  for(let i=0;i<30;i++){
-    let el=document.createElement("div");
-    el.style.position="fixed";
-    el.style.width="6px";
-    el.style.height="6px";
-    el.style.background="white";
-    el.style.top=Math.random()*100+"%";
-    el.style.left=Math.random()*100+"%";
-    el.style.borderRadius="50%";
-    el.style.opacity="0.8";
-    el.style.animation="brilho 2s linear";
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),2000);
+function proximaEtapa() {
+  if (etapa < 3) {
+    etapa++;
+    mostrarEtapa();
   }
 }
 
-/* =========================
-   SOM SUAVE
-========================= */
-function tocarSom(){
-  const audio=new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_115b9c87b5.mp3");
-  audio.volume=0.2;
-  audio.play();
+function etapaAnterior() {
+  if (etapa > 1) {
+    etapa--;
+    mostrarEtapa();
+  }
 }
 
-/* ========================= */
-carregarProdutos();
+/* ============================
+   ENTREGA DINÂMICA
+============================ */
+function tipoEntrega(valor) {
+  const campoEndereco = document.getElementById("campo-endereco");
+  const avisoRetirada = document.getElementById("aviso-retirada");
+
+  if (valor === "entrega") {
+    campoEndereco.style.display = "block";
+    avisoRetirada.style.display = "none";
+  } else {
+    campoEndereco.style.display = "none";
+    avisoRetirada.style.display = "block";
+  }
+}
+
+/* ============================
+   FINALIZAR PEDIDO
+============================ */
+function finalizarPedido() {
+
+  const nome = document.getElementById("cliente-nome").value;
+  const entrega = document.querySelector('input[name="entrega"]:checked')?.value;
+  const endereco = document.getElementById("cliente-endereco").value;
+  const pagamento = document.getElementById("pagamento").value;
+
+  if (!nome || !entrega || !pagamento) {
+    alert("Preencha todos os campos obrigatórios.");
+    return;
+  }
+
+  let mensagem = `✨ Pedido Odòmáiyà ✨\n\n`;
+  mensagem += `👤 Cliente: ${nome}\n\n`;
+  mensagem += `🛍️ Itens:\n`;
+
+  let total = 0;
+
+  carrinho.forEach(item => {
+    const subtotal = item.preco * item.qtd;
+    total += subtotal;
+
+    mensagem += `• ${item.nome}\n`;
+    mensagem += `   Qtd: ${item.qtd}\n`;
+    mensagem += `   Subtotal: R$ ${subtotal.toFixed(2)}\n\n`;
+  });
+
+  mensagem += `💰 Total: R$ ${total.toFixed(2)}\n`;
+  mensagem += `🚚 Tipo: ${entrega}\n`;
+
+  if (entrega === "entrega") {
+    mensagem += `📍 Endereço: ${endereco}\n`;
+    mensagem += `⚠️ Taxa de entrega será informada.\n`;
+  } else {
+    mensagem += `📍 Retirada na loja.\n`;
+  }
+
+  mensagem += `💳 Pagamento: ${pagamento}\n\n`;
+  mensagem += `Aguardo confirmação 🙏`;
+
+  const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensagem)}`;
+
+  document.getElementById("loader").style.display = "flex";
+
+  setTimeout(() => {
+    window.open(url, "_blank");
+    document.getElementById("loader").style.display = "none";
+    fecharCheckout();
+    carrinho = [];
+    atualizarCarrinho();
+    renderProdutos(produtos);
+  }, 1500);
+}
+
+/* ============================
+   INICIAR
+============================ */
+document.addEventListener("DOMContentLoaded", carregarProdutos);
