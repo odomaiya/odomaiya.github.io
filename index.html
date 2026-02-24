@@ -5,270 +5,265 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Odòmàiyá Artigos Religiosos</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
---dark:#0d1b2a;
---dark2:#1b263b;
---silver:#cbd5e1;
---lux:#0f766e;
---light:#f8fafc;
+--azul:#0d1b2a;
+--azul2:#1b263b;
+--verde:#16a34a;
+--cinza:#f1f5f9;
+--branco:#ffffff;
 }
 
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
 
-body{
-font-family:'Inter',sans-serif;
-background:var(--light);
-color:#111;
-}
+body{background:var(--cinza)}
 
 header{
-background:linear-gradient(135deg,var(--dark),var(--dark2));
+background:linear-gradient(135deg,var(--azul),var(--azul2));
+color:white;
 text-align:center;
-padding:60px 20px 80px 20px;
-position:relative;
+padding:30px 20px;
+border-bottom-left-radius:25px;
+border-bottom-right-radius:25px;
 }
 
-.logo-wrapper{
-width:160px;
-height:160px;
-margin:0 auto 20px auto;
+h1{font-size:22px}
+.sub{font-size:14px;opacity:0.8}
+
+.search{
+padding:15px;
+}
+
+.search input{
+width:100%;
+padding:14px;
+border:none;
+border-radius:15px;
 background:white;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 20px 40px rgba(0,0,0,0.25);
-}
-
-.logo-wrapper img{
-max-width:120px;
-height:auto;
-object-fit:contain;
-}
-
-h1{
-font-family:'Playfair Display',serif;
-color:white;
-font-size:42px;
-letter-spacing:2px;
-}
-
-.subtitle{
-color:var(--silver);
-margin-top:8px;
-}
-
-.cart-btn{
-position:fixed;
-top:25px;
-right:25px;
-background:var(--dark2);
-color:white;
-padding:12px 20px;
-border-radius:50px;
-font-weight:600;
-cursor:pointer;
-box-shadow:0 10px 25px rgba(0,0,0,0.3);
-}
-
-.cart-btn span{
-background:white;
-color:var(--dark2);
-padding:3px 9px;
-border-radius:50px;
-margin-left:6px;
+box-shadow:0 4px 15px rgba(0,0,0,0.08);
 }
 
 .products{
-max-width:1300px;
-margin:-50px auto 60px auto;
+padding:15px;
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:30px;
-padding:0 20px;
+grid-template-columns:1fr 1fr;
+gap:15px;
 }
 
 .card{
 background:white;
 border-radius:18px;
 overflow:hidden;
-box-shadow:0 20px 50px rgba(0,0,0,0.08);
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-10px);
+box-shadow:0 5px 20px rgba(0,0,0,0.05);
+display:flex;
+flex-direction:column;
 }
 
 .card img{
 width:100%;
-height:250px;
+height:140px;
 object-fit:cover;
 }
 
-.card-content{
-padding:20px;
+.info{
+padding:10px;
+flex:1;
+display:flex;
+flex-direction:column;
 }
 
 .price{
-font-weight:700;
-font-size:20px;
+font-weight:600;
+font-size:14px;
 }
 
 .old{
 text-decoration:line-through;
 color:red;
-font-size:14px;
-margin-right:10px;
+font-size:12px;
+}
+
+.stock{
+font-size:11px;
+opacity:0.6;
 }
 
 button{
-margin-top:15px;
-width:100%;
-padding:12px;
+margin-top:auto;
+padding:8px;
 border:none;
 border-radius:10px;
-background:var(--dark2);
+background:var(--azul2);
+color:white;
+font-size:12px;
+cursor:pointer;
+}
+
+button:disabled{
+background:#ccc;
+}
+
+.footer-bar{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 -5px 20px rgba(0,0,0,0.1);
+}
+
+.total{
+font-weight:600;
+}
+
+.checkout{
+background:var(--verde);
+padding:10px 18px;
+border-radius:30px;
 color:white;
 font-weight:600;
+border:none;
 cursor:pointer;
-transition:.3s;
-}
-
-button:hover{
-background:var(--lux);
-}
-
-footer{
-background:var(--dark);
-color:white;
-padding:40px 20px;
-text-align:center;
-}
-
-.social a{
-margin:0 10px;
-color:white;
-font-size:20px;
-text-decoration:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="cart-btn" onclick="abrirCheckout()">
-🛒 Carrinho <span id="cart-count">0</span>
-</div>
-
 <header>
-<div class="logo-wrapper">
-<img src="logo.png">
-</div>
-<h1>Odòmàiyá Artigos Religiosos</h1>
-<p class="subtitle">Luxo Espiritual • Tradição • Energia</p>
+<h1>Odòmàiyá</h1>
+<p class="sub">Artigos Religiosos</p>
 </header>
 
-<div class="products" id="produtos"></div>
-
-<footer>
-<p>📍 R. Sete de Agosto, 28 - Centro, Passo Fundo - RS, 99025-030</p>
-<p>📞 (54) 9604-8808</p>
-<div class="social">
-<a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
-<a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
+<div class="search">
+<input type="text" id="busca" placeholder="Pesquisar produtos...">
 </div>
-</footer>
+
+<div class="products" id="produtos">
+<p>Carregando produtos...</p>
+</div>
+
+<div class="footer-bar">
+<div class="total">R$ <span id="total">0.00</span></div>
+<button class="checkout" onclick="finalizar()">Finalizar no WhatsApp</button>
+</div>
 
 <script>
-let carrinho = JSON.parse(localStorage.getItem("carrinho")) || []
-let produtos = []
+const CSV_URL="SUA_URL_CSV_AQUI";
 
-function atualizarCarrinho(){
-document.getElementById("cart-count").innerText = carrinho.length
-localStorage.setItem("carrinho",JSON.stringify(carrinho))
+let produtos=[];
+let carrinho=[];
+
+async function carregar(){
+let res=await fetch(CSV_URL);
+let text=await res.text();
+let linhas=text.trim().split("\n").slice(1);
+
+produtos=linhas.map(l=>{
+let c=l.split(",");
+return{
+nome:c[0],
+preco:parseFloat(c[1])||0,
+promocao:parseFloat(c[2])||0,
+categoria:c[3],
+imagem:c[4],
+estoque:parseInt(c[5])||0
+}
+});
+
+render(produtos);
 }
 
-fetch('produtos.csv')
-.then(r=>r.text())
-.then(text=>{
-let linhas=text.trim().split('\n').slice(1)
-linhas.forEach(l=>{
-let [nome,preco,promocao,categoria,imagem,estoque]=l.split(',')
-produtos.push({
-nome,
-preco:parseFloat(preco)||0,
-promocao:parseFloat(promocao)||0,
-categoria,
-imagem,
-estoque:parseInt(estoque)||0
-})
-})
-render()
-})
+function render(lista){
+let html="";
+lista.forEach((p,i)=>{
+let valor=p.promocao>0?p.promocao:p.preco;
 
-function render(){
-let container=document.getElementById("produtos")
-container.innerHTML=""
-
-produtos.forEach((p,i)=>{
-let precoFinal = p.promocao>0 ? p.promocao : p.preco
-
-container.innerHTML+=`
+html+=`
 <div class="card">
-<img src="imagens/${p.imagem}">
-<div class="card-content">
-<h3>${p.nome}</h3>
-<div>
+<img src="${p.imagem}">
+<div class="info">
+<b>${p.nome}</b>
 ${p.promocao>0?`<span class="old">R$ ${p.preco}</span>`:''}
-<span class="price">R$ ${precoFinal}</span>
-</div>
-<p>Estoque: ${p.estoque}</p>
-<button onclick="addCarrinho(${i})" ${p.estoque<=0?'disabled':''}>
-${p.estoque<=0?'Esgotado':'Adicionar ao Carrinho'}
+<span class="price">R$ ${valor.toFixed(2)}</span>
+<span class="stock">Estoque: ${p.estoque}</span>
+<button onclick="add(${i})" ${p.estoque<=0?'disabled':''}>
+${p.estoque<=0?'Esgotado':'Adicionar'}
 </button>
 </div>
-</div>`
-})
+</div>
+`;
+});
+
+document.getElementById("produtos").innerHTML=html;
 }
 
-function addCarrinho(i){
-if(produtos[i].estoque<=0)return
-produtos[i].estoque--
-carrinho.push(produtos[i])
-atualizarCarrinho()
-render()
+function add(i){
+if(produtos[i].estoque<=0)return;
+
+let valor=produtos[i].promocao>0?produtos[i].promocao:produtos[i].preco;
+
+carrinho.push({
+nome:produtos[i].nome,
+valor:valor
+});
+
+produtos[i].estoque--;
+atualizarTotal();
+render(produtos);
 }
 
-function abrirCheckout(){
-let nome=prompt("Digite seu nome:")
-if(!nome)return
-
-let tipo=prompt("Digite 1 para Retirada ou 2 para Entrega")
-let endereco=""
-if(tipo==2){
-endereco=prompt("Digite seu endereço completo:")
+function atualizarTotal(){
+let total=carrinho.reduce((s,p)=>s+p.valor,0);
+document.getElementById("total").innerText=total.toFixed(2);
 }
 
-let pagamento=prompt("Forma de pagamento (Pix, Dinheiro, Cartão):")
+function finalizar(){
+if(carrinho.length===0){
+alert("Carrinho vazio");
+return;
+}
 
-let texto=`Pedido - Odòmàiyá Artigos Religiosos\n\nCliente: ${nome}\n`
+let nome=prompt("Digite seu nome:");
+if(!nome)return;
+
+let tipo=prompt("Digite 1 para Retirada ou 2 para Entrega:");
+let endereco="";
+if(tipo=="2"){
+endereco=prompt("Digite seu endereço completo:");
+}
+
+let pagamento=prompt("Forma de pagamento (Pix, Dinheiro, Cartão):");
+
+let total=carrinho.reduce((s,p)=>s+p.valor,0);
+
+let mensagem=`✨ *Pedido - Odòmàiyá Artigos Religiosos* ✨\n\n`;
+mensagem+=`👤 Cliente: ${nome}\n\n`;
 
 carrinho.forEach(p=>{
-let valor=p.promocao>0?p.promocao:p.preco
-texto+=`${p.nome} - R$ ${valor}\n`
-})
+mensagem+=`🛍 ${p.nome} - R$ ${p.valor.toFixed(2)}\n`;
+});
 
-texto+=`\nTipo: ${tipo==2?'Entrega':'Retirada'}`
-if(endereco) texto+=`\nEndereço: ${endereco}`
-texto+=`\nPagamento: ${pagamento}`
+mensagem+=`\n💰 Total: R$ ${total.toFixed(2)}\n`;
+mensagem+=`\n📦 Tipo: ${tipo=="2"?'Entrega':'Retirada'}`;
+if(endereco) mensagem+=`\n📍 Endereço: ${endereco}`;
+mensagem+=`\n💳 Pagamento: ${pagamento}`;
 
-window.open("https://wa.me/555496048808?text="+encodeURIComponent(texto))
+window.open("https://wa.me/555496048808?text="+encodeURIComponent(mensagem));
 }
-atualizarCarrinho()
+
+document.getElementById("busca").addEventListener("input",e=>{
+let termo=e.target.value.toLowerCase();
+render(produtos.filter(p=>p.nome.toLowerCase().includes(termo)));
+});
+
+carregar();
 </script>
 
 </body>
