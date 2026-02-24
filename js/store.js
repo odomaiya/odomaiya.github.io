@@ -48,3 +48,14 @@ const Store = {
   }
 
 };
+
+let produtos = [];
+let carrinho = {};
+
+function ordenarProdutos(lista){
+  return lista.sort((a,b)=>{
+    if(a.promocao && !b.promocao) return -1;
+    if(!a.promocao && b.promocao) return 1;
+    return 0;
+  });
+}
