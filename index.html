@@ -5,75 +5,82 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🧿 Odòmáiyà Artigos Religiosos</title>
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="estilo.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<header class="topo">
-  <h1>🧿 Odòmáiyà Artigos Religiosos</h1>
-  <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+<header class="hero">
+  <div class="hero-content">
+    <h1>🧿 Odòmáiyà Artigos Religiosos</h1>
+    <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+  </div>
 </header>
 
-<section class="filtros">
+<section class="barra-topo">
+  <input type="text" id="busca" placeholder="🔎 Buscar produto...">
   <div id="categorias"></div>
 </section>
 
 <main id="produtos" class="produtos"></main>
 
-<div class="cart-btn" onclick="abrirCheckout()">
+<!-- BOTÃO CARRINHO -->
+<div class="cart-btn" onclick="abrirCarrinho()">
   🛒 <span id="contador">0</span>
+</div>
+
+<!-- CARRINHO LATERAL -->
+<div id="carrinho" class="carrinho">
+  <div class="carrinho-header">
+    <h2>Seu Pedido</h2>
+    <button onclick="fecharCarrinho()">✕</button>
+  </div>
+
+  <div id="itensCarrinho"></div>
+
+  <div class="carrinho-footer">
+    <h3>Total: <span id="total">R$ 0,00</span></h3>
+    <button class="btn-principal" onclick="abrirCheckout()">Finalizar Pedido</button>
+  </div>
 </div>
 
 <!-- CHECKOUT -->
 <div id="checkout" class="checkout">
   <div class="checkout-box">
 
-    <div id="etapa-1" class="etapa">
-      <h2>Seus Dados</h2>
-      <input type="text" id="cliente-nome" placeholder="Seu nome">
-      <button onclick="proximaEtapa()">Continuar</button>
+    <div class="checkout-header">
+      <h2>Finalizar Pedido</h2>
+      <button onclick="fecharCheckout()">✕</button>
     </div>
 
-    <div id="etapa-2" class="etapa">
-      <h2>Entrega</h2>
-
-      <label><input type="radio" name="entrega" value="Retirada" onclick="tipoEntrega('retirada')"> Retirar na loja</label>
-      <label><input type="radio" name="entrega" value="Entrega" onclick="tipoEntrega('entrega')"> Entrega</label>
-
-      <div id="campo-endereco" style="display:none">
-        <input type="text" id="cliente-endereco" placeholder="Endereço completo">
-        <small>Taxa de entrega será informada via WhatsApp</small>
+    <div class="etapas">
+      <div class="etapa ativa" id="etapa-1">
+        <input type="text" id="cliente-nome" placeholder="Seu nome">
+        <button class="btn-principal" onclick="proximaEtapa()">Continuar</button>
       </div>
 
-      <div id="aviso-retirada" style="display:none">
-        <p>📍 Retirada em:
-        <br>
-        Odomaiya Artigos Religiosos<br>
-        R. Sete de Agosto, 28 - Centro<br>
-        Passo Fundo - RS</p>
+      <div class="etapa" id="etapa-2">
+        <label><input type="radio" name="entrega" value="Retirada" onclick="tipoEntrega('retirada')"> Retirar na loja</label>
+        <label><input type="radio" name="entrega" value="Entrega" onclick="tipoEntrega('entrega')"> Entrega</label>
+
+        <div id="campo-endereco"></div>
+
+        <button onclick="voltarEtapa()">Voltar</button>
+        <button class="btn-principal" onclick="proximaEtapa()">Continuar</button>
       </div>
 
-      <button onclick="etapaAnterior()">Voltar</button>
-      <button onclick="proximaEtapa()">Continuar</button>
-    </div>
+      <div class="etapa" id="etapa-3">
+        <select id="pagamento">
+          <option value="">Forma de pagamento</option>
+          <option>Crédito</option>
+          <option>Débito</option>
+          <option>Pix</option>
+          <option>Dinheiro</option>
+        </select>
 
-    <div id="etapa-3" class="etapa">
-      <h2>Pagamento</h2>
-
-      <select id="pagamento">
-        <option value="">Forma de pagamento</option>
-        <option>Crédito</option>
-        <option>Débito</option>
-        <option>Pix</option>
-        <option>Dinheiro</option>
-      </select>
-
-      <div id="listaCarrinho"></div>
-      <h3>Total: <span id="total">R$ 0,00</span></h3>
-
-      <button onclick="etapaAnterior()">Voltar</button>
-      <button onclick="finalizarPedido()">Finalizar Pedido</button>
+        <button onclick="voltarEtapa()">Voltar</button>
+        <button class="btn-principal" onclick="finalizarPedido()">Confirmar Pedido</button>
+      </div>
     </div>
 
   </div>
@@ -81,6 +88,7 @@
 
 <div id="loader" class="loader">✨ Enviando pedido...</div>
 
+<script src="config.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
