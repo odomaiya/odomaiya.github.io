@@ -3,54 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmáiyà Artigos Religiosos</title>
+<title>Odòmàiyá Artigos Religiosos</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 
 <body>
 
-<header>
+<header class="topo">
   <div class="logo-area">
     <img src="logo.png" class="logo">
     <div>
-      <h1>Odòmáiyà</h1>
-      <span>Artigos Religiosos</span>
+      <h1>Odòmàiyá</h1>
+      <p>Artigos Religiosos</p>
     </div>
   </div>
-  <button onclick="abrirCarrinho()">🛒 Carrinho</button>
+
+  <button class="btn-carrinho" onclick="abrirCarrinho()">🛒</button>
 </header>
 
 <section class="busca-area">
-  <input type="text" id="busca" placeholder="Buscar produto...">
+  <input type="text" id="busca" placeholder="Buscar produto..." oninput="buscarProduto()">
 </section>
 
 <section id="produtos" class="grid"></section>
 
-<footer>
-  <div class="footer-content">
-    <p>Odòmáiyà Artigos Religiosos</p>
-    <p>Endereço da Loja Aqui</p>
-    <p>WhatsApp: (54) 9604-8808</p>
-  </div>
+<footer class="rodape">
+  <p><strong>Odòmàiyá Artigos Religiosos</strong></p>
+  <p>R. Sete de Agosto, 28 - Centro</p>
+  <p>Passo Fundo - RS, 99025-030</p>
+  <p>WhatsApp: (54) 9604-8808</p>
 </footer>
 
-<!-- CARRINHO -->
+<!-- MODAL CARRINHO -->
 <div id="modalCarrinho" class="modal">
   <div class="modal-content">
-    <h2>Seu Carrinho</h2>
+    <h3>Seu Carrinho</h3>
     <div id="itensCarrinho"></div>
-    <p>Total: <strong id="valorTotal">R$ 0,00</strong></p>
-    <button onclick="abrirCheckout()">Finalizar</button>
-    <button onclick="fecharCarrinho()">Fechar</button>
+    <p class="total">Total: <span id="valorTotal">R$ 0,00</span></p>
+    <button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
+    <button onclick="fecharCarrinho()" class="btn-fechar">Fechar</button>
   </div>
 </div>
 
-<!-- CHECKOUT -->
+<!-- MODAL CHECKOUT -->
 <div id="modalCheckout" class="modal">
   <div class="modal-content" id="conteudoCheckout"></div>
 </div>
 
-<script src="app.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
