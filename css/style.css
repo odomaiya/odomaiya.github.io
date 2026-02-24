@@ -1,3 +1,196 @@
+/* ============================= */
+/* RESET */
+/* ============================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  background:#0f172a;
+  color:#fff;
+}
+
+/* ============================= */
+/* HEADER */
+/* ============================= */
+
+.topo{
+  background:#0b1220;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+}
+
+.logo-area{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  width:55px;
+  border-radius:50%;
+}
+
+.topo h1{
+  font-size:20px;
+  font-weight:700;
+}
+
+.topo p{
+  font-size:12px;
+  opacity:0.7;
+}
+
+.social a{
+  color:#3a6ea5;
+  text-decoration:none;
+  margin-left:15px;
+  font-weight:600;
+}
+
+/* ============================= */
+/* FILTROS */
+/* ============================= */
+
+.busca-area{
+  padding:15px;
+}
+
+#filtros{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+#filtros button{
+  background:#1e293b;
+  border:none;
+  padding:8px 14px;
+  border-radius:20px;
+  color:white;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+#filtros button:hover{
+  background:#3a6ea5;
+}
+
+/* ============================= */
+/* GRID PRODUTOS */
+/* ============================= */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:15px;
+  padding:15px;
+}
+
+.produto-card{
+  background:#1e293b;
+  border-radius:16px;
+  padding:15px;
+  text-align:center;
+  position:relative;
+  transition:0.3s;
+  box-shadow:0 4px 15px rgba(0,0,0,0.4);
+}
+
+.produto-card:hover{
+  transform:translateY(-4px);
+}
+
+.produto-card img{
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+.produto-card h3{
+  font-size:14px;
+  margin-bottom:5px;
+}
+
+/* ============================= */
+/* PROMOÇÃO */
+/* ============================= */
+
+.promo-card{
+  border:2px solid #3a6ea5;
+  animation:pulse 2s infinite;
+}
+
+.promo-card::after{
+  content:"💎 OFERTA";
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:#3a6ea5;
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:11px;
+}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 10px rgba(58,110,165,0.4);}
+  50%{box-shadow:0 0 20px rgba(58,110,165,0.9);}
+  100%{box-shadow:0 0 10px rgba(58,110,165,0.4);}
+}
+
+.antigo{
+  text-decoration:line-through;
+  font-size:12px;
+  opacity:0.6;
+}
+
+.promo{
+  color:#4ade80;
+  font-weight:700;
+  font-size:16px;
+}
+
+/* ============================= */
+/* CONTADOR */
+/* ============================= */
+
+.contador{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+}
+
+.contador button{
+  background:#3a6ea5;
+  border:none;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.contador button:hover{
+  background:#2563eb;
+}
+
+/* ============================= */
+/* BOTÃO FLUTUANTE */
+/* ============================= */
+
 .btn-carrinho{
   position:fixed;
   bottom:20px;
@@ -11,7 +204,16 @@
   box-shadow:0 8px 20px rgba(0,0,0,0.4);
   cursor:pointer;
   z-index:1000;
+  transition:0.3s;
 }
+
+.btn-carrinho:hover{
+  transform:scale(1.05);
+}
+
+/* ============================= */
+/* CARRINHO LATERAL */
+/* ============================= */
 
 .carrinho{
   position:fixed;
@@ -19,24 +221,74 @@
   top:0;
   width:300px;
   height:100%;
-  background:#12121f;
+  background:#111827;
   padding:20px;
   transition:0.3s;
   overflow-y:auto;
+  z-index:999;
 }
 
 .carrinho.ativo{
   right:0;
 }
 
-.promo-card{
-  border:2px solid #3a6ea5;
-  box-shadow:0 0 15px rgba(58,110,165,0.6);
-  animation:pulse 2s infinite;
+.carrinho h3{
+  margin-bottom:15px;
 }
 
-@keyframes pulse{
-  0%{box-shadow:0 0 10px rgba(58,110,165,0.4);}
-  50%{box-shadow:0 0 20px rgba(58,110,165,0.9);}
-  100%{box-shadow:0 0 10px rgba(58,110,165,0.4);}
+.total{
+  margin-top:15px;
+  font-weight:700;
+}
+
+.btn-finalizar{
+  margin-top:15px;
+  width:100%;
+  padding:10px;
+  background:#22c55e;
+  border:none;
+  border-radius:8px;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ============================= */
+/* MODAL CHECKOUT */
+/* ============================= */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
+}
+
+.modal-content{
+  background:#1e293b;
+  padding:20px;
+  border-radius:12px;
+  width:90%;
+  max-width:400px;
+}
+
+.modal input{
+  width:100%;
+  padding:8px;
+  margin-bottom:10px;
+  border:none;
+  border-radius:6px;
+}
+
+/* ============================= */
+/* RESPONSIVO */
+/* ============================= */
+
+@media(min-width:768px){
+  .grid{
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  }
 }
