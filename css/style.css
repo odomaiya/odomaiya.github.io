@@ -192,3 +192,48 @@ input, select{
   width:90%;
   max-width:400px;
 }
+/* BOTÕES CONTADOR ESTILO PREMIUM */
+
+.contador button{
+  width:38px;
+  height:38px;
+  border:none;
+  border-radius:50%;
+  background:var(--azul-medio);
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  box-shadow:0 6px 12px rgba(0,0,0,0.2);
+  transition:0.2s;
+}
+
+.contador button:hover{
+  transform:scale(1.1);
+  background:var(--azul-escuro);
+}
+
+/* SOCIAL ÍCONES */
+
+.social a{
+  margin-left:20px;
+  color:var(--azul-medio);
+  text-decoration:none;
+  font-weight:600;
+  font-size:16px;
+}
+
+.social i{
+  margin-right:8px;
+  font-size:18px;
+}
+
+/* RODAPÉ */
+
+.rodape{
+  text-align:center;
+  padding:30px;
+  background:var(--azul-escuro);
+  color:white;
+  margin-top:40px;
+  font-size:14px;
+}
