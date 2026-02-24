@@ -1,5 +1,6 @@
-const API_URL = "COLE_SUA_URL_AQUI";
-const WHATSAPP_NUMERO = "5599999999999"; // coloque seu número
+const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
+
+const WHATSAPP_NUMERO = "555496048808"; 
 
 let produtos = [];
 let carrinho = [];
@@ -59,8 +60,8 @@ function atualizarCarrinho(){
     container.innerHTML += `
       <div class="cart-item">
         <strong>${item.nome}</strong><br>
-        Qtd: ${item.qtd}<br>
-        R$ ${subtotal.toFixed(2)}
+        🔢 Qtd: ${item.qtd}<br>
+        💰 R$ ${subtotal.toFixed(2)}
       </div>
     `;
   });
