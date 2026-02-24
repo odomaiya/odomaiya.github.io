@@ -3,61 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odò Máiyà | Artigos Religiosos Premium</title>
 
-<title>Odòmáiyà Artigos Religiosos | Loja Oficial</title>
-<meta name="description" content="Loja oficial Odòmáiyà Artigos Religiosos. Produtos selecionados com respeito às tradições de matriz africana.">
-<meta name="keywords" content="artigos religiosos, umbanda, candomblé, velas, guias, pembas">
-<meta name="author" content="Odòmáiyà">
+<meta name="description" content="Odò Máiyà Artigos Religiosos. Conectando fé, ancestralidade e força espiritual com elegância e tradição.">
+<meta name="keywords" content="artigos religiosos, umbanda, candomblé, velas, guias, pembas, artigos espirituais">
+<meta name="author" content="Odò Máiyà">
 
-<link rel="canonical" href="https://seudominio.com/">
-
-<meta property="og:title" content="Odòmáiyà Artigos Religiosos">
-<meta property="og:description" content="Conectando fé, ancestralidade e força espiritual.">
+<meta property="og:title" content="Odò Máiyà Artigos Religiosos">
+<meta property="og:description" content="Luxo espiritual com tradição e respeito às matrizes africanas.">
+<meta property="og:image" content="logo.png">
 <meta property="og:type" content="website">
 
-<link rel="manifest" href="manifest.json">
+<link rel="preload" href="style.css" as="style">
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
-<div class="particles"></div>
-
-<header class="header">
-  <h1>Odòmáiyà Artigos Religiosos</h1>
-  <p>Conectando fé, ancestralidade e força espiritual.</p>
+<header class="hero">
+<img src="logo.png" class="logo">
+<h1>Odò Máiyà</h1>
+<p>Artigos Religiosos Premium</p>
 </header>
 
 <section class="controls">
-  <input type="text" id="busca" placeholder="🔎 Buscar produto...">
-  <div id="filtros"></div>
+<input type="text" id="busca" placeholder="Buscar produto...">
+<div id="filtros"></div>
 </section>
 
 <section id="produtos" class="grid"></section>
 
-<!-- CARRINHO LATERAL -->
-<div id="carrinhoLateral" class="carrinho">
-  <h3>Seu Pedido</h3>
-  <div id="itensCarrinho"></div>
-  <div class="total-box">
-    Total: <span id="valorTotal">R$ 0.00</span>
-  </div>
-  <button class="btn-checkout" onclick="abrirCheckout()">Finalizar Pedido</button>
+<div class="carrinho-fixo">
+<button onclick="abrirCheckout()">
+🛒 Finalizar Pedido
+</button>
+<span id="contadorCarrinho">0</span>
 </div>
 
-<!-- MODAL CHECKOUT -->
-<div id="checkoutModal" class="modal"></div>
+<a href="https://wa.me/555496048808" class="whatsapp" target="_blank">WhatsApp</a>
 
+<footer>
+<a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
+<p>Passo Fundo - RS</p>
+</footer>
+
+<script src="config.js"></script>
 <script src="app.js"></script>
-
-<script>
-if('serviceWorker' in navigator){
-navigator.serviceWorker.register('service-worker.js');
-}
-</script>
 
 </body>
 </html>
