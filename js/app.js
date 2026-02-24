@@ -1,51 +1,95 @@
-const App = {
+const API_URL = "COLE_SUA_URL_AQUI";
+const WHATSAPP_NUMERO = "5599999999999"; // coloque seu número
 
-  init() {
-    Store.carregarProdutos();
-  },
+let produtos = [];
+let carrinho = [];
 
-  async finalizar() {
+async function carregarProdutos(){
+  const res = await fetch(API_URL + "?acao=produtos");
+  produtos = await res.json();
 
-    const nome = prompt("Seu nome:");
-    if (!nome) return;
+  produtos.sort((a,b)=> (b.promocao>0?1:0)-(a.promocao>0?1:0));
 
-    const tipo = confirm("Clique OK para ENTREGA ou Cancelar para RETIRADA");
+  renderizarProdutos(produtos);
+}
 
-    let endereco = "";
-    if (tipo) endereco = prompt("Digite seu endereço:");
+function renderizarProdutos(lista){
+  const grid = document.getElementById("productsGrid");
+  grid.innerHTML = "";
 
-    const pagamento = prompt("Forma de pagamento:");
+  lista.forEach(prod=>{
+    const preco = prod.promocao>0 ? prod.promocao : prod.preco;
+    const promoBadge = prod.promocao>0 ? `<div class="badge">🔥 Promoção</div>` : "";
 
-    const dados = {
-      cliente: nome,
-      entrega: tipo ? "Entrega" : "Retirada",
-      endereco,
-      pagamento,
-      itens: Store.carrinho,
-      total: Store.total()
-    };
+    grid.innerHTML += `
+      <div class="card">
+        ${promoBadge}
+        <img src="${prod.imagem}">
+        <h3>${prod.nome}</h3>
+        <div>
+          ${prod.promocao>0 ? `<span class="old">R$ ${prod.preco}</span>`:""}
+          <div class="new">R$ ${preco}</div>
+        </div>
+        <div class="stock">Estoque: ${prod.estoque}</div>
+        <button onclick="adicionarCarrinho('${prod.nome}',${preco})">Adicionar</button>
+      </div>
+    `;
+  });
+}
 
-    await API.salvarVenda(dados);
+function adicionarCarrinho(nome,preco){
+  const item = carrinho.find(p=>p.nome===nome);
+  if(item){
+    item.qtd++;
+  } else {
+    carrinho.push({nome,preco,qtd:1});
+  }
+  atualizarCarrinho();
+}
 
-    let mensagem = `✨ Pedido - ${CONFIG.LOJA}%0A`;
-    mensagem += `Cliente: ${nome}%0A`;
-    mensagem += `Tipo: ${dados.entrega}%0A`;
-    if (endereco) mensagem += `Endereço: ${endereco}%0A`;
-    mensagem += `Pagamento: ${pagamento}%0A`;
-    mensagem += `------------------------%0A`;
+function atualizarCarrinho(){
+  const container = document.getElementById("cartItems");
+  container.innerHTML = "";
+  let total = 0;
 
-    for (let item in Store.carrinho) {
-      mensagem += `${item} x${Store.carrinho[item]}%0A`;
-    }
+  carrinho.forEach(item=>{
+    const subtotal = item.preco * item.qtd;
+    total += subtotal;
 
-    mensagem += `------------------------%0A`;
-    mensagem += `Total: R$ ${Store.total().toFixed(2)}`;
+    container.innerHTML += `
+      <div class="cart-item">
+        <strong>${item.nome}</strong><br>
+        Qtd: ${item.qtd}<br>
+        R$ ${subtotal.toFixed(2)}
+      </div>
+    `;
+  });
 
-    window.open(`https://wa.me/${CONFIG.WHATSAPP}?text=${mensagem}`);
+  document.getElementById("cartTotal").innerText = "Total: R$ " + total.toFixed(2);
+}
 
-    location.reload();
+function finalizarPedido(){
+  if(carrinho.length===0){
+    alert("Carrinho vazio!");
+    return;
   }
 
-};
+  let mensagem = `✨ *Pedido - ODO MAIYÀ* ✨\n\n`;
+  let total = 0;
 
-document.addEventListener("DOMContentLoaded", App.init);
+  carrinho.forEach(item=>{
+    const subtotal = item.preco*item.qtd;
+    total += subtotal;
+    mensagem += `🛍 *${item.nome}*\n`;
+    mensagem += `🔢 Quantidade: ${item.qtd}\n`;
+    mensagem += `💰 Valor: R$ ${subtotal.toFixed(2)}\n\n`;
+  });
+
+  mensagem += `📦 *Total do Pedido:* R$ ${total.toFixed(2)}\n\n`;
+  mensagem += `🙏 Aguardo confirmação.`;
+
+  const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`;
+  window.open(url,'_blank');
+}
+
+carregarProdutos();
