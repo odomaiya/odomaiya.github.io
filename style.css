@@ -1,77 +1,81 @@
 body{
   margin:0;
   font-family:'Poppins',sans-serif;
-  background:linear-gradient(180deg,#f4f8ff,#e6f0ff);
+  background:linear-gradient(180deg,#eef5ff,#ffffff);
+  overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.6), transparent),
+    radial-gradient(2px 2px at 70% 60%, rgba(255,255,255,.6), transparent);
+  animation: brilho 10s linear infinite;
+  pointer-events:none;
+}
+
+@keyframes brilho{
+  from{transform:translateY(0);}
+  to{transform:translateY(-50px);}
 }
 
 .hero{
   background:linear-gradient(135deg,#0a3d91,#1e5bd6);
   color:white;
-  padding:40px 20px;
   text-align:center;
-  position:relative;
-  overflow:hidden;
+  padding:50px 20px;
 }
 
-.hero::after{
-  content:"";
-  position:absolute;
-  width:300px;
-  height:300px;
-  background:radial-gradient(circle,rgba(255,255,255,.2),transparent);
-  top:-100px;
-  right:-100px;
-  border-radius:50%;
-}
-
-.barra-topo{
-  padding:15px;
+.top-bar{
   background:white;
-  box-shadow:0 5px 20px rgba(0,0,0,.05);
+  padding:15px;
   position:sticky;
   top:0;
   z-index:10;
+  box-shadow:0 4px 20px rgba(0,0,0,.05);
 }
 
 #busca{
   width:100%;
   padding:12px;
-  border-radius:30px;
+  border-radius:25px;
   border:1px solid #ddd;
   margin-bottom:10px;
 }
 
 #categorias button{
-  margin:5px;
-  padding:6px 12px;
+  margin:4px;
+  padding:6px 14px;
   border:none;
   border-radius:20px;
-  background:#e6f0ff;
+  background:#eaf2ff;
   cursor:pointer;
 }
 
 .produtos{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
   gap:20px;
   padding:20px;
 }
 
 .card{
   background:white;
-  border-radius:15px;
   padding:15px;
-  box-shadow:0 8px 25px rgba(0,0,0,.07);
+  border-radius:18px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
   transition:.3s;
 }
 
 .card:hover{
-  transform:translateY(-5px);
+  transform:translateY(-6px);
 }
 
 .card img{
   width:100%;
-  height:160px;
+  height:150px;
   object-fit:cover;
   border-radius:12px;
 }
@@ -84,8 +88,8 @@ body{
 }
 
 .controle button{
-  width:30px;
-  height:30px;
+  width:32px;
+  height:32px;
   border:none;
   border-radius:50%;
   background:#0a3d91;
@@ -93,7 +97,7 @@ body{
   cursor:pointer;
 }
 
-.cart-btn{
+.cart-fab{
   position:fixed;
   bottom:20px;
   right:20px;
@@ -113,9 +117,10 @@ body{
   height:100%;
   background:white;
   transition:.4s;
+  padding:20px;
   display:flex;
   flex-direction:column;
-  box-shadow:-5px 0 20px rgba(0,0,0,.1);
+  box-shadow:-5px 0 25px rgba(0,0,0,.1);
 }
 
 .carrinho.ativo{
@@ -140,16 +145,17 @@ body{
   width:95%;
   max-width:400px;
   padding:25px;
-  border-radius:15px;
+  border-radius:18px;
 }
 
 .btn-principal{
   width:100%;
   padding:12px;
-  background:#0a3d91;
-  color:white;
   border:none;
   border-radius:30px;
+  background:linear-gradient(135deg,#0a3d91,#1e5bd6);
+  color:white;
+  font-weight:600;
   margin-top:10px;
   cursor:pointer;
 }
@@ -162,4 +168,5 @@ body{
   display:none;
   justify-content:center;
   align-items:center;
+  font-size:18px;
 }
