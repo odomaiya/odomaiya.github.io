@@ -11,14 +11,16 @@
 </head>
 <body>
 
+<div class="particles"></div>
+
 <header class="header">
-    <h1>Odòmáiyà Artigos Religiosos</h1>
-    <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
+  <h1>Odòmáiyà Artigos Religiosos</h1>
+  <p>Conectando fé, ancestralidade e força espiritual.</p>
 </header>
 
 <section class="controls">
-    <input type="text" id="busca" placeholder="🔎 Buscar produto...">
-    <div id="filtros"></div>
+  <input type="text" id="busca" placeholder="🔎 Buscar produto...">
+  <div id="filtros"></div>
 </section>
 
 <section id="produtos" class="grid"></section>
@@ -27,18 +29,17 @@
 🛒 Finalizar Pedido (<span id="totalItens">0</span>)
 </button>
 
-<!-- MODAL CHECKOUT -->
+<!-- MODAL -->
 <div id="checkoutModal" class="modal">
   <div class="modal-content">
-
-    <div class="modal-header">
-      <h2>Finalizar Pedido</h2>
-      <span onclick="fecharCheckout()" class="fechar">&times;</span>
-    </div>
-
     <div id="checkoutSteps"></div>
-
   </div>
+</div>
+
+<!-- SUCCESS PAGE -->
+<div id="successPage" class="success">
+  <h2>Pedido Enviado ✨</h2>
+  <p>Você será direcionado para o WhatsApp.</p>
 </div>
 
 <script src="app.js"></script>
