@@ -237,3 +237,66 @@ input, select{
   margin-top:40px;
   font-size:14px;
 }
+/* ANIMAÇÃO SUAVE DE ENTRADA */
+
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.produto-card{
+  animation:fadeUp 0.5s ease forwards;
+  opacity:0;
+}
+
+/* MICROINTERAÇÃO BOTÃO CARRINHO */
+
+.btn-carrinho{
+  transition:all 0.3s ease;
+}
+
+.btn-carrinho:hover{
+  transform:scale(1.08);
+}
+
+/* SUAVIDADE GERAL MOBILE */
+
+*{
+  -webkit-tap-highlight-color: transparent;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+/* MELHOR RESPONSIVIDADE */
+
+@media(max-width:768px){
+
+  .topo{
+    flex-direction:column;
+    gap:10px;
+    padding:15px;
+    text-align:center;
+  }
+
+  .grid{
+    padding:10px;
+    gap:15px;
+  }
+
+  .produto-card{
+    padding:15px;
+  }
+
+  .drawer-content{
+    width:100%;
+  }
+
+}
