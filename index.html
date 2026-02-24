@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<link rel="manifest" href="manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Odòmàiyá Artigos Religiosos</title>
@@ -10,39 +9,85 @@
 
 <style>
 :root{
---primary:#0f1c2b;
---secondary:#1f3247;
---accent:#7fa8c9;
---lux:#d6e4f0;
---danger:#b91c1c;
---promo:#0f766e;
+--dark:#0d1b2a;
+--dark2:#1b263b;
+--silver:#cbd5e1;
+--lux:#0f766e;
+--light:#f8fafc;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
 
-body{background:#f8fafc;color:#111}
+body{
+font-family:'Inter',sans-serif;
+background:var(--light);
+color:#111;
+}
 
 header{
-background:linear-gradient(135deg,#0f1c2b,#1f3247);
-padding:40px 20px;
+background:linear-gradient(135deg,var(--dark),var(--dark2));
 text-align:center;
-color:white;
+padding:60px 20px 80px 20px;
+position:relative;
 }
 
-header img{height:120px;margin-bottom:15px}
+.logo-wrapper{
+width:160px;
+height:160px;
+margin:0 auto 20px auto;
+background:white;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 20px 40px rgba(0,0,0,0.25);
+}
+
+.logo-wrapper img{
+max-width:120px;
+height:auto;
+object-fit:contain;
+}
 
 h1{
 font-family:'Playfair Display',serif;
-font-size:38px;
+color:white;
+font-size:42px;
 letter-spacing:2px;
+}
+
+.subtitle{
+color:var(--silver);
+margin-top:8px;
+}
+
+.cart-btn{
+position:fixed;
+top:25px;
+right:25px;
+background:var(--dark2);
+color:white;
+padding:12px 20px;
+border-radius:50px;
+font-weight:600;
+cursor:pointer;
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.cart-btn span{
+background:white;
+color:var(--dark2);
+padding:3px 9px;
+border-radius:50px;
+margin-left:6px;
 }
 
 .products{
 max-width:1300px;
-margin:60px auto;
+margin:-50px auto 60px auto;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:35px;
+gap:30px;
 padding:0 20px;
 }
 
@@ -50,42 +95,34 @@ padding:0 20px;
 background:white;
 border-radius:18px;
 overflow:hidden;
-box-shadow:0 15px 40px rgba(0,0,0,0.08);
+box-shadow:0 20px 50px rgba(0,0,0,0.08);
 transition:.3s;
-position:relative;
 }
 
-.card:hover{transform:translateY(-8px)}
+.card:hover{
+transform:translateY(-10px);
+}
 
 .card img{
 width:100%;
-height:260px;
+height:250px;
 object-fit:cover;
 }
 
-.card-content{padding:20px}
-
-.card h3{margin-bottom:10px;font-size:18px}
-
-.price{font-size:20px;font-weight:700;color:var(--secondary)}
-
-.old-price{
-text-decoration:line-through;
-color:var(--danger);
-font-size:15px;
-margin-right:10px;
+.card-content{
+padding:20px;
 }
 
-.badge{
-position:absolute;
-top:15px;
-left:15px;
-background:var(--promo);
-color:white;
-padding:6px 12px;
-border-radius:50px;
-font-size:13px;
-font-weight:600;
+.price{
+font-weight:700;
+font-size:20px;
+}
+
+.old{
+text-decoration:line-through;
+color:red;
+font-size:14px;
+margin-right:10px;
 }
 
 button{
@@ -94,103 +131,99 @@ width:100%;
 padding:12px;
 border:none;
 border-radius:10px;
-background:var(--secondary);
+background:var(--dark2);
 color:white;
 font-weight:600;
 cursor:pointer;
 transition:.3s;
 }
 
-button:hover{background:var(--primary)}
-
-.cart{
-position:fixed;
-top:25px;
-right:25px;
-background:var(--secondary);
-color:white;
-padding:12px 18px;
-border-radius:50px;
-font-weight:600;
-cursor:pointer;
-}
-
-.cart span{
-background:white;
-color:var(--secondary);
-padding:3px 8px;
-border-radius:50px;
-margin-left:8px;
+button:hover{
+background:var(--lux);
 }
 
 footer{
-margin-top:80px;
-background:#0f1c2b;
+background:var(--dark);
 color:white;
+padding:40px 20px;
 text-align:center;
-padding:30px;
+}
+
+.social a{
+margin:0 10px;
+color:white;
+font-size:20px;
+text-decoration:none;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<img src="logo.png">
-<h1>Odòmàiyá Artigos Religiosos</h1>
-<p>Luxo Espiritual • Tradição • Energia</p>
-</header>
-
-<div class="cart" onclick="abrirCheckout()">
+<div class="cart-btn" onclick="abrirCheckout()">
 🛒 Carrinho <span id="cart-count">0</span>
 </div>
+
+<header>
+<div class="logo-wrapper">
+<img src="logo.png">
+</div>
+<h1>Odòmàiyá Artigos Religiosos</h1>
+<p class="subtitle">Luxo Espiritual • Tradição • Energia</p>
+</header>
 
 <div class="products" id="produtos"></div>
 
 <footer>
-<p>WhatsApp: (54) 9604-8808</p>
-<p>R. Sete de Agosto, 28 - Centro, Passo Fundo - RS</p>
+<p>📍 R. Sete de Agosto, 28 - Centro, Passo Fundo - RS, 99025-030</p>
+<p>📞 (54) 9604-8808</p>
+<div class="social">
+<a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
+<a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
+</div>
 </footer>
 
 <script>
-let carrinho=[]
-let produtos=[]
+let carrinho = JSON.parse(localStorage.getItem("carrinho")) || []
+let produtos = []
+
+function atualizarCarrinho(){
+document.getElementById("cart-count").innerText = carrinho.length
+localStorage.setItem("carrinho",JSON.stringify(carrinho))
+}
 
 fetch('produtos.csv')
-.then(res=>res.text())
+.then(r=>r.text())
 .then(text=>{
-const linhas=text.split('\n').slice(1)
+let linhas=text.trim().split('\n').slice(1)
 linhas.forEach(l=>{
-const [nome,preco,promocao,categoria,imagem,estoque]=l.split('\t')
+let [nome,preco,promocao,categoria,imagem,estoque]=l.split(',')
 produtos.push({
 nome,
-preco:parseFloat(preco),
-promocao:parseFloat(promocao),
+preco:parseFloat(preco)||0,
+promocao:parseFloat(promocao)||0,
 categoria,
 imagem,
-estoque:parseInt(estoque)
+estoque:parseInt(estoque)||0
 })
 })
 render()
 })
 
 function render(){
-const container=document.getElementById("produtos")
+let container=document.getElementById("produtos")
 container.innerHTML=""
 
 produtos.forEach((p,i)=>{
-if(!p.nome)return
-
-let precoFinal=p.promocao>0?p.promocao:p.preco
+let precoFinal = p.promocao>0 ? p.promocao : p.preco
 
 container.innerHTML+=`
 <div class="card">
-${p.promocao>0?'<div class="badge">OFERTA</div>':''}
 <img src="imagens/${p.imagem}">
 <div class="card-content">
 <h3>${p.nome}</h3>
 <div>
-${p.promocao>0?`<span class="old-price">R$ ${p.preco}</span>`:''}
+${p.promocao>0?`<span class="old">R$ ${p.preco}</span>`:''}
 <span class="price">R$ ${precoFinal}</span>
 </div>
 <p>Estoque: ${p.estoque}</p>
@@ -206,18 +239,36 @@ function addCarrinho(i){
 if(produtos[i].estoque<=0)return
 produtos[i].estoque--
 carrinho.push(produtos[i])
-document.getElementById("cart-count").innerText=carrinho.length
+atualizarCarrinho()
 render()
 }
 
 function abrirCheckout(){
-let texto="Pedido - Odòmàiyá Artigos Religiosos%0A%0A"
+let nome=prompt("Digite seu nome:")
+if(!nome)return
+
+let tipo=prompt("Digite 1 para Retirada ou 2 para Entrega")
+let endereco=""
+if(tipo==2){
+endereco=prompt("Digite seu endereço completo:")
+}
+
+let pagamento=prompt("Forma de pagamento (Pix, Dinheiro, Cartão):")
+
+let texto=`Pedido - Odòmàiyá Artigos Religiosos\n\nCliente: ${nome}\n`
+
 carrinho.forEach(p=>{
 let valor=p.promocao>0?p.promocao:p.preco
-texto+=p.nome+" - R$ "+valor+"%0A"
+texto+=`${p.nome} - R$ ${valor}\n`
 })
-window.open("https://wa.me/555496048808?text="+texto)
+
+texto+=`\nTipo: ${tipo==2?'Entrega':'Retirada'}`
+if(endereco) texto+=`\nEndereço: ${endereco}`
+texto+=`\nPagamento: ${pagamento}`
+
+window.open("https://wa.me/555496048808?text="+encodeURIComponent(texto))
 }
+atualizarCarrinho()
 </script>
 
 </body>
