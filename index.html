@@ -4,88 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Odòmàiyá Artigos Religiosos</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="whatsapp-fixo" onclick="finalizarPedido()">💬</div>
 
-<div class="barra-mobile">
-  <button onclick="abrirCarrinho()">🛒 Carrinho</button>
-</div>
-
-<div class="carrinho-lateral">
-  <h3>Seu Carrinho</h3>
-  <div id="itensCarrinho"></div>
-  <div>Total: <span id="valorTotal">R$ 0,00</span></div>
-  <button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
-  <button onclick="fecharCarrinho()" class="btn-finalizar" style="background:#444;">Fechar</button>
-</div>
-
-<header class="header">
-  <button onclick="abrirCarrinho()" style="padding:10px 15px;border:none;border-radius:10px;background:#6f97b5;color:white;">
-🛒 Carrinho
-</button>
+<header class="topo">
   <div class="logo-area">
     <img src="logo.png" class="logo">
     <div>
       <h1>Odòmàiyá</h1>
-      <span>Artigos Religiosos</span>
+      <p>Artigos Religiosos</p>
     </div>
+  </div>
+
+  <div class="social">
+    <a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
+    <a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
   </div>
 </header>
 
-<div class="search-area">
-  <input type="text" id="pesquisa" placeholder="Pesquisar produtos..." onkeyup="filtrarProdutos()">
-  <div id="filtros" class="filtros"></div>
+<section class="busca-area">
+  <input type="text" id="busca" placeholder="Buscar produto...">
+  <div id="filtros"></div>
+</section>
+
+<section id="produtos" class="grid"></section>
+
+<div class="carrinho-lateral">
+  <h3>Seu Carrinho</h3>
+  <div id="itensCarrinho"></div>
+  <div class="total">Total: <span id="valorTotal">R$ 0,00</span></div>
+  <button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
 </div>
 
-<div id="produtos" class="produtos"></div>
-
-<div class="cart-float" onclick="abrirCarrinho()">
-🛒 <span id="cartCount">0</span>
+<div id="modalCheckout" class="modal">
+  <div class="modal-content" id="checkoutConteudo"></div>
 </div>
 
-<div id="cartPanel" class="cart-panel">
-  <div class="cart-header">
-    <h2>Seu Carrinho</h2>
-    <span onclick="fecharCarrinho()">✕</span>
-  </div>
-
-  <div id="cartItems" class="cart-items"></div>
-
-  <div class="checkout">
-    <select id="tipoEntrega" onchange="mostrarEndereco()">
-      <option value="">Entrega ou Retirada?</option>
-      <option value="Retirada">Retirada na Loja</option>
-      <option value="Entrega">Entrega</option>
-    </select>
-
-    <input type="text" id="nomeCliente" placeholder="Seu nome">
-
-    <input type="text" id="enderecoCliente" placeholder="Digite seu endereço" style="display:none;">
-
-    <select id="pagamento">
-      <option value="">Forma de pagamento</option>
-      <option>PIX</option>
-      <option>Cartão</option>
-      <option>Dinheiro</option>
-    </select>
-
-    <div id="cartTotal" class="cart-total">Total: R$ 0,00</div>
-
-    <button class="whatsapp-btn" onclick="finalizarPedido()">
-      Finalizar no WhatsApp
-    </button>
-  </div>
-</div>
-
-<script src="config.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
-
-<a class="whatsapp-fixo"
-   href="https://wa.me/555496048808"
-   target="_blank">
-💬
-</a>
