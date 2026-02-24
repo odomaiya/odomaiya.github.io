@@ -1,135 +1,151 @@
-:root{
-  --azul-escuro:#2f4f6f;
-  --azul-medio:#3d5f82;
-  --azul-claro:#6f97b5;
-  --vidro:rgba(255,255,255,0.08);
-  --blur:blur(20px);
-}
-
-*{
+body {
   margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-body{
   font-family:'Poppins',sans-serif;
-  background:linear-gradient(135deg,#1c2b3a,#243f57);
+  background:linear-gradient(135deg,#1f3447,#2c4c67);
   color:white;
-  padding-bottom:80px;
+  overflow-x:hidden;
 }
 
-/* HEADER */
+/* HEADER PREMIUM */
 
-header{
+.topo {
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  padding:20px;
-  background:var(--vidro);
-  backdrop-filter:var(--blur);
+  align-items:center;
+  padding:20px 40px;
+  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.05);
   border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
-.logo-area{
+.logo-area {
   display:flex;
   align-items:center;
   gap:15px;
 }
 
-.logo-area img{
-  width:55px;
-  height:55px;
-  object-fit:contain;
+.logo {
+  width:65px;
+  height:65px;
   border-radius:50%;
+  object-fit:cover;
   background:white;
-  padding:5px;
+  padding:6px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
 
-h1{
+.topo h1{
+  margin:0;
   font-size:20px;
-  font-weight:600;
 }
 
-.sub{
+.topo p{
+  margin:0;
   font-size:13px;
   opacity:0.7;
 }
 
-/* BUSCA */
+/* LINKS */
 
-.busca{
-  padding:15px;
+.social a{
+  margin-left:15px;
+  text-decoration:none;
+  color:#9dc6e0;
+  font-weight:500;
 }
 
-.busca input{
-  width:100%;
-  padding:14px;
+/* BUSCA */
+
+.busca-area{
+  padding:25px;
+  text-align:center;
+}
+
+input, select{
+  padding:12px;
+  border-radius:10px;
   border:none;
-  border-radius:15px;
-  background:var(--vidro);
-  backdrop-filter:var(--blur);
+  margin:10px;
+  width:250px;
+}
+
+/* FILTROS */
+
+#filtros{
+  margin-top:10px;
+}
+
+.filtro-btn{
+  margin:5px;
+  padding:8px 15px;
+  border:none;
+  border-radius:20px;
+  background:rgba(255,255,255,0.1);
   color:white;
-  outline:none;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.filtro-btn:hover{
+  background:#6f97b5;
 }
 
 /* GRID */
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:25px;
+  padding:30px;
+}
+
+/* CARD PREMIUM */
+
+.produto-card{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(15px);
   padding:20px;
-}
-
-/* CARD */
-
-.card{
-  background:var(--vidro);
-  backdrop-filter:var(--blur);
   border-radius:20px;
-  padding:15px;
-  transition:0.4s ease;
+  text-align:center;
   position:relative;
-  animation:fadeUp 0.6s ease forwards;
+  transition:0.4s;
+  animation:fadeUp 0.6s ease;
 }
 
-.card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 15px 30px rgba(0,0,0,0.3);
+.produto-card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
 }
 
-.card img{
+.produto-card img{
   width:100%;
-  height:160px;
+  height:190px;
   object-fit:cover;
   border-radius:15px;
 }
 
+/* PROMO */
+
 .badge{
   position:absolute;
-  top:10px;
-  right:10px;
-  background:var(--azul-claro);
-  color:#0d1a24;
-  padding:5px 10px;
-  border-radius:20px;
+  top:15px;
+  right:15px;
+  background:#6f97b5;
+  padding:6px 12px;
+  border-radius:15px;
   font-size:12px;
   font-weight:600;
 }
 
-/* PREÇO */
-
-.preco-antigo{
+.antigo{
   text-decoration:line-through;
-  font-size:13px;
-  opacity:0.6;
+  opacity:0.5;
 }
 
-.preco{
-  font-size:16px;
-  font-weight:600;
-  color:var(--azul-claro);
+.promo{
+  color:#9dc6e0;
+  font-weight:bold;
+  font-size:18px;
 }
 
 /* CONTADOR */
@@ -138,71 +154,74 @@ h1{
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:10px;
-  margin-top:10px;
+  gap:12px;
+  margin-top:12px;
 }
 
 .contador button{
-  width:30px;
-  height:30px;
+  width:35px;
+  height:35px;
   border:none;
   border-radius:50%;
-  background:var(--azul-medio);
+  background:#6f97b5;
   color:white;
   font-size:18px;
+  cursor:pointer;
 }
 
-/* CARRINHO DRAWER */
+/* CARRINHO LATERAL */
 
-.carrinho{
+.carrinho-lateral{
   position:fixed;
-  right:-100%;
+  right:-350px;
   top:0;
   width:320px;
   height:100%;
-  background:rgba(20,30,40,0.95);
-  backdrop-filter:blur(30px);
+  background:#1c2b3a;
+  padding:25px;
   transition:0.4s ease;
-  padding:20px;
-  overflow-y:auto;
   z-index:999;
+  overflow-y:auto;
 }
 
-.carrinho.ativo{
+.carrinho-lateral.ativo{
   right:0;
 }
 
-/* BOTÃO FLUTUANTE */
-
-.whatsapp-fixo{
-  position:fixed;
-  bottom:90px;
-  right:20px;
-  background:#25D366;
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:28px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-}
-
-/* BARRA MOBILE */
-
-.barra-mobile{
-  position:fixed;
-  bottom:0;
+.btn-finalizar{
   width:100%;
-  background:rgba(20,30,40,0.9);
-  backdrop-filter:blur(20px);
-  display:flex;
-  justify-content:space-around;
   padding:15px;
+  background:#6f97b5;
+  border:none;
+  border-radius:12px;
+  color:white;
+  margin-top:20px;
+  font-weight:600;
+  cursor:pointer;
 }
+
+/* MODAL */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:#243f57;
+  padding:30px;
+  border-radius:20px;
+  width:90%;
+  max-width:420px;
+}
+
+/* ANIMAÇÃO APPLE */
 
 @keyframes fadeUp{
-  from{opacity:0; transform:translateY(15px);}
+  from{opacity:0; transform:translateY(30px);}
   to{opacity:1; transform:translateY(0);}
 }
