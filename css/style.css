@@ -1,363 +1,42 @@
-:root{
-  --azul-escuro:#2f4f6f;
-  --azul-medio:#3e6f95;
-  --azul-claro:#6f9fc4;
-  --azul-detalhe:#8fb9d9;
-  --fundo:#f4f6f8;
-  --branco:#ffffff;
-}
-
-body{
-  margin:0;
-  font-family:'Poppins',sans-serif;
-  background:var(--fundo);
-  color:var(--azul-escuro);
-}
-
-.topo{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 40px;
-  background:var(--branco);
-  box-shadow:0 5px 20px rgba(0,0,0,0.05);
-}
-
-.logo-area{
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
-
-.logo{
-  width:80px;
-  height:80px;
-  border-radius:50%;
-}
-
-.social a{
-  margin-left:15px;
-  color:var(--azul-medio);
-  text-decoration:none;
-  font-weight:600;
-}
-
-.busca-area{
-  padding:20px;
-  text-align:center;
-}
-
-input, select{
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #ddd;
-  margin:8px;
-  width:90%;
-  max-width:350px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:20px;
-  padding:20px;
-}
-
-.produto-card{
-  background:var(--branco);
-  padding:20px;
-  border-radius:15px;
-  text-align:center;
-  position:relative;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
-}
-.produto-card{
-  background:white;
-  padding:20px;
-  border-radius:15px;
-  text-align:center;
-  position:relative;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
-  transition:0.3s;
-}
-.produto-card img{
-  width:100%;
-  height:180px;
-  object-fit:cover;
-  border-radius:10px;
-}
-
-.badge{
-  position:absolute;
-  top:10px;
-  right:10px;
-  background:var(--azul-medio);
-  color:white;
-  padding:5px 10px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:bold;
-}
-
-.antigo{
-  text-decoration:line-through;
-  opacity:0.6;
-}
-
-.promo{
-  color:var(--azul-medio);
-  font-weight:bold;
-}
-
-.contador{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-top:10px;
-}
-
-.contador button{
-  width:35px;
-  height:35px;
-  border:none;
-  border-radius:50%;
-  background:var(--azul-medio);
-  color:white;
-  font-size:18px;
-  cursor:pointer;
-}
-
-/* CARRINHO */
-
 .btn-carrinho{
   position:fixed;
   bottom:20px;
   right:20px;
-  background:var(--azul-medio);
+  background:#3a6ea5;
   color:white;
   border:none;
-  padding:15px 20px;
+  padding:15px 18px;
   border-radius:50px;
   font-size:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.4);
   cursor:pointer;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  z-index:1000;
 }
 
-.drawer{
+.carrinho{
   position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  display:none;
-  justify-content:flex-end;
-}
-
-.drawer-content{
-  width:350px;
+  right:-350px;
+  top:0;
+  width:300px;
   height:100%;
-  background:white;
+  background:#12121f;
   padding:20px;
+  transition:0.3s;
   overflow-y:auto;
 }
 
-.drawer-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.carrinho.ativo{
+  right:0;
 }
 
-.total{
-  font-weight:bold;
-  margin-top:20px;
-}
-
-.btn-finalizar{
-  width:100%;
-  padding:15px;
-  background:var(--azul-medio);
-  color:white;
-  border:none;
-  border-radius:10px;
-  margin-top:20px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-/* MODAL */
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  justify-content:center;
-  align-items:center;
-}
-
-.modal-content{
-  background:white;
-  padding:30px;
-  border-radius:15px;
-  width:90%;
-  max-width:400px;
-}
-/* BOTÕES CONTADOR ESTILO PREMIUM */
-
-.contador button{
-  width:38px;
-  height:38px;
-  border:none;
-  border-radius:50%;
-  background:var(--azul-medio);
-  color:white;
-  font-size:20px;
-  cursor:pointer;
-  box-shadow:0 6px 12px rgba(0,0,0,0.2);
-  transition:0.2s;
-}
-
-.contador button:hover{
-  transform:scale(1.1);
-  background:var(--azul-escuro);
-}
-
-/* SOCIAL ÍCONES */
-
-.social a{
-  margin-left:20px;
-  color:var(--azul-medio);
-  text-decoration:none;
-  font-weight:600;
-  font-size:16px;
-}
-
-.social i{
-  margin-right:8px;
-  font-size:18px;
-}
-
-/* RODAPÉ */
-
-.rodape{
-  text-align:center;
-  padding:30px;
-  background:var(--azul-escuro);
-  color:white;
-  margin-top:40px;
-  font-size:14px;
-}
-/* ANIMAÇÃO SUAVE DE ENTRADA */
-
-@keyframes fadeUp{
-  from{
-    opacity:0;
-    transform:translateY(20px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-.produto-card{
-  animation:fadeUp 0.5s ease forwards;
-  opacity:0;
-}
-
-/* MICROINTERAÇÃO BOTÃO CARRINHO */
-
-.btn-carrinho{
-  transition:all 0.3s ease;
-}
-
-.btn-carrinho:hover{
-  transform:scale(1.08);
-}
-
-/* SUAVIDADE GERAL MOBILE */
-
-*{
-  -webkit-tap-highlight-color: transparent;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-/* MELHOR RESPONSIVIDADE */
-
-@media(max-width:768px){
-
-  .topo{
-    flex-direction:column;
-    gap:10px;
-    padding:15px;
-    text-align:center;
-  }
-
-  .grid{
-    padding:10px;
-    gap:15px;
-  }
-
-  .produto-card{
-    padding:15px;
-  }
-
-  .drawer-content{
-    width:100%;
-  }
-
-}
-/* PRODUTO EM PROMOÇÃO */
-
-.produto-card.promo-card{
-  border:2px solid var(--azul-medio);
-  box-shadow:0 0 20px rgba(62,111,149,0.25);
-}
-
-.produto-card.promo-card::after{
-  content:"🔥 OFERTA ESPECIAL";
-  position:absolute;
-  bottom:-10px;
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--azul-medio);
-  color:white;
-  padding:5px 12px;
-  font-size:11px;
-  border-radius:20px;
-}
-/* BRILHO ANIMADO */
 .promo-card{
-  border:2px solid var(--azul-medio);
-  box-shadow:0 0 15px rgba(62,111,149,0.4);
-  position:relative;
-  animation:pulseGlow 2s infinite;
+  border:2px solid #3a6ea5;
+  box-shadow:0 0 15px rgba(58,110,165,0.6);
+  animation:pulse 2s infinite;
 }
 
-@keyframes pulseGlow{
-  0%{ box-shadow:0 0 10px rgba(62,111,149,0.3); }
-  50%{ box-shadow:0 0 25px rgba(62,111,149,0.7); }
-  100%{ box-shadow:0 0 10px rgba(62,111,149,0.3); }
-}
-
-/* SELO GIRANDO SUAVE */
-.badge{
-  animation:rotateBadge 6s linear infinite;
-}
-
-@keyframes rotateBadge{
-  0%{ transform:rotate(0deg); }
-  100%{ transform:rotate(360deg); }
-}
-
-/* EFEITO PULSAR */
-.promo{
-  animation:pulseText 1.5s infinite;
-}
-
-@keyframes pulseText{
-  0%{ transform:scale(1); }
-  50%{ transform:scale(1.08); }
-  100%{ transform:scale(1); }
+@keyframes pulse{
+  0%{box-shadow:0 0 10px rgba(58,110,165,0.4);}
+  50%{box-shadow:0 0 20px rgba(58,110,165,0.9);}
+  100%{box-shadow:0 0 10px rgba(58,110,165,0.4);}
 }
