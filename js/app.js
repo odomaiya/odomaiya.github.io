@@ -9,7 +9,7 @@ let categoriaAtual = "Todos";
 ========================= */
 async function carregarProdutos(){
   const grid = document.getElementById("produtos");
-  grid.innerHTML = "<p style='text-align:center'>Carregando produtos...</p>";
+  grid.innerHTML = "<p style='text-align:center'>Carregando...</p>";
 
   try{
     const res = await fetch(API_URL + "?acao=produtos");
@@ -24,7 +24,6 @@ async function carregarProdutos(){
       estoque: Number(p.estoque)
     }));
 
-    // PROMOÇÕES PRIMEIRO
     produtos.sort((a,b)=>{
       const promoA = a.promocao > 0 ? 1 : 0;
       const promoB = b.promocao > 0 ? 1 : 0;
@@ -35,17 +34,8 @@ async function carregarProdutos(){
     renderizar(produtos);
 
   }catch(e){
-    grid.innerHTML = "<p>Erro ao carregar produtos.</p>";
     console.error(e);
-  }
-}
-
-    criarFiltros();
-    renderizar(produtos);
-
-  }catch(e){
-    console.error("Erro ao carregar:", e);
-    document.getElementById("produtos").innerHTML="<p>Erro ao carregar produtos.</p>";
+    grid.innerHTML = "<p>Erro ao carregar produtos.</p>";
   }
 }
 
@@ -53,49 +43,56 @@ async function carregarProdutos(){
    FILTROS
 ========================= */
 function criarFiltros(){
-  const area=document.getElementById("filtros");
-  const categorias=["Todos",...new Set(produtos.map(p=>p.categoria))];
-  area.innerHTML="";
+  const area = document.getElementById("filtros");
+  const categorias = ["Todos", ...new Set(produtos.map(p=>p.categoria))];
+  area.innerHTML = "";
 
   categorias.forEach(cat=>{
-    const btn=document.createElement("button");
-    btn.innerText=cat;
-    btn.onclick=()=>filtrar(cat);
+    const btn = document.createElement("button");
+    btn.innerText = cat;
+    btn.onclick = ()=> filtrar(cat);
     area.appendChild(btn);
   });
 }
 
 function filtrar(cat){
-  categoriaAtual=cat;
+  categoriaAtual = cat;
   if(cat==="Todos") renderizar(produtos);
   else renderizar(produtos.filter(p=>p.categoria===cat));
 }
 
 /* =========================
-   RENDERIZAR PRODUTOS
+   RENDERIZAR
 ========================= */
 function renderizar(lista){
-  const grid=document.getElementById("produtos");
-  grid.innerHTML="";
+  const grid = document.getElementById("produtos");
+  grid.innerHTML = "";
 
-  const fragment=document.createDocumentFragment();
+  const fragment = document.createDocumentFragment();
 
   lista.forEach((p,index)=>{
-    const precoFinal=p.promocao>0?p.promocao:p.preco;
-    const temPromo=p.promocao>0;
 
-    const card=document.createElement("div");
-    card.className="produto-card";
+    const temPromo = p.promocao > 0;
+
+    const card = document.createElement("div");
+    card.className = "produto-card";
     card.style.animationDelay = `${index * 40}ms`;
 
-    card.innerHTML=`
+    if(temPromo){
+      card.classList.add("promo-card");
+    }
+
+    card.innerHTML = `
       ${temPromo?`<div class="badge">PROMOÇÃO</div>`:""}
       <img src="${p.imagem}" loading="lazy">
       <h3>${p.nome}</h3>
       ${temPromo?
-      `<div><span class="antigo">R$ ${p.preco.toFixed(2)}</span> 
-       <span class="promo">R$ ${p.promocao.toFixed(2)}</span></div>`:
-      `<div>R$ ${p.preco.toFixed(2)}</div>`}
+        `<div>
+           <span class="antigo">R$ ${p.preco.toFixed(2)}</span>
+           <span class="promo">R$ ${p.promocao.toFixed(2)}</span>
+         </div>`:
+        `<div>R$ ${p.preco.toFixed(2)}</div>`
+      }
       <small>Estoque: ${p.estoque}</small>
       <div class="contador">
         <button onclick="alterar('${p.nome}',-1)">−</button>
@@ -115,7 +112,7 @@ function renderizar(lista){
    CARRINHO
 ========================= */
 function alterar(nome,valor){
-  const produto=produtos.find(p=>p.nome===nome);
+  const produto = produtos.find(p=>p.nome===nome);
   if(!carrinho[nome]) carrinho[nome]=0;
   if(valor>0 && carrinho[nome]>=produto.estoque) return;
   carrinho[nome]+=valor;
@@ -124,25 +121,25 @@ function alterar(nome,valor){
 }
 
 function atualizarCarrinho(){
-  const area=document.getElementById("itensCarrinho");
-  area.innerHTML="";
-  let total=0;
-  let contador=0;
+  const area = document.getElementById("itensCarrinho");
+  area.innerHTML = "";
+  let total = 0;
+  let contador = 0;
 
   Object.keys(carrinho).forEach(nome=>{
     if(carrinho[nome]>0){
-      const p=produtos.find(x=>x.nome===nome);
-      const preco=p.promocao>0?p.promocao:p.preco;
-      total+=preco*carrinho[nome];
-      contador+=carrinho[nome];
+      const p = produtos.find(x=>x.nome===nome);
+      const preco = p.promocao>0?p.promocao:p.preco;
+      total += preco*carrinho[nome];
+      contador += carrinho[nome];
 
-      area.innerHTML+=`
-      <div>
-        <strong>${nome}</strong><br>
-        Qtd: ${carrinho[nome]}<br>
-        R$ ${(preco*carrinho[nome]).toFixed(2)}
-        <hr>
-      </div>`;
+      area.innerHTML += `
+        <div>
+          <strong>${nome}</strong><br>
+          Qtd: ${carrinho[nome]}<br>
+          R$ ${(preco*carrinho[nome]).toFixed(2)}
+          <hr>
+        </div>`;
     }
   });
 
@@ -151,48 +148,6 @@ function atualizarCarrinho(){
 }
 
 /* =========================
-   ABRIR / FECHAR
-========================= */
-function abrirCarrinho(){
-  document.getElementById("drawerCarrinho").style.display="flex";
-}
-
-function fecharCarrinho(){
-  document.getElementById("drawerCarrinho").style.display="none";
-}
-
-/* =========================
    INICIAR
 ========================= */
 carregarProdutos();
-function abrirCheckout(){
-  fecharCarrinho();
-
-  const modal = document.getElementById("modalCheckout");
-  const conteudo = document.getElementById("checkoutConteudo");
-
-  conteudo.innerHTML = `
-    <h3>Finalizar Pedido</h3>
-
-    <input id="nomeCliente" placeholder="Seu Nome">
-
-    <select id="pagamento">
-      <option value="">Forma de Pagamento</option>
-      <option>Cartão</option>
-      <option>Dinheiro</option>
-      <option>Pix</option>
-    </select>
-
-    <select id="tipoEntrega">
-      <option value="">Tipo de Entrega</option>
-      <option value="retirada">Retirada</option>
-      <option value="entrega">Entrega</option>
-    </select>
-
-    <button onclick="enviarWhatsApp()" class="btn-finalizar">
-      Enviar Pedido
-    </button>
-  `;
-
-  modal.style.display = "flex";
-}
