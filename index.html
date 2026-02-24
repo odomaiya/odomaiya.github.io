@@ -5,266 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Odòmàiyá Artigos Religiosos</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
-<style>
-:root{
---azul:#0d1b2a;
---azul2:#1b263b;
---verde:#16a34a;
---cinza:#f1f5f9;
---branco:#ffffff;
-}
-
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
-
-body{background:var(--cinza)}
-
-header{
-background:linear-gradient(135deg,var(--azul),var(--azul2));
-color:white;
-text-align:center;
-padding:30px 20px;
-border-bottom-left-radius:25px;
-border-bottom-right-radius:25px;
-}
-
-h1{font-size:22px}
-.sub{font-size:14px;opacity:0.8}
-
-.search{
-padding:15px;
-}
-
-.search input{
-width:100%;
-padding:14px;
-border:none;
-border-radius:15px;
-background:white;
-box-shadow:0 4px 15px rgba(0,0,0,0.08);
-}
-
-.products{
-padding:15px;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-}
-
-.card{
-background:white;
-border-radius:18px;
-overflow:hidden;
-box-shadow:0 5px 20px rgba(0,0,0,0.05);
-display:flex;
-flex-direction:column;
-}
-
-.card img{
-width:100%;
-height:140px;
-object-fit:cover;
-}
-
-.info{
-padding:10px;
-flex:1;
-display:flex;
-flex-direction:column;
-}
-
-.price{
-font-weight:600;
-font-size:14px;
-}
-
-.old{
-text-decoration:line-through;
-color:red;
-font-size:12px;
-}
-
-.stock{
-font-size:11px;
-opacity:0.6;
-}
-
-button{
-margin-top:auto;
-padding:8px;
-border:none;
-border-radius:10px;
-background:var(--azul2);
-color:white;
-font-size:12px;
-cursor:pointer;
-}
-
-button:disabled{
-background:#ccc;
-}
-
-.footer-bar{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:white;
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-box-shadow:0 -5px 20px rgba(0,0,0,0.1);
-}
-
-.total{
-font-weight:600;
-}
-
-.checkout{
-background:var(--verde);
-padding:10px 18px;
-border-radius:30px;
-color:white;
-font-weight:600;
-border:none;
-cursor:pointer;
-}
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-<h1>Odòmàiyá</h1>
-<p class="sub">Artigos Religiosos</p>
+<header class="topo">
+  <div class="logo-area">
+    <img src="logo.png" class="logo">
+    <div>
+      <h1>Odòmàiyá</h1>
+      <p>Artigos Religiosos</p>
+    </div>
+  </div>
+
+  <div class="social">
+    <a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
+    <a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
+  </div>
 </header>
 
-<div class="search">
-<input type="text" id="busca" placeholder="Pesquisar produtos...">
+<section class="busca-area">
+  <input type="text" id="busca" placeholder="Buscar produto...">
+  <div id="filtros"></div>
+</section>
+
+<section id="produtos" class="grid"></section>
+
+<div class="carrinho-lateral">
+  <h3>Seu Carrinho</h3>
+  <div id="itensCarrinho"></div>
+  <div class="total">Total: <span id="valorTotal">R$ 0,00</span></div>
+  <button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
 </div>
 
-<div class="products" id="produtos">
-<p>Carregando produtos...</p>
+<div id="modalCheckout" class="modal">
+  <div class="modal-content" id="checkoutConteudo"></div>
 </div>
 
-<div class="footer-bar">
-<div class="total">R$ <span id="total">0.00</span></div>
-<button class="checkout" onclick="finalizar()">Finalizar no WhatsApp</button>
-</div>
-
-<script>
-const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR7j4_2qhc-W7EscYgFNEoWX-jEUsfS8xPSnOkEGj7uf1xSUFKkANQ8YQ57UUZsPytia7Vq6iShxHGy/pub?gid=1004684059&single=true&output=csv";
-
-let produtos=[];
-let carrinho=[];
-
-async function carregar(){
-let res=await fetch(CSV_URL);
-let text=await res.text();
-let linhas=text.trim().split("\n").slice(1);
-
-produtos=linhas.map(l=>{
-let c=l.split(",");
-return{
-nome:c[0],
-preco:parseFloat(c[1])||0,
-promocao:parseFloat(c[2])||0,
-categoria:c[3],
-imagem:c[4],
-estoque:parseInt(c[5])||0
-}
-});
-
-render(produtos);
-}
-
-function render(lista){
-let html="";
-lista.forEach((p,i)=>{
-let valor=p.promocao>0?p.promocao:p.preco;
-
-html+=`
-<div class="card">
-<img src="${p.imagem}">
-<div class="info">
-<b>${p.nome}</b>
-${p.promocao>0?`<span class="old">R$ ${p.preco}</span>`:''}
-<span class="price">R$ ${valor.toFixed(2)}</span>
-<span class="stock">Estoque: ${p.estoque}</span>
-<button onclick="add(${i})" ${p.estoque<=0?'disabled':''}>
-${p.estoque<=0?'Esgotado':'Adicionar'}
-</button>
-</div>
-</div>
-`;
-});
-
-document.getElementById("produtos").innerHTML=html;
-}
-
-function add(i){
-if(produtos[i].estoque<=0)return;
-
-let valor=produtos[i].promocao>0?produtos[i].promocao:produtos[i].preco;
-
-carrinho.push({
-nome:produtos[i].nome,
-valor:valor
-});
-
-produtos[i].estoque--;
-atualizarTotal();
-render(produtos);
-}
-
-function atualizarTotal(){
-let total=carrinho.reduce((s,p)=>s+p.valor,0);
-document.getElementById("total").innerText=total.toFixed(2);
-}
-
-function finalizar(){
-if(carrinho.length===0){
-alert("Carrinho vazio");
-return;
-}
-
-let nome=prompt("Digite seu nome:");
-if(!nome)return;
-
-let tipo=prompt("Digite 1 para Retirada ou 2 para Entrega:");
-let endereco="";
-if(tipo=="2"){
-endereco=prompt("Digite seu endereço completo:");
-}
-
-let pagamento=prompt("Forma de pagamento (Pix, Dinheiro, Cartão):");
-
-let total=carrinho.reduce((s,p)=>s+p.valor,0);
-
-let mensagem=`✨ *Pedido - Odòmàiyá Artigos Religiosos* ✨\n\n`;
-mensagem+=`👤 Cliente: ${nome}\n\n`;
-
-carrinho.forEach(p=>{
-mensagem+=`🛍 ${p.nome} - R$ ${p.valor.toFixed(2)}\n`;
-});
-
-mensagem+=`\n💰 Total: R$ ${total.toFixed(2)}\n`;
-mensagem+=`\n📦 Tipo: ${tipo=="2"?'Entrega':'Retirada'}`;
-if(endereco) mensagem+=`\n📍 Endereço: ${endereco}`;
-mensagem+=`\n💳 Pagamento: ${pagamento}`;
-
-window.open("https://wa.me/555496048808?text="+encodeURIComponent(mensagem));
-}
-
-document.getElementById("busca").addEventListener("input",e=>{
-let termo=e.target.value.toLowerCase();
-render(produtos.filter(p=>p.nome.toLowerCase().includes(termo)));
-});
-
-carregar();
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
