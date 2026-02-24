@@ -130,3 +130,53 @@ input, select {
   width:90%;
   max-width:400px;
 }
+
+/* BOTÃO FLUTUANTE */
+.btn-carrinho {
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#7b2cbf;
+  border:none;
+  color:white;
+  padding:15px 18px;
+  border-radius:50px;
+  font-size:18px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.4);
+  cursor:pointer;
+  z-index:1000;
+}
+
+.btn-carrinho span {
+  background:white;
+  color:#7b2cbf;
+  padding:2px 8px;
+  border-radius:50%;
+  font-size:12px;
+  margin-left:5px;
+}
+
+/* PAINEL DESLIZANTE */
+.painel-carrinho {
+  position:fixed;
+  right:-100%;
+  top:0;
+  width:320px;
+  height:100%;
+  background:#12121f;
+  padding:20px;
+  transition:0.4s;
+  z-index:999;
+  overflow:auto;
+}
+
+.painel-carrinho.ativo {
+  right:0;
+}
+
+.cabecalho-carrinho {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
