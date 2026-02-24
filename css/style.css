@@ -100,3 +100,22 @@ footer{
   padding:20px;
   margin-top:40px;
 }
+
+.promo-destaque{
+  border:2px solid #3F5F7F;
+  box-shadow:0 0 15px rgba(63,95,127,0.3);
+}
+
+.preco-antigo{
+  text-decoration:line-through;
+  font-size:14px;
+  opacity:0.6;
+}
+
+input{
+  width:100%;
+  padding:8px;
+  margin-bottom:10px;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
