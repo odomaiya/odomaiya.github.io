@@ -6,51 +6,36 @@ color:white;
 overflow-x:hidden;
 }
 
-/* Partículas */
-.particles{
-position:fixed;
-inset:0;
-background-image:radial-gradient(white 1px,transparent 1px);
-background-size:60px 60px;
-opacity:0.05;
-animation:moveParticles 40s linear infinite;
-pointer-events:none;
-}
-
-@keyframes moveParticles{
-from{transform:translateY(0);}
-to{transform:translateY(-100px);}
-}
-
 .header{
 text-align:center;
-padding:50px 20px;
+padding:40px 20px;
 }
 
 .controls{
 text-align:center;
-padding:20px;
+margin-bottom:20px;
 }
 
 input{
 padding:12px;
-border-radius:8px;
+border-radius:30px;
 border:none;
-width:260px;
+width:250px;
+outline:none;
 }
 
 #filtros{
-margin-top:15px;
+margin-top:10px;
 display:flex;
+justify-content:center;
 flex-wrap:wrap;
 gap:10px;
-justify-content:center;
 }
 
 .filtro-btn{
-padding:8px 15px;
+padding:8px 18px;
 border-radius:20px;
-border:1px solid white;
+border:1px solid rgba(255,255,255,0.4);
 background:transparent;
 color:white;
 cursor:pointer;
@@ -70,23 +55,27 @@ padding:20px;
 }
 
 .produto-card{
-background:#1e2d44;
+background:rgba(255,255,255,0.05);
 padding:20px;
-border-radius:16px;
+border-radius:20px;
+backdrop-filter:blur(10px);
 transition:0.3s;
-box-shadow:0 15px 40px rgba(0,0,0,0.4);
 }
 
 .produto-card:hover{
 transform:translateY(-6px);
 }
 
+.preco{
+font-weight:600;
+margin:10px 0;
+}
+
 .contador{
 display:flex;
 justify-content:center;
-align-items:center;
 gap:10px;
-margin-top:10px;
+align-items:center;
 }
 
 .contador button{
@@ -94,23 +83,106 @@ width:32px;
 height:32px;
 border-radius:50%;
 border:none;
+background:white;
 cursor:pointer;
+font-weight:bold;
+}
+
+.btn-finalizar{
+position:fixed;
+bottom:20px;
+right:20px;
+padding:16px 28px;
+border:none;
+border-radius:40px;
 background:white;
 color:#0d1b2a;
-font-weight:bold;
-position:relative;
+font-weight:600;
+cursor:pointer;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
 overflow:hidden;
 }
 
-.contador button::after{
+.btn-finalizar::after{
 content:"";
 position:absolute;
 top:0;
 left:-100%;
 width:100%;
 height:100%;
-background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent);
+background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);
 animation:shine 3s infinite;
 }
 
-@keyframes
+@keyframes shine{
+100%{left:100%;}
+}
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.7);
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:white;
+color:#0d1b2a;
+width:90%;
+max-width:500px;
+border-radius:20px;
+padding:30px;
+animation:fadeUp 0.4s ease;
+}
+
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+.checkout-input{
+width:100%;
+margin:10px 0;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+.checkout-btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#0d1b2a;
+color:white;
+margin-top:10px;
+cursor:pointer;
+}
+
+.success{
+display:none;
+position:fixed;
+inset:0;
+background:#0d1b2a;
+justify-content:center;
+align-items:center;
+color:white;
+}
+
+.success-box{
+text-align:center;
+animation:fadeUp 0.5s ease;
+}
+
+/* Partículas */
+
+.particles{
+position:fixed;
+inset:0;
+background-image:radial-gradient(white 1px,transparent 1px);
+background-size:40px 40px;
+opacity:0.05;
+pointer-events:none;
+}
