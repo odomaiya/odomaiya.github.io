@@ -164,11 +164,27 @@ function enviarWhatsApp(){
   const pagamento=document.getElementById("pagamento").value;
   const tipo=document.getElementById("tipoEntrega").value;
 
-  let mensagem=`✨ *Novo Pedido - Odòmàiyá* ✨\n\n`;
-  mensagem+=`👤 Cliente: ${nome}\n`;
-  mensagem+=`💳 Pagamento: ${pagamento}\n`;
-  mensagem+=`📦 Tipo: ${tipo}\n\n`;
-  mensagem+=`🛍️ *Itens:*\n`;
+  let enderecoTexto="";
+
+  if(tipo==="entrega"){
+    enderecoTexto=`
+📍 *Endereço de Entrega:*
+🏠 ${document.getElementById("rua").value}, ${document.getElementById("numero").value}
+🏙️ ${document.getElementById("cidade").value}
+📮 CEP: ${document.getElementById("cep").value}
+`;
+  }else{
+    enderecoTexto=`
+🏪 *Retirada na Loja*
+`;
+  }
+
+  let mensagem=`✨🛍️ *Novo Pedido - Odòmàiyá* 🛍️✨\n\n`;
+  mensagem+=`👤 *Cliente:* ${nome}\n`;
+  mensagem+=`💳 *Pagamento:* ${pagamento}\n`;
+  mensagem+=`🚚 *Tipo:* ${tipo}\n`;
+  mensagem+=enderecoTexto;
+  mensagem+=`\n📦 *Itens do Pedido:*\n`;
 
   let total=0;
 
@@ -178,16 +194,22 @@ function enviarWhatsApp(){
       const preco=p.promocao&&p.promocao>0?p.promocao:p.preco;
       total+=preco*carrinho[nome];
 
-      mensagem+=`• ${nome}\n`;
-      mensagem+=`   Qtd: ${carrinho[nome]}\n`;
-      mensagem+=`   Valor: R$ ${(preco*carrinho[nome]).toFixed(2)}\n\n`;
+      mensagem+=`
+🔹 *${nome}*
+   🔢 Qtd: ${carrinho[nome]}
+   💰 R$ ${(preco*carrinho[nome]).toFixed(2)}
+`;
     }
   });
 
-  mensagem+=`💰 *Total: R$ ${total.toFixed(2)}*\n`;
+  mensagem+=`\n━━━━━━━━━━━━━━━`;
+  mensagem+=`\n💎 *TOTAL: R$ ${total.toFixed(2)}*`;
+  mensagem+=`\n━━━━━━━━━━━━━━━`;
+  mensagem+=`\n🙏 Aguardando confirmação do pedido.`;
 
   const url=`https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`;
   window.open(url,"_blank");
+}
 }
 
 carregarProdutos();
