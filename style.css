@@ -1,306 +1,263 @@
-/* ================================
-   TIPOGRAFIA PREMIUM
-================================ */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap');
-
-:root {
-  --azul-escuro: #0f172a;
-  --azul-principal: #1e3a8a;
-  --azul-claro: #3b82f6;
-  --branco: #ffffff;
-  --cinza-claro: #f8fafc;
-  --prata: #e2e8f0;
+:root{
+  --azul-escuro:#0b1d3a;
+  --azul:#163d7a;
+  --azul-claro:#1f5edb;
+  --branco:#ffffff;
+  --prata:#e6eefc;
 }
 
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(180deg, #f8fafc, #eef2f7);
-  color: #0f172a;
-  -webkit-font-smoothing: antialiased;
+*{
+  box-sizing:border-box;
 }
 
-/* ================================
-   HEADER IMPACTANTE
-================================ */
-
-header {
-  background: linear-gradient(135deg, var(--azul-escuro), var(--azul-principal));
-  padding: 60px 20px 70px;
-  text-align: center;
-  color: white;
-  position: relative;
-  overflow: hidden;
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(180deg,#0b1d3a,#122a52);
+  color:white;
+  overflow-x:hidden;
 }
 
-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 42px;
-  margin-bottom: 10px;
-  letter-spacing: 1px;
+/* ================= HEADER ================= */
+
+header{
+  text-align:center;
+  padding:60px 20px 80px;
+  position:relative;
 }
 
-header p {
-  font-size: 16px;
-  opacity: 0.9;
-  margin-top: 0;
+header h1{
+  font-family:'Playfair Display',serif;
+  font-size:42px;
+  margin:0;
+  letter-spacing:1px;
 }
 
-/* Brilho sutil */
-header::after {
-  content: "";
-  position: absolute;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
-  top: -200px;
-  right: -150px;
-  animation: brilho 6s infinite alternate ease-in-out;
+header p{
+  opacity:.9;
+  margin-top:10px;
 }
 
-@keyframes brilho {
-  from { transform: scale(1); }
-  to { transform: scale(1.2); }
+/* ================= PARTÍCULAS ================= */
+
+#particles{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  overflow:hidden;
 }
 
-/* ================================
-   BUSCA + FILTROS
-================================ */
-
-.busca-container {
-  max-width: 1200px;
-  margin: -30px auto 30px;
-  padding: 0 20px;
+.particula{
+  position:absolute;
+  width:4px;
+  height:4px;
+  background:white;
+  border-radius:50%;
+  opacity:.4;
+  animation:flutuar linear infinite;
 }
 
-#busca {
-  width: 100%;
-  padding: 14px 18px;
-  border-radius: 50px;
-  border: none;
-  font-size: 14px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+@keyframes flutuar{
+  from{ transform:translateY(100vh); opacity:.1;}
+  to{ transform:translateY(-10vh); opacity:.6;}
 }
 
-.filtros {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 15px;
+/* ================= PRODUTOS ================= */
+
+#produtos{
+  max-width:1400px;
+  margin:auto;
+  padding:40px 20px 120px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:30px;
 }
 
-.filtros button {
-  padding: 8px 18px;
-  border-radius: 30px;
-  border: 1px solid var(--azul-principal);
-  background: white;
-  color: var(--azul-principal);
-  cursor: pointer;
-  font-weight: 500;
-  transition: 0.3s;
+.produto-card{
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(14px);
+  border-radius:22px;
+  padding:22px;
+  transition:.4s;
+  border:1px solid rgba(255,255,255,.1);
 }
 
-.filtros button:hover,
-.filtros button.ativo {
-  background: var(--azul-principal);
-  color: white;
+.produto-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,.3);
 }
 
-/* ================================
-   GRID PRODUTOS
-================================ */
-
-#produtos {
-  max-width: 1400px;
-  margin: auto;
-  padding: 30px 20px 80px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 28px;
+.produto-card h3{
+  font-family:'Playfair Display',serif;
+  margin:10px 0 6px;
 }
 
-.produto-card {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  transition: 0.4s cubic-bezier(.77,0,.18,1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
+.preco{
+  color:#9cc4ff;
+  font-weight:600;
 }
 
-.produto-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+/* ================= CONTADOR ================= */
+
+.contador{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-top:10px;
 }
 
-.produto-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: contain;
-  margin-bottom: 15px;
+.contador button{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+  color:white;
+  font-weight:bold;
+  background:linear-gradient(145deg,#1f5edb,#2a6dff);
+  box-shadow:0 6px 18px rgba(0,0,0,.4);
+  transition:.2s;
+  position:relative;
+  overflow:hidden;
 }
 
-.produto-card h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 18px;
-  margin: 0 0 8px;
+/* efeito luz */
+.contador button::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.6),transparent);
+  transition:.6s;
 }
 
-.preco {
-  font-weight: 600;
-  color: var(--azul-principal);
+.contador button:hover::after{
+  left:100%;
 }
 
-.estoque {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-bottom: 10px;
+.contador button:active{
+  transform:scale(.9);
 }
 
-/* ================================
-   CONTADOR 3D ELEGANTE
-================================ */
+/* ================= CARRINHO ================= */
 
-.contador {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-top: 10px;
+#carrinho{
+  position:fixed;
+  right:0;
+  top:0;
+  width:420px;
+  max-width:95%;
+  height:100%;
+  background:white;
+  color:#0b1d3a;
+  box-shadow:-10px 0 40px rgba(0,0,0,.4);
+  padding:30px;
+  overflow-y:auto;
+  z-index:9999;
+  transform:translateX(100%);
+  transition:.4s;
 }
 
-.contador button {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: linear-gradient(145deg, #1e3a8a, #2749b5);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-  transition: 0.2s;
+#carrinho.aberto{
+  transform:translateX(0);
 }
 
-.contador button:active {
-  transform: scale(0.9);
+#overlayCarrinho{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(5px);
+  z-index:9998;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
 }
 
-/* ================================
-   CARRINHO LATERAL PREMIUM
-================================ */
-
-#carrinho {
-  position: fixed;
-  top: 0;
-  right: -420px;
-  width: 400px;
-  height: 100vh;
-  background: white;
-  box-shadow: -10px 0 40px rgba(0,0,0,0.15);
-  z-index: 9999;
-  transition: 0.4s;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
+#overlayCarrinho.ativo{
+  opacity:1;
+  pointer-events:all;
 }
 
-#carrinho.aberto {
-  right: 0;
+/* ================= CHECKOUT ================= */
+
+.checkout-step{
+  margin-top:20px;
 }
-
-#overlayCarrinho {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(4px);
-  z-index: 9998;
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.3s;
-}
-
-#overlayCarrinho.ativo {
-  opacity: 1;
-  pointer-events: all;
-}
-
-/* ================================
-   BOTÃO FINALIZAR 3D
-================================ */
-
-.botao-finalizar {
-  margin-top: auto;
-  padding: 14px;
-  border-radius: 50px;
-  border: none;
-  background: linear-gradient(145deg, #1e3a8a, #3b82f6);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 10px 25px rgba(30,58,138,0.3);
-  transition: 0.3s;
-}
-
-.botao-finalizar:hover {
-  transform: translateY(-3px);
-}
-
-/* ================================
-   CHECKOUT STEPS
-================================ */
 
 .checkout-step input,
-.checkout-step select {
-  width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
-  background: linear-gradient(145deg, #ffffff, #f1f5f9);
-  margin-bottom: 14px;
-  transition: 0.3s;
+.checkout-step select{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #dbeafe;
+  margin-bottom:14px;
+  font-size:14px;
 }
 
-.checkout-step input:focus,
-.checkout-step select:focus {
-  border-color: var(--azul-principal);
-  box-shadow: 0 0 0 3px rgba(30,58,138,0.15);
-  outline: none;
+.botao-finalizar{
+  width:100%;
+  padding:15px;
+  border-radius:40px;
+  border:none;
+  background:linear-gradient(145deg,#163d7a,#1f5edb);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:20px;
+  position:relative;
+  overflow:hidden;
 }
 
-/* ================================
-   MICROANIMAÇÕES
-================================ */
-
-.produto-card,
-.filtros button,
-.botao-finalizar {
-  opacity: 0;
-  transform: translateY(15px);
-  animation: fadeUp 0.6s forwards;
+/* efeito luz botão */
+.botao-finalizar::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.6),transparent);
+  transition:.7s;
 }
 
-@keyframes fadeUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.botao-finalizar:hover::after{
+  left:100%;
 }
 
-/* ================================
-   RESPONSIVO PREMIUM
-================================ */
+/* ================= SUCESSO CINEMATOGRÁFICO ================= */
 
-@media (min-width: 1200px) {
-  header h1 {
-    font-size: 52px;
-  }
+#telaSucesso{
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at center,#163d7a,#0b1d3a);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  color:white;
+  z-index:10000;
+  opacity:0;
+  pointer-events:none;
+  transition:.6s;
+}
 
-  #produtos {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  }
+#telaSucesso.ativo{
+  opacity:1;
+  pointer-events:all;
+}
+
+#telaSucesso h2{
+  font-family:'Playfair Display',serif;
+  font-size:38px;
+  margin-bottom:15px;
+  animation:fadeUp 1s ease forwards;
+}
+
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(30px);}
+  to{opacity:1; transform:translateY(0);}
 }
