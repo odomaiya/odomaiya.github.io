@@ -147,3 +147,28 @@ function animarEntrada(){
 }
 
 document.addEventListener("DOMContentLoaded",carregar);
+/* ================= PARTÍCULAS ================= */
+
+const particlesContainer = document.getElementById("particles");
+
+for(let i=0;i<40;i++){
+  const p = document.createElement("div");
+  p.classList.add("particula");
+  p.style.left = Math.random()*100+"vw";
+  p.style.animationDuration = (5+Math.random()*10)+"s";
+  p.style.animationDelay = Math.random()*5+"s";
+  particlesContainer.appendChild(p);
+}
+
+/* ================= SUCESSO CINEMATOGRÁFICO ================= */
+
+function mostrarSucesso(){
+  const tela = document.getElementById("telaSucesso");
+  tela.classList.add("ativo");
+
+  setTimeout(()=>{
+    tela.classList.remove("ativo");
+  },4000);
+}
+
+/* CHAME mostrarSucesso() após confirmação do pedido */
