@@ -13,15 +13,18 @@
   <button onclick="abrirCarrinho()">🛒 Carrinho</button>
 </div>
 
-<div class="carrinho">
+<div class="carrinho-lateral">
   <h3>Seu Carrinho</h3>
   <div id="itensCarrinho"></div>
-  <h4>Total: <span id="totalCarrinho">R$ 0,00</span></h4>
-  <button onclick="finalizarPedido()">Finalizar no WhatsApp</button>
-  <button onclick="fecharCarrinho()">Fechar</button>
+  <div>Total: <span id="valorTotal">R$ 0,00</span></div>
+  <button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
+  <button onclick="fecharCarrinho()" class="btn-finalizar" style="background:#444;">Fechar</button>
 </div>
 
 <header class="header">
+  <button onclick="abrirCarrinho()" style="padding:10px 15px;border:none;border-radius:10px;background:#6f97b5;color:white;">
+🛒 Carrinho
+</button>
   <div class="logo-area">
     <img src="logo.png" class="logo">
     <div>
