@@ -71,7 +71,15 @@ input, select{
   position:relative;
   box-shadow:0 10px 25px rgba(0,0,0,0.05);
 }
-
+.produto-card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  position:relative;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+  transition:0.3s;
+}
 .produto-card img{
   width:100%;
   height:180px;
