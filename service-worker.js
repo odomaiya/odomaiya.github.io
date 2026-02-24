@@ -1,12 +1,22 @@
-self.addEventListener('install', e=>{
+const CACHE_NAME="odomaia-cache-v2";
+
+self.addEventListener("install",e=>{
 e.waitUntil(
-caches.open('odomaia-v1').then(cache=>{
+caches.open(CACHE_NAME).then(cache=>{
 return cache.addAll([
-'/',
-'/index.html',
-'/style.css',
-'/app.js'
+"/",
+"/index.html",
+"/style.css",
+"/app.js"
 ]);
+})
+);
+});
+
+self.addEventListener("fetch",e=>{
+e.respondWith(
+caches.match(e.request).then(res=>{
+return res || fetch(e.request);
 })
 );
 });
