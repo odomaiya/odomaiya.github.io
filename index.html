@@ -7,6 +7,19 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="whatsapp-fixo" onclick="finalizarPedido()">💬</div>
+
+<div class="barra-mobile">
+  <button onclick="abrirCarrinho()">🛒 Carrinho</button>
+</div>
+
+<div class="carrinho">
+  <h3>Seu Carrinho</h3>
+  <div id="itensCarrinho"></div>
+  <h4>Total: <span id="totalCarrinho">R$ 0,00</span></h4>
+  <button onclick="finalizarPedido()">Finalizar no WhatsApp</button>
+  <button onclick="fecharCarrinho()">Fechar</button>
+</div>
 
 <header class="header">
   <div class="logo-area">
