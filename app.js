@@ -1,6 +1,6 @@
 let produtos=[];
 let carrinho=[];
-let etapaAtual=1;
+let etapa=1;
 
 async function carregar(){
  const res=await fetch(CONFIG.planilhaCSV);
@@ -14,6 +14,7 @@ async function carregar(){
 
  renderCategorias();
  renderProdutos(produtos);
+ animarEntrada();
 }
 
 function renderCategorias(){
@@ -81,12 +82,8 @@ function atualizarCarrinho(){
  contador.innerText=carrinho.reduce((s,i)=>s+i.qtd,0);
 }
 
-function abrirCarrinho(){
- document.getElementById("carrinho").classList.add("ativo");
-}
-
-function fecharCarrinho(){
- document.getElementById("carrinho").classList.remove("ativo");
+function toggleCarrinho(){
+ document.getElementById("carrinho").classList.toggle("ativo");
 }
 
 function abrirCheckout(){
@@ -101,11 +98,11 @@ function fecharCheckout(){
 
 function mostrarEtapa(){
  document.querySelectorAll(".etapa").forEach(e=>e.classList.remove("ativa"));
- document.getElementById("etapa-"+etapaAtual).classList.add("ativa");
+ document.getElementById("etapa-"+etapa).classList.add("ativa");
 }
 
-function proximaEtapa(){ etapaAtual++; mostrarEtapa(); }
-function voltarEtapa(){ etapaAtual--; mostrarEtapa(); }
+function proximaEtapa(){ etapa++; mostrarEtapa(); }
+function voltarEtapa(){ etapa--; mostrarEtapa(); }
 
 function tipoEntrega(tipo){
  const div=document.getElementById("campo-endereco");
@@ -143,6 +140,10 @@ function finalizarPedido(){
 
  document.getElementById("loader").style.display="flex";
  setTimeout(()=>window.open(url,"_blank"),1500);
+}
+
+function animarEntrada(){
+ gsap.from(".card",{opacity:0,y:30,duration:0.8,stagger:0.1});
 }
 
 document.addEventListener("DOMContentLoaded",carregar);
