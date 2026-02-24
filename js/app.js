@@ -1,136 +1,70 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
 
-let carrinho = {};
-let categoriaAtual = "Todos";
 let produtos = [];
-
-/* ========================= */
-/* CARREGAR PRODUTOS */
-/* ========================= */
+let carrinho = {};
 
 async function carregarProdutos(){
-  try{
-    const res = await fetch(API_URL + "?acao=produtos");
-    const data = await res.json();
+  const res = await fetch(API_URL + "?acao=produtos");
+  const data = await res.json();
 
-    produtos = data.map(p => {
+  produtos = data.map(p => {
 
-      const preco = Number(String(p.preco || 0).replace(",", ".")) || 0;
-      const promocaoBruta = String(p.promocao || "").trim();
-      const promocao = promocaoBruta !== ""
-        ? Number(promocaoBruta.replace(",", ".")) || 0
-        : 0;
+    const preco = Number(String(p.preco || 0).replace(",", "."));
+    const promoBruta = String(p.promocao || "").trim();
 
-      return {
-        categoria: p.categoria || "Outros",
-        estoque: Number(p.estoque) || 0,
-        imagem: p.imagem || "",
-        nome: p.nome,
-        preco: preco,
-        promocao: (promocao > 0 && promocao < preco) ? promocao : 0
-      };
-    });
+    const promocao = promoBruta !== ""
+      ? Number(promoBruta.replace(",", "."))
+      : 0;
 
-    /* PROMOÇÕES PRIMEIRO + ORDEM ALFABÉTICA */
-    produtos.sort((a, b) => {
-
-      if (a.promocao > 0 && b.promocao === 0) return -1;
-      if (a.promocao === 0 && b.promocao > 0) return 1;
-
-      return a.nome.localeCompare(b.nome, "pt-BR");
-    });
-
-    criarFiltros();
-    renderizar(produtos);
-
-  } catch (e) {
-    console.error("Erro ao carregar produtos:", e);
-  }
-}
-
-/* ========================= */
-/* FILTROS */
-/* ========================= */
-
-function criarFiltros(){
-
-  const area = document.getElementById("filtros");
-
-  const categorias = [
-    "Todos",
-    ...new Set(produtos.map(p => p.categoria))
-  ].sort((a,b)=>a.localeCompare(b,"pt-BR"));
-
-  area.innerHTML = "";
-
-  categorias.forEach(cat => {
-    const btn = document.createElement("button");
-    btn.innerText = cat;
-    btn.onclick = () => filtrar(cat);
-    area.appendChild(btn);
+    return {
+      nome: p.nome,
+      preco: preco,
+      promocao: (promocao > 0 && promocao < preco) ? promocao : 0,
+      categoria: p.categoria || "Outros",
+      imagem: p.imagem || "",
+      estoque: Number(p.estoque) || 0
+    };
   });
+
+  // Promoções primeiro + ordem alfabética
+  produtos.sort((a,b)=>{
+    if(a.promocao > 0 && b.promocao === 0) return -1;
+    if(a.promocao === 0 && b.promocao > 0) return 1;
+    return a.nome.localeCompare(b.nome,"pt-BR");
+  });
+
+  renderizar(produtos);
 }
-
-function filtrar(cat){
-
-  categoriaAtual = cat;
-
-  if (cat === "Todos") {
-    renderizar(produtos);
-  } else {
-    const filtrados = produtos
-      .filter(p => p.categoria === cat)
-      .sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"));
-
-    renderizar(filtrados);
-  }
-}
-
-/* ========================= */
-/* RENDERIZAR */
-/* ========================= */
 
 function renderizar(lista){
 
   const grid = document.getElementById("produtos");
   grid.innerHTML = "";
 
-  lista.forEach(p => {
+  lista.forEach(p=>{
 
-    const precoFinal = p.promocao > 0 ? p.promocao : p.preco;
     const temPromo = p.promocao > 0;
+    const precoFinal = temPromo ? p.promocao : p.preco;
 
     const card = document.createElement("div");
     card.className = "produto-card";
-
-    if (temPromo) card.classList.add("promo-card");
+    if(temPromo) card.classList.add("promo-card");
 
     card.innerHTML = `
-      ${temPromo ? `<div class="badge">🔥 OFERTA</div>` : ""}
-
-      <img src="${p.imagem}" alt="${p.nome}">
+      ${temPromo?'<div class="badge">🔥 OFERTA</div>':""}
+      <img src="${p.imagem}">
       <h3>${p.nome}</h3>
-
-      ${temPromo ?
+      ${temPromo?
         `<div>
-          <span class="antigo">
-            R$ ${p.preco.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </span>
-          <span class="promo">
-            R$ ${p.promocao.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-          </span>
+          <span class="antigo">R$ ${p.preco.toLocaleString("pt-BR",{minimumFractionDigits:2})}</span>
+          <span class="promo">R$ ${p.promocao.toLocaleString("pt-BR",{minimumFractionDigits:2})}</span>
         </div>`
         :
-        `<div>
-          R$ ${p.preco.toLocaleString("pt-BR",{minimumFractionDigits:2})}
-        </div>`
+        `<div>R$ ${p.preco.toLocaleString("pt-BR",{minimumFractionDigits:2})}</div>`
       }
-
-      <small>Estoque: ${p.estoque}</small>
-
       <div class="contador">
         <button onclick="alterar('${p.nome}',-1)">−</button>
-        <span>${carrinho[p.nome] || 0}</span>
+        <span>${carrinho[p.nome]||0}</span>
         <button onclick="alterar('${p.nome}',1)">+</button>
       </div>
     `;
@@ -141,200 +75,52 @@ function renderizar(lista){
   atualizarCarrinho();
 }
 
-/* ========================= */
-/* ALTERAR QUANTIDADE */
-/* ========================= */
-
-function alterar(nome, valor){
-
-  const produto = produtos.find(p => p.nome === nome);
-  if (!produto) return;
-
-  if (!carrinho[nome]) carrinho[nome] = 0;
-
-  if (valor > 0 && carrinho[nome] >= produto.estoque) return;
-
-  carrinho[nome] += valor;
-  if (carrinho[nome] < 0) carrinho[nome] = 0;
-
-  filtrar(categoriaAtual);
+function alterar(nome,valor){
+  if(!carrinho[nome]) carrinho[nome]=0;
+  carrinho[nome]+=valor;
+  if(carrinho[nome]<0) carrinho[nome]=0;
+  renderizar(produtos);
 }
-
-/* ========================= */
-/* ATUALIZAR CARRINHO */
-/* ========================= */
 
 function atualizarCarrinho(){
 
   const area = document.getElementById("itensCarrinho");
-  area.innerHTML = "";
+  const contador = document.getElementById("contadorCarrinho");
 
-  let total = 0;
-
-  const nomesOrdenados = Object.keys(carrinho)
-    .filter(n => carrinho[n] > 0)
-    .sort((a,b)=>a.localeCompare(b,"pt-BR"));
-
-  nomesOrdenados.forEach(nome => {
-
-    const p = produtos.find(x => x.nome === nome);
-    if (!p) return;
-
-    const preco = p.promocao > 0 ? p.promocao : p.preco;
-    total += preco * carrinho[nome];
-
-    area.innerHTML += `
-      <div>
-        <strong>${nome}</strong><br>
-        Qtde: ${carrinho[nome]}<br>
-        <small>
-          R$ ${(preco * carrinho[nome]).toLocaleString("pt-BR",{minimumFractionDigits:2})}
-        </small>
-      </div>
-      <hr>
-    `;
-  });
-
-  document.getElementById("valorTotal").innerText =
-    "R$ " + total.toLocaleString("pt-BR",{minimumFractionDigits:2});
-}
-
-/* ========================= */
-/* CHECKOUT */
-/* ========================= */
-
-function abrirCheckout(){
-
-  if (Object.values(carrinho).every(q => q === 0)){
-    alert("Adicione produtos ao carrinho.");
-    return;
-  }
-
-  document.getElementById("modalCheckout").style.display = "flex";
-
-  document.getElementById("checkoutConteudo").innerHTML = `
-    <h2>Finalizar Pedido</h2>
-
-    <input type="text" id="nomeCliente" placeholder="Seu nome">
-
-    <select id="formaPagamento">
-      <option value="">Forma de pagamento</option>
-      <option>Cartão</option>
-      <option>Dinheiro</option>
-      <option>Pix</option>
-    </select>
-
-    <select id="tipoEntrega" onchange="mostrarEndereco()">
-      <option value="">Entrega ou Retirada?</option>
-      <option value="Entrega">Entrega</option>
-      <option value="Retirada">Retirada</option>
-    </select>
-
-    <div id="areaEndereco"></div>
-
-    <button onclick="enviarPedido()">Enviar pelo WhatsApp</button>
-  `;
-}
-
-/* ========================= */
-
-function mostrarEndereco(){
-
-  const tipo = document.getElementById("tipoEntrega").value;
-  const area = document.getElementById("areaEndereco");
-
-  if (tipo === "Entrega"){
-    area.innerHTML = `
-      <input id="cep" placeholder="CEP" onblur="buscarCEP()">
-      <input id="rua" placeholder="Rua">
-      <input id="numero" placeholder="Número">
-      <input id="cidade" placeholder="Cidade">
-    `;
-  } else {
-    area.innerHTML = `
-      <p><strong>Retirada em Loja:</strong><br>
-      R. Sete de Agosto, 28 - Centro<br>
-      Passo Fundo - RS<br>
-      99025-030</p>
-    `;
-  }
-}
-
-/* ========================= */
-
-async function buscarCEP(){
-
-  const cep = document.getElementById("cep").value.replace(/\D/g,"");
-  if (cep.length !== 8) return;
-
-  const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-  const data = await res.json();
-
-  if (!data.erro){
-    document.getElementById("rua").value = data.logradouro;
-    document.getElementById("cidade").value = data.localidade;
-  }
-}
-
-/* ========================= */
-
-function enviarPedido(){
-
-  const nome = document.getElementById("nomeCliente").value;
-  const pagamento = document.getElementById("formaPagamento").value;
-  const tipo = document.getElementById("tipoEntrega").value;
-
-  if (!nome || !pagamento || !tipo){
-    alert("Preencha todos os campos.");
-    return;
-  }
-
-  let total = 0;
-  let mensagem = `✨ *Pedido Odòmàiyá* ✨\n\n`;
-
-  mensagem += `👤 Cliente: ${nome}\n`;
-  mensagem += `💳 Pagamento: ${pagamento}\n`;
-  mensagem += `🚚 Tipo: ${tipo}\n\n`;
-  mensagem += `🛍️ *Itens:*\n\n`;
+  area.innerHTML="";
+  let total=0;
+  let qtdTotal=0;
 
   Object.keys(carrinho)
-    .filter(n => carrinho[n] > 0)
+    .filter(n=>carrinho[n]>0)
     .sort((a,b)=>a.localeCompare(b,"pt-BR"))
-    .forEach(nomeProd => {
+    .forEach(nome=>{
 
-      const p = produtos.find(x => x.nome === nomeProd);
-      const preco = p.promocao > 0 ? p.promocao : p.preco;
+      const p = produtos.find(x=>x.nome===nome);
+      const preco = p.promocao>0?p.promocao:p.preco;
 
-      total += preco * carrinho[nomeProd];
+      total+=preco*carrinho[nome];
+      qtdTotal+=carrinho[nome];
 
-      mensagem += `• ${nomeProd}\n`;
-      mensagem += `   Qtde: ${carrinho[nomeProd]}\n`;
-      mensagem += `   Valor: R$ ${(preco * carrinho[nomeProd]).toLocaleString("pt-BR",{minimumFractionDigits:2})}\n\n`;
+      area.innerHTML+=`
+        <div>
+          <strong>${nome}</strong><br>
+          Qtde: ${carrinho[nome]}<br>
+          R$ ${(preco*carrinho[nome]).toLocaleString("pt-BR",{minimumFractionDigits:2})}
+        </div><hr>
+      `;
     });
 
-  mensagem += `💰 *Total: R$ ${total.toLocaleString("pt-BR",{minimumFractionDigits:2})}*\n\n`;
-
-  if (tipo === "Entrega"){
-    const rua = document.getElementById("rua").value;
-    const numero = document.getElementById("numero").value;
-    const cidade = document.getElementById("cidade").value;
-    const cep = document.getElementById("cep").value;
-
-    mensagem += `📍 *Endereço de Entrega:*\n${rua}, ${numero}\n${cidade}\nCEP: ${cep}\n`;
-  } else {
-    mensagem += `📍 *Retirada em Loja:*\nR. Sete de Agosto, 28 - Centro\nPasso Fundo - RS\n99025-030\n`;
-  }
-
-  const url = `https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`;
-  window.open(url, "_blank");
+  contador.innerText=qtdTotal;
+  document.getElementById("valorTotal").innerText=
+    "R$ "+total.toLocaleString("pt-BR",{minimumFractionDigits:2});
 }
 
-/* ========================= */
+function abrirCarrinho(){
+  document.getElementById("carrinho").classList.toggle("ativo");
+}
 
 window.alterar = alterar;
-window.abrirCheckout = abrirCheckout;
-window.buscarCEP = buscarCEP;
-window.enviarPedido = enviarPedido;
-window.mostrarEndereco = mostrarEndereco;
+window.abrirCarrinho = abrirCarrinho;
 
 carregarProdutos();
