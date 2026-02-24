@@ -4,18 +4,24 @@ let produtos = [];
 let carrinho = {};
 let categoriaAtual = "Todos";
 
+/* =========================
+   CARREGAR PRODUTOS
+========================= */
 async function carregarProdutos(){
   try{
-    const res = await fetch(API_URL+"?acao=produtos");
-    produtos = await res.json();
+    const res = await fetch(API_URL + "?acao=produtos");
+    const data = await res.json();
 
-    produtos = produtos.map(p => ({
-      ...p,
+    produtos = data.map(p => ({
+      nome: p.nome,
       preco: Number(p.preco),
-      promocao: Number(p.promocao) || 0,
+      promocao: Number(p["promoçao"]) || 0,
+      categoria: p.categoria,
+      imagem: p.imagem,
       estoque: Number(p.estoque)
     }));
 
+    // Promoções primeiro
     produtos.sort((a,b)=>{
       const promoA = a.promocao > 0 ? 1 : 0;
       const promoB = b.promocao > 0 ? 1 : 0;
@@ -26,21 +32,19 @@ async function carregarProdutos(){
     renderizar(produtos);
 
   }catch(e){
-    console.log("Erro:", e);
+    console.error("Erro ao carregar:", e);
     document.getElementById("produtos").innerHTML="<p>Erro ao carregar produtos.</p>";
   }
 }
 
-  }catch(e){
-    document.getElementById("produtos").innerHTML="<p>Erro ao carregar produtos.</p>";
-  }
-}
-}
-
+/* =========================
+   FILTROS
+========================= */
 function criarFiltros(){
   const area=document.getElementById("filtros");
   const categorias=["Todos",...new Set(produtos.map(p=>p.categoria))];
   area.innerHTML="";
+
   categorias.forEach(cat=>{
     const btn=document.createElement("button");
     btn.innerText=cat;
@@ -55,6 +59,9 @@ function filtrar(cat){
   else renderizar(produtos.filter(p=>p.categoria===cat));
 }
 
+/* =========================
+   RENDERIZAR PRODUTOS
+========================= */
 function renderizar(lista){
   const grid=document.getElementById("produtos");
   grid.innerHTML="";
@@ -62,8 +69,8 @@ function renderizar(lista){
   const fragment=document.createDocumentFragment();
 
   lista.forEach((p,index)=>{
-    const precoFinal=p.promocao&&p.promocao>0?p.promocao:p.preco;
-    const temPromo=p.promocao&&p.promocao>0;
+    const precoFinal=p.promocao>0?p.promocao:p.preco;
+    const temPromo=p.promocao>0;
 
     const card=document.createElement("div");
     card.className="produto-card";
@@ -74,9 +81,9 @@ function renderizar(lista){
       <img src="${p.imagem}" loading="lazy">
       <h3>${p.nome}</h3>
       ${temPromo?
-      `<div><span class="antigo">R$ ${p.preco}</span> 
-       <span class="promo">R$ ${p.promocao}</span></div>`:
-      `<div>R$ ${p.preco}</div>`}
+      `<div><span class="antigo">R$ ${p.preco.toFixed(2)}</span> 
+       <span class="promo">R$ ${p.promocao.toFixed(2)}</span></div>`:
+      `<div>R$ ${p.preco.toFixed(2)}</div>`}
       <small>Estoque: ${p.estoque}</small>
       <div class="contador">
         <button onclick="alterar('${p.nome}',-1)">−</button>
@@ -91,8 +98,10 @@ function renderizar(lista){
   grid.appendChild(fragment);
   atualizarCarrinho();
 }
-}
 
+/* =========================
+   CARRINHO
+========================= */
 function alterar(nome,valor){
   const produto=produtos.find(p=>p.nome===nome);
   if(!carrinho[nome]) carrinho[nome]=0;
@@ -111,7 +120,7 @@ function atualizarCarrinho(){
   Object.keys(carrinho).forEach(nome=>{
     if(carrinho[nome]>0){
       const p=produtos.find(x=>x.nome===nome);
-      const preco=p.promocao&&p.promocao>0?p.promocao:p.preco;
+      const preco=p.promocao>0?p.promocao:p.preco;
       total+=preco*carrinho[nome];
       contador+=carrinho[nome];
 
@@ -129,6 +138,9 @@ function atualizarCarrinho(){
   document.getElementById("contadorCarrinho").innerText=contador;
 }
 
+/* =========================
+   ABRIR / FECHAR
+========================= */
 function abrirCarrinho(){
   document.getElementById("drawerCarrinho").style.display="flex";
 }
@@ -137,103 +149,7 @@ function fecharCarrinho(){
   document.getElementById("drawerCarrinho").style.display="none";
 }
 
-function abrirCheckout(){
-  fecharCarrinho();
-
-  const modal=document.getElementById("modalCheckout");
-  const conteudo=document.getElementById("checkoutConteudo");
-
-  conteudo.innerHTML=`
-  <h3>Finalizar Pedido</h3>
-  <input id="nomeCliente" placeholder="Seu Nome">
-  <select id="pagamento">
-    <option>Cartão</option>
-    <option>Dinheiro</option>
-    <option>Pix</option>
-  </select>
-  <select id="tipoEntrega" onchange="mostrarEndereco()">
-    <option value="retirada">Retirada</option>
-    <option value="entrega">Entrega</option>
-  </select>
-  <div id="enderecoArea"></div>
-  <button onclick="enviarWhatsApp()" class="btn-finalizar">
-    Enviar Pedido
-  </button>
-  `;
-
-  modal.style.display="flex";
-}
-
-function mostrarEndereco(){
-  const area=document.getElementById("enderecoArea");
-  area.innerHTML=`
-    <input id="cep" placeholder="CEP" onblur="buscarCEP()">
-    <input id="rua" placeholder="Rua">
-    <input id="numero" placeholder="Número">
-    <input id="cidade" placeholder="Cidade">
-  `;
-}
-
-async function buscarCEP(){
-  const cep=document.getElementById("cep").value;
-  if(cep.length<8) return;
-  const res=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-  const data=await res.json();
-  document.getElementById("rua").value=data.logradouro;
-  document.getElementById("cidade").value=data.localidade;
-}
-
-function enviarWhatsApp(){
-  const nome=document.getElementById("nomeCliente").value;
-  const pagamento=document.getElementById("pagamento").value;
-  const tipo=document.getElementById("tipoEntrega").value;
-
-  let enderecoTexto="";
-
-  if(tipo==="entrega"){
-    enderecoTexto=`
-📍 *Endereço de Entrega:*
-🏠 ${document.getElementById("rua").value}, ${document.getElementById("numero").value}
-🏙️ ${document.getElementById("cidade").value}
-📮 CEP: ${document.getElementById("cep").value}
-`;
-  }else{
-    enderecoTexto=`
-🏪 *Retirada na Loja*
-`;
-  }
-
-  let mensagem=`✨🛍️ *Novo Pedido - Odòmàiyá* 🛍️✨\n\n`;
-  mensagem+=`👤 *Cliente:* ${nome}\n`;
-  mensagem+=`💳 *Pagamento:* ${pagamento}\n`;
-  mensagem+=`🚚 *Tipo:* ${tipo}\n`;
-  mensagem+=enderecoTexto;
-  mensagem+=`\n📦 *Itens do Pedido:*\n`;
-
-  let total=0;
-
-  Object.keys(carrinho).forEach(nome=>{
-    if(carrinho[nome]>0){
-      const p=produtos.find(x=>x.nome===nome);
-      const preco=p.promocao&&p.promocao>0?p.promocao:p.preco;
-      total+=preco*carrinho[nome];
-
-      mensagem+=`
-🔹 *${nome}*
-   🔢 Qtd: ${carrinho[nome]}
-   💰 R$ ${(preco*carrinho[nome]).toFixed(2)}
-`;
-    }
-  });
-
-  mensagem+=`\n━━━━━━━━━━━━━━━`;
-  mensagem+=`\n💎 *TOTAL: R$ ${total.toFixed(2)}*`;
-  mensagem+=`\n━━━━━━━━━━━━━━━`;
-  mensagem+=`\n🙏 Aguardando confirmação do pedido.`;
-
-  const url=`https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`;
-  window.open(url,"_blank");
-}
-}
-
+/* =========================
+   INICIAR
+========================= */
 carregarProdutos();
