@@ -3,9 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmáiyà Artigos Religiosos</title>
 
+<title>Odòmáiyà Artigos Religiosos | Loja Oficial</title>
+<meta name="description" content="Loja oficial Odòmáiyà Artigos Religiosos. Produtos selecionados com respeito às tradições de matriz africana.">
+<meta name="keywords" content="artigos religiosos, umbanda, candomblé, velas, guias, pembas">
+<meta name="author" content="Odòmáiyà">
+
+<link rel="canonical" href="https://seudominio.com/">
+
+<meta property="og:title" content="Odòmáiyà Artigos Religiosos">
+<meta property="og:description" content="Conectando fé, ancestralidade e força espiritual.">
+<meta property="og:type" content="website">
+
+<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 </head>
@@ -25,23 +38,26 @@
 
 <section id="produtos" class="grid"></section>
 
-<button id="btnFinalizar" class="btn-finalizar" onclick="abrirCheckout()">
-🛒 Finalizar Pedido (<span id="totalItens">0</span>)
-</button>
-
-<!-- MODAL -->
-<div id="checkoutModal" class="modal">
-  <div class="modal-content">
-    <div id="checkoutSteps"></div>
+<!-- CARRINHO LATERAL -->
+<div id="carrinhoLateral" class="carrinho">
+  <h3>Seu Pedido</h3>
+  <div id="itensCarrinho"></div>
+  <div class="total-box">
+    Total: <span id="valorTotal">R$ 0.00</span>
   </div>
+  <button class="btn-checkout" onclick="abrirCheckout()">Finalizar Pedido</button>
 </div>
 
-<!-- SUCCESS PAGE -->
-<div id="successPage" class="success">
-  <h2>Pedido Enviado ✨</h2>
-  <p>Você será direcionado para o WhatsApp.</p>
-</div>
+<!-- MODAL CHECKOUT -->
+<div id="checkoutModal" class="modal"></div>
 
 <script src="app.js"></script>
+
+<script>
+if('serviceWorker' in navigator){
+navigator.serviceWorker.register('service-worker.js');
+}
+</script>
+
 </body>
 </html>
