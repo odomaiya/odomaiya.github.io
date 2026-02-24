@@ -9,14 +9,27 @@ async function carregarProdutos(){
     const res = await fetch(API_URL+"?acao=produtos");
     produtos = await res.json();
 
+    produtos = produtos.map(p => ({
+      ...p,
+      preco: Number(p.preco),
+      promocao: Number(p.promocao) || 0,
+      estoque: Number(p.estoque)
+    }));
+
     produtos.sort((a,b)=>{
-      const promoA = a.promocao && a.promocao > 0 ? 1 : 0;
-      const promoB = b.promocao && b.promocao > 0 ? 1 : 0;
+      const promoA = a.promocao > 0 ? 1 : 0;
+      const promoB = b.promocao > 0 ? 1 : 0;
       return promoB - promoA;
     });
 
     criarFiltros();
     renderizar(produtos);
+
+  }catch(e){
+    console.log("Erro:", e);
+    document.getElementById("produtos").innerHTML="<p>Erro ao carregar produtos.</p>";
+  }
+}
 
   }catch(e){
     document.getElementById("produtos").innerHTML="<p>Erro ao carregar produtos.</p>";
