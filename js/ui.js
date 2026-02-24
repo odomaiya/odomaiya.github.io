@@ -57,3 +57,54 @@ const UI = {
   }
 
 };
+
+function abrirCarrinho(){
+  document.querySelector(".carrinho").classList.add("ativo");
+}
+
+function fecharCarrinho(){
+  document.querySelector(".carrinho").classList.remove("ativo");
+}
+
+function renderCarrinho(){
+  const area = document.getElementById("itensCarrinho");
+  area.innerHTML="";
+  let total=0;
+
+  Object.keys(carrinho).forEach(nome=>{
+    if(carrinho[nome]>0){
+      const p = produtos.find(x=>x.nome===nome);
+      const preco = p.promocao || p.preco;
+      total += preco*carrinho[nome];
+
+      area.innerHTML+=`
+        <div>
+          <strong>${nome}</strong><br>
+          ${carrinho[nome]}x R$ ${preco.toFixed(2)}
+        </div><hr>
+      `;
+    }
+  });
+
+  document.getElementById("totalCarrinho").innerText="R$ "+total.toFixed(2);
+}
+
+function finalizarPedido(){
+  let mensagem="✨ *Odòmàiyá Artigos Religiosos* ✨%0A%0A";
+  let total=0;
+
+  Object.keys(carrinho).forEach(nome=>{
+    if(carrinho[nome]>0){
+      const p=produtos.find(x=>x.nome===nome);
+      const preco=p.promocao||p.preco;
+      total+=preco*carrinho[nome];
+      mensagem+=`🛍️ ${nome}%0A`;
+      mensagem+=`Qtd: ${carrinho[nome]}%0A`;
+      mensagem+=`Valor: R$ ${(preco*carrinho[nome]).toFixed(2)}%0A%0A`;
+    }
+  });
+
+  mensagem+=`💰 *Total: R$ ${total.toFixed(2)}*`;
+
+  window.open(`https://wa.me/555496048808?text=${mensagem}`,"_blank");
+}
