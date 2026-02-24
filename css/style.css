@@ -308,3 +308,22 @@ html{
   }
 
 }
+/* PRODUTO EM PROMOÇÃO */
+
+.produto-card.promo-card{
+  border:2px solid var(--azul-medio);
+  box-shadow:0 0 20px rgba(62,111,149,0.25);
+}
+
+.produto-card.promo-card::after{
+  content:"🔥 OFERTA ESPECIAL";
+  position:absolute;
+  bottom:-10px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--azul-medio);
+  color:white;
+  padding:5px 12px;
+  font-size:11px;
+  border-radius:20px;
+}
