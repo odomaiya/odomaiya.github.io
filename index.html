@@ -5,54 +5,54 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Odòmàiyá Artigos Religiosos</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<header class="topo">
+<header class="header">
   <div class="logo-area">
     <img src="logo.png" class="logo">
     <div>
       <h1>Odòmàiyá</h1>
-      <p>Artigos Religiosos</p>
+      <span>Artigos Religiosos</span>
     </div>
   </div>
 
-  <div class="social">
-    <a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
-    <a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
-  </div>
+  <button class="cart-btn" onclick="UI.toggleCart()">
+    🛒 <span id="cart-count">0</span>
+  </button>
 </header>
 
-<section class="busca-area">
-  <input type="text" id="busca" placeholder="Buscar produto...">
-  <div id="filtros"></div>
+<section class="search-section">
+  <input type="text" id="searchInput" placeholder="Buscar produtos...">
+  <div id="categoryFilters"></div>
 </section>
 
-<section id="produtos" class="grid"></section>
+<section id="products" class="products-grid"></section>
 
-<button class="btn-carrinho" onclick="abrirCarrinho()">
-🛒 <span id="contadorCarrinho">0</span>
-</button>
+<div id="cartDrawer" class="cart-drawer"></div>
 
-<div id="painelCarrinho" class="painel-carrinho">
-  <div class="cabecalho-carrinho">
-    <h3>Seu Carrinho</h3>
-    <button onclick="fecharCarrinho()">✕</button>
-  </div>
+<nav class="mobile-bar">
+  <button onclick="UI.toggleCart()">🛒 Carrinho</button>
+  <a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
+  <a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
+</nav>
 
-  <div id="itensCarrinho"></div>
-  <div class="total">Total: <span id="valorTotal">R$ 0,00</span></div>
-  <button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
-</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
 
-<div id="modalCheckout" class="modal">
-  <div class="modal-content" id="checkoutConteudo"></div>
-</div>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+</script>
 
-<script src="app.js"></script>
 </body>
 </html>
