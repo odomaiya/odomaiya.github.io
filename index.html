@@ -4,13 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Odòmàiyá Artigos Religiosos</title>
-
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="css/style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <header class="header">
@@ -21,38 +16,54 @@
       <span>Artigos Religiosos</span>
     </div>
   </div>
-
-  <button class="cart-btn" onclick="UI.toggleCart()">
-    🛒 <span id="cart-count">0</span>
-  </button>
 </header>
 
-<section class="search-section">
-  <input type="text" id="searchInput" placeholder="Buscar produtos...">
-  <div id="categoryFilters"></div>
-</section>
+<div class="search-area">
+  <input type="text" id="pesquisa" placeholder="Pesquisar produtos..." onkeyup="filtrarProdutos()">
+  <div id="filtros" class="filtros"></div>
+</div>
 
-<section id="products" class="products-grid"></section>
+<div id="produtos" class="produtos"></div>
 
-<div id="cartDrawer" class="cart-drawer"></div>
+<div class="cart-float" onclick="abrirCarrinho()">
+🛒 <span id="cartCount">0</span>
+</div>
 
-<nav class="mobile-bar">
-  <button onclick="UI.toggleCart()">🛒 Carrinho</button>
-  <a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
-  <a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
-</nav>
+<div id="cartPanel" class="cart-panel">
+  <div class="cart-header">
+    <h2>Seu Carrinho</h2>
+    <span onclick="fecharCarrinho()">✕</span>
+  </div>
 
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
-<script src="js/store.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/app.js"></script>
+  <div id="cartItems" class="cart-items"></div>
 
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
-}
-</script>
+  <div class="checkout">
+    <select id="tipoEntrega" onchange="mostrarEndereco()">
+      <option value="">Entrega ou Retirada?</option>
+      <option value="Retirada">Retirada na Loja</option>
+      <option value="Entrega">Entrega</option>
+    </select>
 
+    <input type="text" id="nomeCliente" placeholder="Seu nome">
+
+    <input type="text" id="enderecoCliente" placeholder="Digite seu endereço" style="display:none;">
+
+    <select id="pagamento">
+      <option value="">Forma de pagamento</option>
+      <option>PIX</option>
+      <option>Cartão</option>
+      <option>Dinheiro</option>
+    </select>
+
+    <div id="cartTotal" class="cart-total">Total: R$ 0,00</div>
+
+    <button class="whatsapp-btn" onclick="finalizarPedido()">
+      Finalizar no WhatsApp
+    </button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
