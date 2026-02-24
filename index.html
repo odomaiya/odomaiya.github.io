@@ -7,44 +7,42 @@
 
 <link rel="stylesheet" href="estilo.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
+
 <body>
 
 <header class="hero">
-  <div class="hero-content">
-    <h1>🧿 Odòmáiyà Artigos Religiosos</h1>
-    <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
-  </div>
+  <h1>🧿 Odòmáiyà Artigos Religiosos</h1>
+  <p>Conectando fé, ancestralidade e força espiritual em cada detalhe.</p>
 </header>
 
-<section class="barra-topo">
+<section class="top-bar">
   <input type="text" id="busca" placeholder="🔎 Buscar produto...">
   <div id="categorias"></div>
 </section>
 
 <main id="produtos" class="produtos"></main>
 
-<!-- BOTÃO CARRINHO -->
-<div class="cart-btn" onclick="abrirCarrinho()">
+<div class="cart-fab" onclick="toggleCarrinho()">
   🛒 <span id="contador">0</span>
 </div>
 
-<!-- CARRINHO LATERAL -->
 <div id="carrinho" class="carrinho">
-  <div class="carrinho-header">
+  <div class="carrinho-topo">
     <h2>Seu Pedido</h2>
-    <button onclick="fecharCarrinho()">✕</button>
+    <button onclick="toggleCarrinho()">✕</button>
   </div>
 
   <div id="itensCarrinho"></div>
 
-  <div class="carrinho-footer">
-    <h3>Total: <span id="total">R$ 0,00</span></h3>
-    <button class="btn-principal" onclick="abrirCheckout()">Finalizar Pedido</button>
+  <div class="carrinho-total">
+    Total: <strong id="total">R$ 0,00</strong>
   </div>
+
+  <button class="btn-principal" onclick="abrirCheckout()">Finalizar Pedido</button>
 </div>
 
-<!-- CHECKOUT -->
 <div id="checkout" class="checkout">
   <div class="checkout-box">
 
@@ -53,40 +51,37 @@
       <button onclick="fecharCheckout()">✕</button>
     </div>
 
-    <div class="etapas">
-      <div class="etapa ativa" id="etapa-1">
-        <input type="text" id="cliente-nome" placeholder="Seu nome">
-        <button class="btn-principal" onclick="proximaEtapa()">Continuar</button>
-      </div>
+    <div id="etapa-1" class="etapa ativa">
+      <input type="text" id="cliente-nome" placeholder="Seu nome">
+      <button class="btn-principal" onclick="proximaEtapa()">Continuar</button>
+    </div>
 
-      <div class="etapa" id="etapa-2">
-        <label><input type="radio" name="entrega" value="Retirada" onclick="tipoEntrega('retirada')"> Retirar na loja</label>
-        <label><input type="radio" name="entrega" value="Entrega" onclick="tipoEntrega('entrega')"> Entrega</label>
+    <div id="etapa-2" class="etapa">
+      <label><input type="radio" name="entrega" value="Retirada" onclick="tipoEntrega('retirada')"> Retirar na loja</label>
+      <label><input type="radio" name="entrega" value="Entrega" onclick="tipoEntrega('entrega')"> Entrega</label>
+      <div id="campo-endereco"></div>
+      <button onclick="voltarEtapa()">Voltar</button>
+      <button class="btn-principal" onclick="proximaEtapa()">Continuar</button>
+    </div>
 
-        <div id="campo-endereco"></div>
-
-        <button onclick="voltarEtapa()">Voltar</button>
-        <button class="btn-principal" onclick="proximaEtapa()">Continuar</button>
-      </div>
-
-      <div class="etapa" id="etapa-3">
-        <select id="pagamento">
-          <option value="">Forma de pagamento</option>
-          <option>Crédito</option>
-          <option>Débito</option>
-          <option>Pix</option>
-          <option>Dinheiro</option>
-        </select>
-
-        <button onclick="voltarEtapa()">Voltar</button>
-        <button class="btn-principal" onclick="finalizarPedido()">Confirmar Pedido</button>
-      </div>
+    <div id="etapa-3" class="etapa">
+      <select id="pagamento">
+        <option value="">Forma de pagamento</option>
+        <option>Crédito</option>
+        <option>Débito</option>
+        <option>Pix</option>
+        <option>Dinheiro</option>
+      </select>
+      <button onclick="voltarEtapa()">Voltar</button>
+      <button class="btn-principal" onclick="finalizarPedido()">Confirmar Pedido</button>
     </div>
 
   </div>
 </div>
 
-<div id="loader" class="loader">✨ Enviando pedido...</div>
+<div id="loader" class="loader">
+  ✨ Enviando pedido...
+</div>
 
 <script src="config.js"></script>
 <script src="app.js"></script>
