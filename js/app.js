@@ -8,6 +8,9 @@ let categoriaAtual = "Todos";
    CARREGAR PRODUTOS
 ========================= */
 async function carregarProdutos(){
+  const grid = document.getElementById("produtos");
+  grid.innerHTML = "<p style='text-align:center'>Carregando produtos...</p>";
+
   try{
     const res = await fetch(API_URL + "?acao=produtos");
     const data = await res.json();
@@ -21,12 +24,21 @@ async function carregarProdutos(){
       estoque: Number(p.estoque)
     }));
 
-    // Promoções primeiro
+    // PROMOÇÕES PRIMEIRO
     produtos.sort((a,b)=>{
       const promoA = a.promocao > 0 ? 1 : 0;
       const promoB = b.promocao > 0 ? 1 : 0;
       return promoB - promoA;
     });
+
+    criarFiltros();
+    renderizar(produtos);
+
+  }catch(e){
+    grid.innerHTML = "<p>Erro ao carregar produtos.</p>";
+    console.error(e);
+  }
+}
 
     criarFiltros();
     renderizar(produtos);
@@ -153,3 +165,34 @@ function fecharCarrinho(){
    INICIAR
 ========================= */
 carregarProdutos();
+function abrirCheckout(){
+  fecharCarrinho();
+
+  const modal = document.getElementById("modalCheckout");
+  const conteudo = document.getElementById("checkoutConteudo");
+
+  conteudo.innerHTML = `
+    <h3>Finalizar Pedido</h3>
+
+    <input id="nomeCliente" placeholder="Seu Nome">
+
+    <select id="pagamento">
+      <option value="">Forma de Pagamento</option>
+      <option>Cartão</option>
+      <option>Dinheiro</option>
+      <option>Pix</option>
+    </select>
+
+    <select id="tipoEntrega">
+      <option value="">Tipo de Entrega</option>
+      <option value="retirada">Retirada</option>
+      <option value="entrega">Entrega</option>
+    </select>
+
+    <button onclick="enviarWhatsApp()" class="btn-finalizar">
+      Enviar Pedido
+    </button>
+  `;
+
+  modal.style.display = "flex";
+}
