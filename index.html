@@ -34,8 +34,16 @@
 
 <section id="produtos" class="grid"></section>
 
-<div class="carrinho-lateral">
-  <h3>Seu Carrinho</h3>
+<button class="btn-carrinho" onclick="abrirCarrinho()">
+🛒 <span id="contadorCarrinho">0</span>
+</button>
+
+<div id="painelCarrinho" class="painel-carrinho">
+  <div class="cabecalho-carrinho">
+    <h3>Seu Carrinho</h3>
+    <button onclick="fecharCarrinho()">✕</button>
+  </div>
+
   <div id="itensCarrinho"></div>
   <div class="total">Total: <span id="valorTotal">R$ 0,00</span></div>
   <button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
