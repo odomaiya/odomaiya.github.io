@@ -1,96 +1,104 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
-
-const WHATSAPP_NUMERO = "555496048808"; 
-
 let produtos = [];
 let carrinho = [];
 
 async function carregarProdutos(){
-  const res = await fetch(API_URL + "?acao=produtos");
-  produtos = await res.json();
+const res = await fetch(API_URL+"?acao=produtos");
+produtos = await res.json();
 
-  produtos.sort((a,b)=> (b.promocao>0?1:0)-(a.promocao>0?1:0));
+produtos.sort((a,b)=>{
+if(a.promocao && !b.promocao) return -1;
+if(!a.promocao && b.promocao) return 1;
+return 0;
+});
 
-  renderizarProdutos(produtos);
+renderizarProdutos(produtos);
 }
 
 function renderizarProdutos(lista){
-  const grid = document.getElementById("productsGrid");
-  grid.innerHTML = "";
+const div = document.getElementById("produtos");
+div.innerHTML="";
 
-  lista.forEach(prod=>{
-    const preco = prod.promocao>0 ? prod.promocao : prod.preco;
-    const promoBadge = prod.promocao>0 ? `<div class="badge">🔥 Promoção</div>` : "";
+lista.forEach(p=>{
+const precoFinal = p.promocao && p.promocao!="" ? p.promocao : p.preco;
 
-    grid.innerHTML += `
-      <div class="card">
-        ${promoBadge}
-        <img src="${prod.imagem}">
-        <h3>${prod.nome}</h3>
-        <div>
-          ${prod.promocao>0 ? `<span class="old">R$ ${prod.preco}</span>`:""}
-          <div class="new">R$ ${preco}</div>
-        </div>
-        <div class="stock">Estoque: ${prod.estoque}</div>
-        <button onclick="adicionarCarrinho('${prod.nome}',${preco})">Adicionar</button>
-      </div>
-    `;
-  });
+div.innerHTML+=`
+<div class="card">
+<img src="${p.imagem}">
+<h3>${p.nome}</h3>
+${p.promocao?`<div class="preco"><s>R$ ${p.preco}</s></div><div class="promocao">R$ ${p.promocao}</div>`:`<div class="preco">R$ ${p.preco}</div>`}
+<button onclick='adicionarCarrinho(${JSON.stringify(p)})'>+</button>
+</div>
+`;
+});
 }
 
-function adicionarCarrinho(nome,preco){
-  const item = carrinho.find(p=>p.nome===nome);
-  if(item){
-    item.qtd++;
-  } else {
-    carrinho.push({nome,preco,qtd:1});
-  }
-  atualizarCarrinho();
+function adicionarCarrinho(prod){
+let item = carrinho.find(i=>i.nome===prod.nome);
+if(item){
+item.qtd++;
+}else{
+carrinho.push({...prod,qtd:1});
+}
+atualizarCarrinho();
 }
 
 function atualizarCarrinho(){
-  const container = document.getElementById("cartItems");
-  container.innerHTML = "";
-  let total = 0;
+const div = document.getElementById("cartItems");
+div.innerHTML="";
+let total=0;
 
-  carrinho.forEach(item=>{
-    const subtotal = item.preco * item.qtd;
-    total += subtotal;
+carrinho.forEach(i=>{
+const preco = i.promocao && i.promocao!="" ? parseFloat(i.promocao) : parseFloat(i.preco);
+total+=preco*i.qtd;
 
-    container.innerHTML += `
-      <div class="cart-item">
-        <strong>${item.nome}</strong><br>
-        🔢 Qtd: ${item.qtd}<br>
-        💰 R$ ${subtotal.toFixed(2)}
-      </div>
-    `;
-  });
+div.innerHTML+=`
+<div class="cart-item">
+<span>${i.nome} x${i.qtd}</span>
+<span>R$ ${(preco*i.qtd).toFixed(2)}</span>
+</div>
+`;
+});
 
-  document.getElementById("cartTotal").innerText = "Total: R$ " + total.toFixed(2);
+document.getElementById("cartTotal").innerText="Total: R$ "+total.toFixed(2);
+document.getElementById("cartCount").innerText=carrinho.length;
+}
+
+function abrirCarrinho(){
+document.getElementById("cartPanel").classList.add("active");
+}
+
+function fecharCarrinho(){
+document.getElementById("cartPanel").classList.remove("active");
+}
+
+function mostrarEndereco(){
+const tipo=document.getElementById("tipoEntrega").value;
+document.getElementById("enderecoCliente").style.display= tipo==="Entrega"?"block":"none";
 }
 
 function finalizarPedido(){
-  if(carrinho.length===0){
-    alert("Carrinho vazio!");
-    return;
-  }
+if(carrinho.length===0)return alert("Carrinho vazio");
 
-  let mensagem = `✨ *Pedido - ODO MAIYÀ* ✨\n\n`;
-  let total = 0;
+const nome=document.getElementById("nomeCliente").value;
+const entrega=document.getElementById("tipoEntrega").value;
+const endereco=document.getElementById("enderecoCliente").value;
+const pagamento=document.getElementById("pagamento").value;
 
-  carrinho.forEach(item=>{
-    const subtotal = item.preco*item.qtd;
-    total += subtotal;
-    mensagem += `🛍 *${item.nome}*\n`;
-    mensagem += `🔢 Quantidade: ${item.qtd}\n`;
-    mensagem += `💰 Valor: R$ ${subtotal.toFixed(2)}\n\n`;
-  });
+let msg=`🛍️ *Pedido - ${NOME_LOJA}*\n\n👤 Nome: ${nome}\n🚚 Tipo: ${entrega}\n`;
+if(entrega==="Entrega") msg+=`📍 Endereço: ${endereco}\n`;
+msg+=`💳 Pagamento: ${pagamento}\n\n📦 *Itens:*\n`;
 
-  mensagem += `📦 *Total do Pedido:* R$ ${total.toFixed(2)}\n\n`;
-  mensagem += `🙏 Aguardo confirmação.`;
+let total=0;
 
-  const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`;
-  window.open(url,'_blank');
+carrinho.forEach(i=>{
+const preco = i.promocao && i.promocao!="" ? parseFloat(i.promocao) : parseFloat(i.preco);
+total+=preco*i.qtd;
+msg+=`• ${i.nome} x${i.qtd} = R$ ${(preco*i.qtd).toFixed(2)}\n`;
+});
+
+msg+=`\n💰 Total: R$ ${total.toFixed(2)}\n\n✨ Obrigado pela preferência!`;
+
+window.open(`https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(msg)}`,"_blank");
 }
 
 carregarProdutos();
