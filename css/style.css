@@ -1,79 +1,119 @@
 body{
   margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background:#F5F8FB;
-  color:#2F4F6F;
+  font-family:'Poppins',sans-serif;
+  background:#f4f8fc;
+  color:#1f2f46;
 }
 
-header{
-  background:white;
+.topo{
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:15px 20px;
+  background:white;
   box-shadow:0 2px 10px rgba(0,0,0,0.05);
-}
-
-.logo{
-  width:50px;
-  margin-right:10px;
 }
 
 .logo-area{
   display:flex;
   align-items:center;
+  gap:15px;
+}
+
+.logo{
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  object-fit:cover;
+  box-shadow:0 5px 15px rgba(0,0,0,0.15);
+}
+
+h1{
+  margin:0;
+  font-size:20px;
+  color:#2f4f6f;
+}
+
+.topo p{
+  margin:0;
+  font-size:12px;
+  opacity:0.7;
+}
+
+.btn-carrinho{
+  background:#3F5F7F;
+  color:white;
+  border:none;
+  padding:10px 14px;
+  border-radius:50px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.busca-area{
+  padding:15px;
+  text-align:center;
+}
+
+.busca-area input{
+  width:90%;
+  max-width:400px;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #dce3ea;
 }
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
   gap:15px;
-  padding:20px;
+  padding:15px;
 }
 
 .produto-card{
   background:white;
-  border-radius:16px;
+  border-radius:12px;
   padding:15px;
   text-align:center;
-  box-shadow:0 4px 15px rgba(0,0,0,0.05);
-  transition:0.3s;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+  transition:0.2s;
 }
 
 .produto-card:hover{
-  transform:translateY(-5px);
+  transform:translateY(-4px);
 }
 
 .produto-card img{
   width:100%;
-  height:120px;
+  height:140px;
   object-fit:cover;
-  border-radius:12px;
+  border-radius:8px;
 }
 
 .preco{
-  font-weight:bold;
-  font-size:18px;
+  font-weight:600;
+  color:#3F5F7F;
   margin:8px 0;
 }
 
 .preco-antigo{
   text-decoration:line-through;
-  opacity:0.5;
-  font-size:14px;
+  font-size:13px;
+  opacity:0.6;
 }
 
-button{
+.promo{
+  border:2px solid #3F5F7F;
+  box-shadow:0 0 15px rgba(63,95,127,0.2);
+}
+
+.produto-card button{
   background:#3F5F7F;
   color:white;
   border:none;
   padding:8px 12px;
   border-radius:8px;
   cursor:pointer;
-}
-
-button:hover{
-  background:#2F4F6F;
 }
 
 .modal{
@@ -87,35 +127,40 @@ button:hover{
 
 .modal-content{
   background:white;
+  padding:20px;
   width:90%;
   max-width:400px;
-  padding:20px;
-  border-radius:16px;
+  border-radius:12px;
 }
 
-footer{
+.total{
+  font-weight:600;
+  margin-top:10px;
+}
+
+.btn-finalizar{
   background:#3F5F7F;
   color:white;
-  text-align:center;
-  padding:20px;
-  margin-top:40px;
-}
-
-.promo-destaque{
-  border:2px solid #3F5F7F;
-  box-shadow:0 0 15px rgba(63,95,127,0.3);
-}
-
-.preco-antigo{
-  text-decoration:line-through;
-  font-size:14px;
-  opacity:0.6;
-}
-
-input{
+  border:none;
+  padding:10px;
   width:100%;
-  padding:8px;
-  margin-bottom:10px;
-  border:1px solid #ddd;
   border-radius:8px;
+  margin-top:10px;
+}
+
+.btn-fechar{
+  background:#ccc;
+  border:none;
+  padding:8px;
+  width:100%;
+  border-radius:8px;
+  margin-top:8px;
+}
+
+.rodape{
+  background:white;
+  padding:20px;
+  text-align:center;
+  font-size:14px;
+  margin-top:30px;
 }
