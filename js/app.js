@@ -1,104 +1,105 @@
+const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
+
 let produtos = [];
-let carrinho = [];
+let carrinho = {};
+let categoriaAtual = "Todos";
 
-async function carregarProdutos(){
-const res = await fetch(API_URL+"?acao=produtos");
-produtos = await res.json();
+async function carregarProdutos() {
+  const res = await fetch(API_URL + "?acao=produtos");
+  produtos = await res.json();
 
-produtos.sort((a,b)=>{
-if(a.promocao && !b.promocao) return -1;
-if(!a.promocao && b.promocao) return 1;
-return 0;
-});
+  produtos.sort((a,b)=> (b.promocao>0)-(a.promocao>0));
 
-renderizarProdutos(produtos);
+  criarFiltros();
+  renderizar(produtos);
 }
 
-function renderizarProdutos(lista){
-const div = document.getElementById("produtos");
-div.innerHTML="";
+function criarFiltros(){
+  const area = document.getElementById("filtros");
+  const categorias = ["Todos", ...new Set(produtos.map(p=>p.categoria))];
+  area.innerHTML="";
 
-lista.forEach(p=>{
-const precoFinal = p.promocao && p.promocao!="" ? p.promocao : p.preco;
-
-div.innerHTML+=`
-<div class="card">
-<img src="${p.imagem}">
-<h3>${p.nome}</h3>
-${p.promocao?`<div class="preco"><s>R$ ${p.preco}</s></div><div class="promocao">R$ ${p.promocao}</div>`:`<div class="preco">R$ ${p.preco}</div>`}
-<button onclick='adicionarCarrinho(${JSON.stringify(p)})'>+</button>
-</div>
-`;
-});
+  categorias.forEach(cat=>{
+    const btn=document.createElement("button");
+    btn.className="filtro-btn";
+    btn.innerText=cat;
+    btn.onclick=()=>filtrar(cat);
+    area.appendChild(btn);
+  });
 }
 
-function adicionarCarrinho(prod){
-let item = carrinho.find(i=>i.nome===prod.nome);
-if(item){
-item.qtd++;
-}else{
-carrinho.push({...prod,qtd:1});
+function filtrar(cat){
+  categoriaAtual=cat;
+  if(cat==="Todos") renderizar(produtos);
+  else renderizar(produtos.filter(p=>p.categoria===cat));
 }
-atualizarCarrinho();
+
+function renderizar(lista){
+  const grid=document.getElementById("produtos");
+  grid.innerHTML="";
+
+  lista.forEach(p=>{
+    const precoFinal=p.promocao>0?p.promocao:p.preco;
+    const temPromo=p.promocao>0;
+
+    const card=document.createElement("div");
+    card.className="produto-card";
+
+    card.innerHTML=`
+      ${temPromo?'<div class="badge">PROMOÇÃO</div>':''}
+      <img src="${p.imagem}">
+      <h3>${p.nome}</h3>
+      ${temPromo?
+        `<div><span class="antigo">R$ ${p.preco}</span> <span class="promo">R$ ${p.promocao}</span></div>`:
+        `<div>R$ ${p.preco}</div>`
+      }
+      <small>Estoque: ${p.estoque}</small>
+      <div class="contador">
+        <button onclick="alterar('${p.nome}',-1)">−</button>
+        <span>${carrinho[p.nome]||0}</span>
+        <button onclick="alterar('${p.nome}',1)">+</button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  atualizarCarrinho();
+}
+
+function alterar(nome,valor){
+  const produto=produtos.find(p=>p.nome===nome);
+  if(!carrinho[nome]) carrinho[nome]=0;
+  if(valor>0 && carrinho[nome]>=produto.estoque) return;
+  carrinho[nome]+=valor;
+  if(carrinho[nome]<0) carrinho[nome]=0;
+
+  renderizar(produtos.filter(p=>categoriaAtual==="Todos"||p.categoria===categoriaAtual));
 }
 
 function atualizarCarrinho(){
-const div = document.getElementById("cartItems");
-div.innerHTML="";
-let total=0;
+  const area=document.getElementById("itensCarrinho");
+  area.innerHTML="";
+  let total=0;
 
-carrinho.forEach(i=>{
-const preco = i.promocao && i.promocao!="" ? parseFloat(i.promocao) : parseFloat(i.preco);
-total+=preco*i.qtd;
+  Object.keys(carrinho).forEach(nome=>{
+    if(carrinho[nome]>0){
+      const p=produtos.find(x=>x.nome===nome);
+      const preco=p.promocao>0?p.promocao:p.preco;
+      total+=preco*carrinho[nome];
+      area.innerHTML+=`<div>${nome} x${carrinho[nome]}</div>`;
+    }
+  });
 
-div.innerHTML+=`
-<div class="cart-item">
-<span>${i.nome} x${i.qtd}</span>
-<span>R$ ${(preco*i.qtd).toFixed(2)}</span>
-</div>
-`;
-});
-
-document.getElementById("cartTotal").innerText="Total: R$ "+total.toFixed(2);
-document.getElementById("cartCount").innerText=carrinho.length;
+  document.getElementById("valorTotal").innerText="R$ "+total.toFixed(2);
 }
 
 function abrirCarrinho(){
-document.getElementById("cartPanel").classList.add("active");
+  document.querySelector(".carrinho-lateral").classList.add("ativo");
 }
 
 function fecharCarrinho(){
-document.getElementById("cartPanel").classList.remove("active");
-}
-
-function mostrarEndereco(){
-const tipo=document.getElementById("tipoEntrega").value;
-document.getElementById("enderecoCliente").style.display= tipo==="Entrega"?"block":"none";
-}
-
-function finalizarPedido(){
-if(carrinho.length===0)return alert("Carrinho vazio");
-
-const nome=document.getElementById("nomeCliente").value;
-const entrega=document.getElementById("tipoEntrega").value;
-const endereco=document.getElementById("enderecoCliente").value;
-const pagamento=document.getElementById("pagamento").value;
-
-let msg=`🛍️ *Pedido - ${NOME_LOJA}*\n\n👤 Nome: ${nome}\n🚚 Tipo: ${entrega}\n`;
-if(entrega==="Entrega") msg+=`📍 Endereço: ${endereco}\n`;
-msg+=`💳 Pagamento: ${pagamento}\n\n📦 *Itens:*\n`;
-
-let total=0;
-
-carrinho.forEach(i=>{
-const preco = i.promocao && i.promocao!="" ? parseFloat(i.promocao) : parseFloat(i.preco);
-total+=preco*i.qtd;
-msg+=`• ${i.nome} x${i.qtd} = R$ ${(preco*i.qtd).toFixed(2)}\n`;
-});
-
-msg+=`\n💰 Total: R$ ${total.toFixed(2)}\n\n✨ Obrigado pela preferência!`;
-
-window.open(`https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(msg)}`,"_blank");
+  document.querySelector(".carrinho-lateral").classList.remove("ativo");
 }
 
 carregarProdutos();
