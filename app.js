@@ -1,174 +1,127 @@
-let produtos=[];
-let carrinho=[];
-let etapa=1;
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7j4_2qhc-W7EscYgFNEoWX-jEUsfS8xPSnOkEGj7uf1xSUFKkANQ8YQ57UUZsPytia7Vq6iShxHGy/pub?gid=1004684059&single=true&output=csv";
 
-async function carregar(){
- const res=await fetch(CONFIG.planilhaCSV);
- const txt=await res.text();
- const linhas=txt.split("\n").slice(1);
+let produtos = [];
+let carrinho = {};
 
- produtos=linhas.map(l=>{
-   const [nome,preco,categoria,imagem,estoque]=l.split(",");
-   return {nome,preco:parseFloat(preco),categoria,imagem,estoque:parseInt(estoque)};
- }).filter(p=>p.nome);
+async function carregarProdutos(){
+    const res = await fetch(CSV_URL);
+    const texto = await res.text();
 
- renderCategorias();
- renderProdutos(produtos);
- animarEntrada();
+    const linhas = texto.split("\n").slice(1);
+
+    produtos = linhas.map(linha => {
+        const col = linha.split(",");
+
+        return {
+            nome: col[0]?.trim(),
+            preco: parseFloat(col[1]?.replace("R$","").replace(",",".").trim()) || 0,
+            categoria: col[2]?.trim(),
+            imagem: col[3]?.trim(),
+            estoque: parseInt(col[4]) || 0
+        };
+    });
+
+    renderizarProdutos(produtos);
 }
 
-function renderCategorias(){
- const cats=[...new Set(produtos.map(p=>p.categoria))];
- const el=document.getElementById("categorias");
- el.innerHTML=`<button onclick="filtrar('')">Todos</button>`;
- cats.forEach(c=>{
-   el.innerHTML+=`<button onclick="filtrar('${c}')">${c}</button>`;
- });
+function renderizarProdutos(lista){
+    const container = document.getElementById("produtos");
+    container.innerHTML = "";
+
+    lista.forEach((p,i)=>{
+        const div = document.createElement("div");
+        div.className = "produto-card";
+
+        div.innerHTML = `
+            <img src="${p.imagem}" width="100%" height="150" style="object-fit:cover;border-radius:12px">
+            <h3>${p.nome}</h3>
+            <div class="preco">R$ ${p.preco.toFixed(2)}</div>
+            <div>Restam ${p.estoque}</div>
+            <div class="contador">
+                <button onclick="alterarQtd(${i}, -1)">-</button>
+                <span id="qtd-${i}">0</span>
+                <button onclick="alterarQtd(${i}, 1)">+</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
 }
 
-function filtrar(cat){
- if(!cat) return renderProdutos(produtos);
- renderProdutos(produtos.filter(p=>p.categoria===cat));
-}
+function alterarQtd(index, valor){
+    const produto = produtos[index];
+    if(!carrinho[index]) carrinho[index]=0;
 
-function renderProdutos(lista){
- const el=document.getElementById("produtos");
- el.innerHTML="";
- lista.forEach(p=>{
-   const qtd=carrinho.find(i=>i.nome===p.nome)?.qtd||0;
-   el.innerHTML+=`
-   <div class="card">
-     <img src="${p.imagem}">
-     <h3>${p.nome}</h3>
-     <p>R$ ${p.preco.toFixed(2)}</p>
-     <small>Restam ${p.estoque}</small>
-     <div class="controle">
-       <button onclick="alterar('${p.nome}',-1)">-</button>
-       <span>${qtd}</span>
-       <button onclick="alterar('${p.nome}',1)">+</button>
-     </div>
-   </div>`;
- });
-}
+    carrinho[index]+=valor;
 
-function alterar(nome,delta){
- const prod=produtos.find(p=>p.nome===nome);
- let item=carrinho.find(i=>i.nome===nome);
+    if(carrinho[index]<0) carrinho[index]=0;
+    if(carrinho[index]>produto.estoque) carrinho[index]=produto.estoque;
 
- if(!item && delta>0){
-   carrinho.push({...prod,qtd:1});
- }else if(item){
-   item.qtd+=delta;
-   if(item.qtd<=0) carrinho=carrinho.filter(i=>i.nome!==nome);
- }
-
- atualizarCarrinho();
- renderProdutos(produtos);
-}
-
-function atualizarCarrinho(){
- const el=document.getElementById("itensCarrinho");
- const totalEl=document.getElementById("total");
- const contador=document.getElementById("contador");
-
- let total=0;
- el.innerHTML="";
- carrinho.forEach(i=>{
-   total+=i.preco*i.qtd;
-   el.innerHTML+=`<div>${i.nome} x${i.qtd}</div>`;
- });
-
- totalEl.innerText=`R$ ${total.toFixed(2)}`;
- contador.innerText=carrinho.reduce((s,i)=>s+i.qtd,0);
-}
-
-function toggleCarrinho(){
- document.getElementById("carrinho").classList.toggle("ativo");
-}
-
-function abrirCheckout(){
- if(!carrinho.length) return alert("Carrinho vazio");
- document.getElementById("checkout").classList.add("ativo");
- mostrarEtapa();
-}
-
-function fecharCheckout(){
- document.getElementById("checkout").classList.remove("ativo");
-}
-
-function mostrarEtapa(){
- document.querySelectorAll(".etapa").forEach(e=>e.classList.remove("ativa"));
- document.getElementById("etapa-"+etapa).classList.add("ativa");
-}
-
-function proximaEtapa(){ etapa++; mostrarEtapa(); }
-function voltarEtapa(){ etapa--; mostrarEtapa(); }
-
-function tipoEntrega(tipo){
- const div=document.getElementById("campo-endereco");
- if(tipo==="entrega"){
-   div.innerHTML=`<input type="text" id="cliente-endereco" placeholder="Endereço completo">`;
- }else{
-   div.innerHTML=`<p>📍 ${CONFIG.loja.endereco}</p>`;
- }
+    document.getElementById(`qtd-${index}`).innerText = carrinho[index];
 }
 
 function finalizarPedido(){
- const nome=document.getElementById("cliente-nome").value;
- const pagamento=document.getElementById("pagamento").value;
- const entrega=document.querySelector('input[name="entrega"]:checked')?.value;
- const endereco=document.getElementById("cliente-endereco")?.value||"";
 
- if(!nome||!pagamento||!entrega) return alert("Preencha todos os campos");
+    const nome = prompt("Digite seu nome:");
+    if(!nome){
+        alert("Nome é obrigatório.");
+        return;
+    }
 
- let total=0;
- let msg=`✨ Pedido Odòmáiyà ✨\n\n👤 ${nome}\n\n🛍️ Itens:\n`;
+    const tipo = prompt("Digite 1 para Retirada ou 2 para Entrega:");
+    if(tipo!=="1" && tipo!=="2"){
+        alert("Escolha válida obrigatória.");
+        return;
+    }
 
- carrinho.forEach(i=>{
-   const sub=i.preco*i.qtd;
-   total+=sub;
-   msg+=`• ${i.nome} x${i.qtd}\nSubtotal: R$ ${sub.toFixed(2)}\n\n`;
- });
+    let endereco="";
+    if(tipo==="2"){
+        endereco = prompt("Digite seu endereço completo:");
+        if(!endereco){
+            alert("Endereço obrigatório para entrega.");
+            return;
+        }
+    }
 
- msg+=`💰 Total: R$ ${total.toFixed(2)}\n🚚 ${entrega}\n`;
- if(entrega==="Entrega"){
-   msg+=`📍 ${endereco}\n⚠️ Taxa informada via WhatsApp\n`;
- }
- msg+=`💳 ${pagamento}`;
+    const pagamento = prompt("Forma de pagamento (Crédito, Débito, Dinheiro ou Pix):");
+    if(!pagamento){
+        alert("Informe a forma de pagamento.");
+        return;
+    }
 
- const url=`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`;
+    let mensagem = `*Pedido - Odòmáiyà Artigos Religiosos*%0A`;
+    mensagem += `Cliente: ${nome}%0A`;
 
- document.getElementById("loader").style.display="flex";
- setTimeout(()=>window.open(url,"_blank"),1500);
+    if(tipo==="1"){
+        mensagem += "Retirada na loja%0A";
+    }else{
+        mensagem += `Entrega: ${endereco}%0A`;
+        mensagem += "Taxa de entrega será informada.%0A";
+    }
+
+    mensagem += `Pagamento: ${pagamento}%0A%0A`;
+    mensagem += "*Itens:*%0A";
+
+    let total=0;
+
+    Object.keys(carrinho).forEach(i=>{
+        if(carrinho[i]>0){
+            const p = produtos[i];
+            mensagem += `${p.nome} x${carrinho[i]}%0A`;
+            total += p.preco * carrinho[i];
+        }
+    });
+
+    mensagem += `%0ATotal: R$ ${total.toFixed(2)}`;
+
+    if(total===0){
+        alert("Seu carrinho está vazio.");
+        return;
+    }
+
+    const telefone = "555496048808";
+    window.open(`https://wa.me/${telefone}?text=${mensagem}`,"_blank");
+
+    mostrarSucesso();
 }
 
-function animarEntrada(){
- gsap.from(".card",{opacity:0,y:30,duration:0.8,stagger:0.1});
-}
-
-document.addEventListener("DOMContentLoaded",carregar);
-/* ================= PARTÍCULAS ================= */
-
-const particlesContainer = document.getElementById("particles");
-
-for(let i=0;i<40;i++){
-  const p = document.createElement("div");
-  p.classList.add("particula");
-  p.style.left = Math.random()*100+"vw";
-  p.style.animationDuration = (5+Math.random()*10)+"s";
-  p.style.animationDelay = Math.random()*5+"s";
-  particlesContainer.appendChild(p);
-}
-
-/* ================= SUCESSO CINEMATOGRÁFICO ================= */
-
-function mostrarSucesso(){
-  const tela = document.getElementById("telaSucesso");
-  tela.classList.add("ativo");
-
-  setTimeout(()=>{
-    tela.classList.remove("ativo");
-  },4000);
-}
-
-/* CHAME mostrarSucesso() após confirmação do pedido */
+carregarProdutos();
