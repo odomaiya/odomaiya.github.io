@@ -5,17 +5,23 @@ let carrinho = {};
 let categoriaAtual = "Todos";
 
 async function carregarProdutos(){
-  const res = await fetch(API_URL+"?acao=produtos");
-  produtos = await res.json();
+  try{
+    const res = await fetch(API_URL+"?acao=produtos");
+    produtos = await res.json();
 
-  produtos.sort((a,b)=>{
-    const promoA = a.promocao && a.promocao > 0 ? 1 : 0;
-    const promoB = b.promocao && b.promocao > 0 ? 1 : 0;
-    return promoB - promoA;
-  });
+    produtos.sort((a,b)=>{
+      const promoA = a.promocao && a.promocao > 0 ? 1 : 0;
+      const promoB = b.promocao && b.promocao > 0 ? 1 : 0;
+      return promoB - promoA;
+    });
 
-  criarFiltros();
-  renderizar(produtos);
+    criarFiltros();
+    renderizar(produtos);
+
+  }catch(e){
+    document.getElementById("produtos").innerHTML="<p>Erro ao carregar produtos.</p>";
+  }
+}
 }
 
 function criarFiltros(){
@@ -40,16 +46,19 @@ function renderizar(lista){
   const grid=document.getElementById("produtos");
   grid.innerHTML="";
 
-  lista.forEach(p=>{
+  const fragment=document.createDocumentFragment();
+
+  lista.forEach((p,index)=>{
     const precoFinal=p.promocao&&p.promocao>0?p.promocao:p.preco;
     const temPromo=p.promocao&&p.promocao>0;
 
     const card=document.createElement("div");
     card.className="produto-card";
+    card.style.animationDelay = `${index * 40}ms`;
 
     card.innerHTML=`
       ${temPromo?`<div class="badge">PROMOÇÃO</div>`:""}
-      <img src="${p.imagem}">
+      <img src="${p.imagem}" loading="lazy">
       <h3>${p.nome}</h3>
       ${temPromo?
       `<div><span class="antigo">R$ ${p.preco}</span> 
@@ -63,10 +72,12 @@ function renderizar(lista){
       </div>
     `;
 
-    grid.appendChild(card);
+    fragment.appendChild(card);
   });
 
+  grid.appendChild(fragment);
   atualizarCarrinho();
+}
 }
 
 function alterar(nome,valor){
