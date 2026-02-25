@@ -20,37 +20,48 @@
     </div>
   </div>
 
-  <button class="btn-carrinho" onclick="abrirCarrinho()">🛒</button>
+  <div class="social">
+    <a href="https://wa.me/555496048808" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png">
+    </a>
+    <a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png">
+    </a>
+  </div>
 </header>
 
 <section class="busca-area">
   <input type="text" id="busca" placeholder="Buscar produto..." oninput="buscarProduto()">
+  <div id="filtros"></div>
 </section>
 
 <section id="produtos" class="grid"></section>
 
-<footer class="rodape">
-  <p><strong>Odòmàiyá Artigos Religiosos</strong></p>
-  <p>R. Sete de Agosto, 28 - Centro</p>
-  <p>Passo Fundo - RS, 99025-030</p>
-  <p>WhatsApp: (54) 9604-8808</p>
-</footer>
+<button class="btn-flutuante" onclick="abrirCarrinho()">
+  🛒 <span id="contadorCarrinho">0</span>
+</button>
 
-<!-- MODAL CARRINHO -->
+<!-- CARRINHO -->
 <div id="modalCarrinho" class="modal">
   <div class="modal-content">
     <h3>Seu Carrinho</h3>
     <div id="itensCarrinho"></div>
     <p class="total">Total: <span id="valorTotal">R$ 0,00</span></p>
-    <button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
-    <button onclick="fecharCarrinho()" class="btn-fechar">Fechar</button>
+    <button onclick="abrirCheckout()" class="btn-primario">Finalizar Pedido</button>
+    <button onclick="fecharCarrinho()" class="btn-secundario">Fechar</button>
   </div>
 </div>
 
-<!-- MODAL CHECKOUT -->
+<!-- CHECKOUT -->
 <div id="modalCheckout" class="modal">
   <div class="modal-content" id="conteudoCheckout"></div>
 </div>
+
+<footer class="rodape">
+  <p><strong>Odòmàiyá Artigos Religiosos</strong></p>
+  <p>R. Sete de Agosto, 28 - Centro</p>
+  <p>Passo Fundo - RS, 99025-030</p>
+</footer>
 
 <script src="js/app.js"></script>
 </body>
