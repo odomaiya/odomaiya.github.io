@@ -1,88 +1,113 @@
-const api = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
 
 let produtos = [];
 let carrinho = [];
 
-fetch(api)
-.then(res => res.json())
-.then(data => {
-    produtos = data;
-    renderProdutos(produtos);
-});
+async function carregarProdutos() {
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-function renderProdutos(lista){
+    produtos = data.map(p => ({
+        ...p,
+        preco: Number(String(p.preco).replace(",", "."))
+    }));
+
+    renderizarProdutos(produtos);
+}
+
+function renderizarProdutos(lista) {
     const container = document.getElementById("produtos");
     container.innerHTML = "";
 
     lista.forEach(prod => {
         container.innerHTML += `
-        <div class="card">
-            <h3>${prod.nome}</h3>
-            <p>R$ ${Number(prod.preco).toFixed(2)}</p>
-            <button onclick="adicionar(${prod.id})">Adicionar</button>
-        </div>
+            <div class="card">
+                ${prod.promocao ? `<span class="badge">Promoção</span>` : ""}
+                <img src="${prod.imagem}" alt="${prod.nome}">
+                <h3>${prod.nome}</h3>
+                <p class="preco">R$ ${prod.preco.toFixed(2)}</p>
+                <div class="controle">
+                    <button onclick="alterarQtd(${prod.id}, -1)">-</button>
+                    <span id="qtd-${prod.id}">0</span>
+                    <button onclick="alterarQtd(${prod.id}, 1)">+</button>
+                </div>
+            </div>
         `;
     });
 }
 
-function adicionar(id){
-    const item = produtos.find(p => p.id == id);
-    const existente = carrinho.find(p => p.id == id);
+function alterarQtd(id, delta) {
+    const produto = produtos.find(p => p.id == id);
+    if (!produto) return;
 
-    if(existente){
-        existente.qtd++;
-    } else {
-        carrinho.push({...item, qtd:1});
+    let item = carrinho.find(p => p.id == id);
+
+    if (!item && delta > 0) {
+        carrinho.push({ ...produto, qtd: 1 });
+    } else if (item) {
+        item.qtd += delta;
+        if (item.qtd <= 0) {
+            carrinho = carrinho.filter(p => p.id != id);
+        }
     }
 
     atualizarCarrinho();
 }
 
-function atualizarCarrinho(){
-    const container = document.getElementById("cart-items");
+function atualizarCarrinho() {
+    const lista = document.getElementById("cart-items");
     const totalEl = document.getElementById("cart-total");
     const countEl = document.getElementById("cart-count");
 
-    container.innerHTML = "";
+    lista.innerHTML = "";
     let total = 0;
-    let count = 0;
+    let quantidade = 0;
 
     carrinho.forEach(item => {
-        total += item.preco * item.qtd;
-        count += item.qtd;
+        const subtotal = item.preco * item.qtd;
+        total += subtotal;
+        quantidade += item.qtd;
 
-        container.innerHTML += `
-        <p>${item.nome} (${item.qtd}x) - R$ ${(item.preco*item.qtd).toFixed(2)}</p>
+        lista.innerHTML += `
+            <div class="item-carrinho">
+                <p>${item.nome}</p>
+                <p>${item.qtd}x - R$ ${subtotal.toFixed(2)}</p>
+            </div>
         `;
     });
 
-    totalEl.innerText = "R$ " + total.toFixed(2);
-    countEl.innerText = count;
+    totalEl.innerText = `R$ ${total.toFixed(2)}`;
+    countEl.innerText = quantidade;
 }
 
-function toggleCarrinho(){
+function toggleCarrinho() {
     document.getElementById("carrinho").classList.toggle("ativo");
 }
 
-function abrirCheckout(){
+function abrirCheckout() {
+    if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio.");
+        return;
+    }
     document.getElementById("checkout").classList.remove("hidden");
 }
 
-function fecharCheckout(){
+function fecharCheckout() {
     document.getElementById("checkout").classList.add("hidden");
 }
 
-document.getElementById("cep").addEventListener("blur", function(){
-    const cep = this.value.replace(/\D/g,"");
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("rua").value = data.logradouro;
-        document.getElementById("cidade").value = data.localidade;
-    });
+document.getElementById("cep").addEventListener("blur", async function () {
+    const cep = this.value.replace(/\D/g, "");
+    if (cep.length !== 8) return;
+
+    const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const data = await res.json();
+
+    document.getElementById("rua").value = data.logradouro || "";
+    document.getElementById("cidade").value = data.localidade || "";
 });
 
-function finalizarPedido(){
+function finalizarPedido() {
     const nome = document.getElementById("nome").value;
     const rua = document.getElementById("rua").value;
     const numero = document.getElementById("numero").value;
@@ -97,9 +122,10 @@ function finalizarPedido(){
 
     let total = 0;
 
-    carrinho.forEach(item=>{
-        mensagem += `• ${item.nome} (${item.qtd}x) - R$ ${(item.preco*item.qtd).toFixed(2)}\n`;
-        total += item.preco * item.qtd;
+    carrinho.forEach(item => {
+        const subtotal = item.preco * item.qtd;
+        mensagem += `• ${item.nome} (${item.qtd}x) - R$ ${subtotal.toFixed(2)}\n`;
+        total += subtotal;
     });
 
     mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
@@ -107,3 +133,5 @@ function finalizarPedido(){
     const url = `https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`;
     window.open(url, "_blank");
 }
+
+carregarProdutos();
