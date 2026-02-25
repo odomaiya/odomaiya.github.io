@@ -29,6 +29,10 @@ render(produtos);
 }
 
 function render(lista){
+
+// 🔥 guarda a lista atual exibida
+window.listaAtual = lista;
+
 const grid=document.getElementById("produtos");
 grid.innerHTML="";
 
@@ -60,6 +64,9 @@ if(!carrinho[nome]) carrinho[nome]=0;
 carrinho[nome]+=v;
 if(carrinho[nome]<0) carrinho[nome]=0;
 
+// 🔥 renderiza exatamente o que estava na tela
+render(window.listaAtual || produtos);
+}
 // 🔥 mantém filtro ativo
 if(categoriaAtual==="Todos"){
 render(produtos);
