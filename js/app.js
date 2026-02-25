@@ -15,7 +15,7 @@ produtos.sort((a,b)=>
 (b.promocao>0)-(a.promocao>0)||
 a.nome.localeCompare(b.nome)
 );
-
+criarCategorias();
 render(produtos);
 }
 
