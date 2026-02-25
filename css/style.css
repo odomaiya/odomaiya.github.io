@@ -176,3 +176,41 @@ footer {
     background:white;
     margin-top:40px;
 }
+.badge {
+    position:absolute;
+    top:10px;
+    left:10px;
+    background:#1f3a5f;
+    color:white;
+    font-size:12px;
+    padding:4px 8px;
+    border-radius:20px;
+}
+
+.card {
+    position:relative;
+}
+
+.controle {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+.controle button {
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    border:none;
+    background:#1f3a5f;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.item-carrinho {
+    border-bottom:1px solid #eee;
+    padding:8px 0;
+}
