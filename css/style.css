@@ -374,3 +374,38 @@ color:white;
 font-weight:600;
 cursor:pointer;
 }
+
+/* ================= PWA FULL SCREEN ================= */
+
+/* Remove qualquer margem padrão do navegador */
+html, body{
+height:100%;
+width:100%;
+overflow-x:hidden;
+}
+
+/* Quando estiver instalado como app */
+@media (display-mode: standalone){
+  
+  body{
+    min-height:100vh;
+    background:#f8fbff;
+  }
+
+  header{
+    padding-top:env(safe-area-inset-top);
+  }
+
+  footer{
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+
+}
+
+/* Ajuste extra para iPhone (notch) */
+@supports(padding: max(0px)){
+  body{
+    padding-left:env(safe-area-inset-left);
+    padding-right:env(safe-area-inset-right);
+  }
+}
