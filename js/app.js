@@ -51,7 +51,7 @@ lista.forEach(p=>{
 
 const preco=p.promocao>0?p.promocao:p.preco;
 const semEstoque = p.estoque <= 0;
-const estoqueBaixo = p.estoque > 0 && p.estoque <= 3;
+const estoqueBaixo = p.estoque > 0 && p.estoque < 10;
 
 const card=document.createElement("div");
 card.className="produto"
@@ -72,7 +72,15 @@ ${semEstoque ?
 Estoque: ${p.estoque}
 </p>
 
+${estoqueBaixo ? 
+`<div class="aviso-estoque">
+⚠ Estoque quase esgotado
+</div>` 
+: ""}
+
 <div class="contador">
+`
+}
 <button onclick="alterar('${p.nome}',-1)">−</button>
 <span>${carrinho[p.nome]||0}</span>
 <button onclick="alterar('${p.nome}',1)">+</button>
