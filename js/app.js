@@ -1,105 +1,109 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
+const api = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
 
-let produtos=[];
-let carrinho={};
+let produtos = [];
+let carrinho = [];
 
-async function carregarProdutos(){
-  const res=await fetch(API_URL+"?acao=produtos&nocache="+Date.now());
-  produtos=await res.json();
+fetch(api)
+.then(res => res.json())
+.then(data => {
+    produtos = data;
+    renderProdutos(produtos);
+});
 
-  produtos.forEach(p=>{
-    p.preco=parseFloat(p.preco)||0;
-    p.promocao=parseFloat(p.promocao)||0;
-  });
+function renderProdutos(lista){
+    const container = document.getElementById("produtos");
+    container.innerHTML = "";
 
-  produtos.sort((a,b)=>{
-    if((b.promocao||0)-(a.promocao||0)!==0)
-      return (b.promocao||0)-(a.promocao||0);
-    return a.nome.localeCompare(b.nome);
-  });
-
-  criarFiltros();
-  renderizar(produtos);
+    lista.forEach(prod => {
+        container.innerHTML += `
+        <div class="card">
+            <h3>${prod.nome}</h3>
+            <p>R$ ${Number(prod.preco).toFixed(2)}</p>
+            <button onclick="adicionar(${prod.id})">Adicionar</button>
+        </div>
+        `;
+    });
 }
 
-function criarFiltros(){
-  const area=document.getElementById("filtros");
-  const categorias=["Todos",...new Set(produtos.map(p=>p.categoria))].sort();
-  area.innerHTML="";
-  categorias.forEach(cat=>{
-    const btn=document.createElement("button");
-    btn.innerText=cat;
-    btn.onclick=()=>filtrar(cat);
-    area.appendChild(btn);
-  });
-}
+function adicionar(id){
+    const item = produtos.find(p => p.id == id);
+    const existente = carrinho.find(p => p.id == id);
 
-function filtrar(cat){
-  if(cat==="Todos") renderizar(produtos);
-  else renderizar(produtos.filter(p=>p.categoria===cat));
-}
+    if(existente){
+        existente.qtd++;
+    } else {
+        carrinho.push({...item, qtd:1});
+    }
 
-function renderizar(lista){
-  const grid=document.getElementById("produtos");
-  grid.innerHTML="";
-  lista.forEach(p=>{
-    const precoFinal=p.promocao>0?p.promocao:p.preco;
-    const card=document.createElement("div");
-    card.className="produto-card";
-    if(p.promocao>0) card.classList.add("promo-card");
-
-    card.innerHTML=`
-      <img src="${p.imagem||'https://via.placeholder.com/200'}">
-      <h4>${p.nome}</h4>
-      <div>
-        ${p.promocao>0?`<small style="text-decoration:line-through">R$ ${p.preco.toFixed(2).replace('.',',')}</small><br>`:""}
-        <strong>R$ ${precoFinal.toFixed(2).replace('.',',')}</strong>
-      </div>
-      <div class="contador">
-        <button onclick="alterar('${p.nome}',-1)">−</button>
-        <span>${carrinho[p.nome]||0}</span>
-        <button onclick="alterar('${p.nome}',1,${precoFinal})">+</button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function alterar(nome,valor,preco=0){
-  if(!carrinho[nome]) carrinho[nome]={qtd:0,preco};
-  carrinho[nome].qtd+=valor;
-  if(carrinho[nome].qtd<=0) delete carrinho[nome];
-  atualizarCarrinho();
-  renderizar(produtos);
+    atualizarCarrinho();
 }
 
 function atualizarCarrinho(){
-  const area=document.getElementById("carrinho-itens");
-  const contador=document.getElementById("contador");
-  const totalEl=document.getElementById("total-carrinho");
+    const container = document.getElementById("cart-items");
+    const totalEl = document.getElementById("cart-total");
+    const countEl = document.getElementById("cart-count");
 
-  area.innerHTML="";
-  let total=0,qtd=0;
+    container.innerHTML = "";
+    let total = 0;
+    let count = 0;
 
-  Object.keys(carrinho).forEach(nome=>{
-    const item=carrinho[nome];
-    total+=item.qtd*item.preco;
-    qtd+=item.qtd;
-    area.innerHTML+=`<p>${nome} (${item.qtd}x) - R$ ${(item.qtd*item.preco).toFixed(2).replace('.',',')}</p>`;
-  });
+    carrinho.forEach(item => {
+        total += item.preco * item.qtd;
+        count += item.qtd;
 
-  totalEl.innerText="R$ "+total.toFixed(2).replace('.',',');
-  contador.innerText=qtd;
+        container.innerHTML += `
+        <p>${item.nome} (${item.qtd}x) - R$ ${(item.preco*item.qtd).toFixed(2)}</p>
+        `;
+    });
+
+    totalEl.innerText = "R$ " + total.toFixed(2);
+    countEl.innerText = count;
 }
 
-function abrirCarrinho(){
-  document.getElementById("overlay").style.display="block";
-  document.getElementById("carrinho-lateral").classList.add("ativo");
+function toggleCarrinho(){
+    document.getElementById("carrinho").classList.toggle("ativo");
 }
 
-function fecharCarrinho(){
-  document.getElementById("overlay").style.display="none";
-  document.getElementById("carrinho-lateral").classList.remove("ativo");
+function abrirCheckout(){
+    document.getElementById("checkout").classList.remove("hidden");
 }
 
-carregarProdutos();
+function fecharCheckout(){
+    document.getElementById("checkout").classList.add("hidden");
+}
+
+document.getElementById("cep").addEventListener("blur", function(){
+    const cep = this.value.replace(/\D/g,"");
+    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("rua").value = data.logradouro;
+        document.getElementById("cidade").value = data.localidade;
+    });
+});
+
+function finalizarPedido(){
+    const nome = document.getElementById("nome").value;
+    const rua = document.getElementById("rua").value;
+    const numero = document.getElementById("numero").value;
+    const cidade = document.getElementById("cidade").value;
+    const pagamento = document.getElementById("pagamento").value;
+
+    let mensagem = `✨ *Novo Pedido Odòmáiyà* ✨\n\n`;
+    mensagem += `👤 Cliente: ${nome}\n`;
+    mensagem += `📍 Entrega: ${rua}, ${numero} - ${cidade}\n`;
+    mensagem += `💳 Pagamento: ${pagamento}\n\n`;
+    mensagem += `🛒 Itens:\n`;
+
+    let total = 0;
+
+    carrinho.forEach(item=>{
+        mensagem += `• ${item.nome} (${item.qtd}x) - R$ ${(item.preco*item.qtd).toFixed(2)}\n`;
+        total += item.preco * item.qtd;
+    });
+
+    mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
+
+    const url = `https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`;
+    window.open(url, "_blank");
+}
