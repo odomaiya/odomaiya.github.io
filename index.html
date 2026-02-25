@@ -1,73 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Odòmáiyà Artigos Religiosos</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odòmáiyà Artigos Religiosos</title>
 
-  <link rel="stylesheet" href="CSS/style.css">
-  <script defer src="js/app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="CSS/style.css">
+<script src="js/app.js" defer></script>
 </head>
+
 <body>
 
 <header class="header">
-  <img src="logo.png" class="logo">
-  <h1>Odòmáiyà Artigos Religiosos</h1>
-  <button class="btn-carrinho" onclick="abrirCarrinho()">
-    🛒 <span id="contador">0</span>
-  </button>
+  <div class="logo-area">
+    <img src="logo.png" class="logo">
+    <div>
+      <h1>Odòmáiyà</h1>
+      <p>Artigos Religiosos</p>
+    </div>
+  </div>
+
+  <div class="social">
+    <a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
+    <a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank">Instagram</a>
+  </div>
 </header>
 
-<section class="produtos" id="listaProdutos"></section>
+<section class="filtros">
+  <input type="text" id="busca" placeholder="Buscar produto...">
+  <div id="categorias"></div>
+</section>
 
-<!-- CARRINHO -->
+<section id="produtos" class="grid"></section>
+
+<button class="btn-carrinho" onclick="abrirCarrinho()">
+🛒 <span id="contadorCarrinho">0</span>
+</button>
+
 <div class="carrinho" id="carrinho">
-  <div class="carrinho-topo">
-    <h2>Seu Carrinho</h2>
-    <button onclick="fecharCarrinho()">✖</button>
-  </div>
-
+  <h3>Seu Carrinho</h3>
   <div id="itensCarrinho"></div>
-
-  <div class="carrinho-total">
-    Total: R$ <span id="totalCarrinho">0,00</span>
-  </div>
-
-  <button class="btn-finalizar" onclick="abrirCheckout()">
-    Finalizar Pedido
-  </button>
+  <div class="total">Total: <span id="valorTotal">R$ 0,00</span></div>
+  <button class="btn-finalizar" onclick="abrirCheckout()">Finalizar Pedido</button>
 </div>
 
-<!-- CHECKOUT -->
-<div class="checkout" id="checkout">
-  <h2>Finalizar Pedido</h2>
-
-  <input type="text" id="cliente" placeholder="Seu nome">
-
-  <select id="tipoEntrega">
-    <option value="retirar">Retirar na loja</option>
-    <option value="entrega">Entrega</option>
-  </select>
-
-  <div id="campoEndereco" style="display:none;">
-    <input type="text" id="endereco" placeholder="Endereço completo">
-  </div>
-
-  <select id="pagamento">
-    <option value="cartao">Cartão</option>
-    <option value="dinheiro">Dinheiro</option>
-    <option value="pix">Pix</option>
-  </select>
-
-  <button class="btn-enviar" onclick="enviarPedido()">
-    Enviar Pedido
-  </button>
-
-  <button onclick="fecharCheckout()">Cancelar</button>
+<div class="modal" id="modalCheckout">
+  <div class="modal-content" id="checkoutConteudo"></div>
 </div>
 
 <footer>
-  R. Sete de Agosto, 28 - Centro, Passo Fundo - RS, 99025-030
+R. Sete de Agosto, 28 - Centro, Passo Fundo - RS, 99025-030
 </footer>
 
 </body>
