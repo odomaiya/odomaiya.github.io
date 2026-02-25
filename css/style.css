@@ -470,3 +470,22 @@ border-radius:8px;
 font-weight:600;
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
+
+/* Mantém a borda laranja */
+.quase-esgotado {
+  border: 2px solid #ff9800;
+}
+
+/* Aviso discreto mas visível */
+.aviso-estoque {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff9800;
+  letter-spacing: 0.3px;
+}
+
+/* Se for promoção + estoque baixo continua elegante */
+.produto.promo.quase-esgotado {
+  border: 2px solid #ff9800;
+}
