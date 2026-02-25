@@ -312,3 +312,7 @@ area.appendChild(btn);
 }
 
 carregar();
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
+}
