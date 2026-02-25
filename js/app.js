@@ -4,12 +4,15 @@ let produtos=[];
 let carrinho={};
 let categoriaAtual="Todos";
 
+/* FORMATAR MOEDA */
 function money(v){
 return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 }
 
+/* CARREGAR PRODUTOS */
 async function carregar(){
-const r=await fetch(API_URL+"?acao=produtos");
+try{
+const r=await fetch(API_URL+"?acao=produtos",{cache:"no-store"});
 produtos=await r.json();
 
 produtos.sort((a,b)=>
@@ -19,8 +22,12 @@ a.nome.localeCompare(b.nome)
 
 criarCategorias();
 aplicarFiltro();
+}catch(e){
+console.error("Erro ao carregar produtos",e);
+}
 }
 
+/* FILTRO */
 function aplicarFiltro(){
 if(categoriaAtual==="Todos"){
 render(produtos);
@@ -29,6 +36,7 @@ render(produtos.filter(p=>p.categoria===categoriaAtual));
 }
 }
 
+/* RENDER GRID */
 function render(lista){
 const grid=document.getElementById("produtos");
 grid.innerHTML="";
@@ -56,13 +64,15 @@ grid.appendChild(card);
 atualizarCarrinho();
 }
 
+/* ALTERAR QUANTIDADE */
 function alterar(nome,v){
 if(!carrinho[nome]) carrinho[nome]=0;
 carrinho[nome]+=v;
 if(carrinho[nome]<0) carrinho[nome]=0;
-aplicarFiltro();
+aplicarFiltro(); // mantém na categoria atual
 }
 
+/* ATUALIZAR CARRINHO */
 function atualizarCarrinho(){
 let total=0;
 let html="";
@@ -101,8 +111,8 @@ document.getElementById("carrinho").classList.toggle("ativo");
 }
 
 /* CHECKOUT */
-
 function abrirCheckout(){
+
 document.getElementById("modalCheckout").style.display="flex";
 
 document.getElementById("checkoutConteudo").innerHTML=`
@@ -129,11 +139,30 @@ document.getElementById("checkoutConteudo").innerHTML=`
 <option>Pix</option>
 </select>
 
-// SUGESTÃO INTELIGENTE BASEADA NA CATEGORIA
+<button onclick="voltarCarrinho()" 
+style="width:100%;padding:10px;margin-top:10px;background:#eee;border:none;border-radius:10px;cursor:pointer">
+⬅ Voltar ao Carrinho
+</button>
 
+<button onclick="finalizar()" 
+style="width:100%;padding:12px;background:#0077cc;color:white;border:none;border-radius:12px;margin-top:10px">
+Enviar Pedido
+</button>
+`;
+
+document.getElementById("tipo").onchange=function(){
+document.getElementById("enderecoArea").style.display=
+this.value==="entrega"?"block":"none";
+};
+
+document.getElementById("cep").addEventListener("blur",buscarCEP);
+
+sugerirPromocaoInteligente();
+}
+
+/* SUGESTÃO INTELIGENTE */
 function sugerirPromocaoInteligente(){
 
-// descobrir categoria predominante no carrinho
 let categoriasCarrinho={};
 
 Object.keys(carrinho).forEach(nome=>{
@@ -148,11 +177,9 @@ categoriasCarrinho[produto.categoria] =
 
 if(Object.keys(categoriasCarrinho).length===0) return;
 
-// pegar categoria mais comprada
 const categoriaPrincipal = Object.keys(categoriasCarrinho)
 .sort((a,b)=>categoriasCarrinho[b]-categoriasCarrinho[a])[0];
 
-// filtrar promoções dessa categoria
 const promocoes = produtos
 .filter(p=>p.categoria===categoriaPrincipal && p.promocao>0 && !carrinho[p.nome])
 .sort((a,b)=>Number(a.promocao)-Number(b.promocao));
@@ -162,56 +189,31 @@ if(promocoes.length===0) return;
 const oferta = promocoes[0];
 
 document.getElementById("checkoutConteudo").innerHTML += `
-<div style="
-margin-top:20px;
-padding:15px;
-background:linear-gradient(135deg,#ffffff,#f0f8ff);
-border:1px solid #0077cc;
-border-radius:15px;
-box-shadow:0 10px 25px rgba(0,0,0,0.05);
-animation:fadeUp 0.4s ease;
-">
+<div style="margin-top:20px;padding:15px;background:linear-gradient(135deg,#ffffff,#f0f8ff);
+border:1px solid #0077cc;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.05);">
 🔥 <b>Oferta Especial para você:</b><br><br>
 ${oferta.nome}<br>
 De ${money(oferta.preco)} por <b style="color:#0077cc">${money(oferta.promocao)}</b><br><br>
-
 <button onclick="adicionarPromo('${oferta.nome}')" 
-style="
-padding:10px 14px;
-background:#0077cc;
-color:white;
-border:none;
-border-radius:10px;
-cursor:pointer;
-font-weight:600;
-">
+style="padding:10px 14px;background:#0077cc;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:600;">
 Adicionar e aproveitar ✨
 </button>
 </div>
 `;
 }
 
-sugerirPromocaoInteligente();
-
-<button onclick="voltarCarrinho()" 
-style="width:100%;padding:10px;margin-top:10px;
-background:#eee;border:none;border-radius:10px;cursor:pointer">
-⬅ Voltar ao Carrinho
-</button>
-
-<button onclick="finalizar()" style="width:100%;padding:12px;background:#0077cc;color:white;border:none;border-radius:12px;margin-top:10px">
-Enviar Pedido
-</button>
-`;
-
-document.getElementById("tipo").onchange=function(){
-document.getElementById("enderecoArea").style.display=
-this.value==="entrega"?"block":"none";
-};
-
-document.getElementById("cep").addEventListener("blur",buscarCEP);
+function adicionarPromo(nome){
+if(!carrinho[nome]) carrinho[nome]=0;
+carrinho[nome]+=1;
+atualizarCarrinho();
+alert("✨ Oferta adicionada ao carrinho!");
 }
 
+function voltarCarrinho(){
+document.getElementById("modalCheckout").style.display="none";
+}
+
+/* CEP */
 async function buscarCEP(){
 const cep=document.getElementById("cep").value.replace(/\D/g,'');
 if(cep.length!==8) return;
@@ -226,6 +228,7 @@ document.getElementById("cidade").value=d.localidade||"";
 }catch(e){}
 }
 
+/* FINALIZAR WHATSAPP */
 function finalizar(){
 
 let total=0;
@@ -234,7 +237,18 @@ let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
 msg+="👤 Cliente: "+document.getElementById("cliente").value+"\n";
 msg+="📦 Tipo: "+document.getElementById("tipo").value+"\n";
 msg+="💳 Pagamento: "+document.getElementById("pagamento").value+"\n\n";
-
+if(document.getElementById("tipo").value==="entrega"){
+msg+=`\n📍 Endereço: ${
+document.getElementById("rua").value
+}, ${
+document.getElementById("numero").value
+}, ${
+document.getElementById("cidade").value
+}`;
+}else{
+msg+=`\n📍 Retirada na loja`;
+}
+  
 msg+="🛍️ Itens:\n";
 
 Object.keys(carrinho).forEach(n=>{
@@ -248,43 +262,27 @@ msg+=`• ${n} x${carrinho[n]} — ${money(preco)}\n`;
 
 msg+=`\n💰 Total: ${money(total)}\n`;
 
-if(document.getElementById("tipo").value==="entrega"){
-msg+=`\n📍 Endereço: ${
-document.getElementById("rua").value
-}, ${
-document.getElementById("numero").value
-}, ${
-document.getElementById("cidade").value
-}`;
-}else{
-msg+=`\n📍 Retirada na loja`;
-}
-
 window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
 }
 
+/* CATEGORIAS */
 function criarCategorias(){
 const categorias=["Todos",...new Set(produtos.map(p=>p.categoria))];
-
 const area=document.getElementById("categorias");
 area.innerHTML="";
 
 categorias.forEach(cat=>{
 const btn=document.createElement("button");
 btn.innerText=cat;
-
 btn.onclick=()=>{
 categoriaAtual=cat;
 aplicarFiltro();
 };
-
 area.appendChild(btn);
 });
 }
 
-carregar();
-/* ORIENTAÇÃO DE INSTALAÇÃO - VERSÃO CORRIGIDA */
-
+/* INSTALAÇÃO PWA */
 function isStandalone(){
 return (
 window.matchMedia('(display-mode: standalone)').matches ||
@@ -294,16 +292,13 @@ window.navigator.standalone === true
 
 function detectarSistema(){
 const ua=navigator.userAgent;
-
 if(/android/i.test(ua)) return "android";
 if(/iphone|ipad|ipod/i.test(ua)) return "ios";
-
 return "outro";
 }
 
 function mostrarInstalacao(){
-
-if(isStandalone()) return; // NÃO mostra se já está instalado
+if(isStandalone()) return;
 if(localStorage.getItem("instalacaoFechada")) return;
 
 const sistema=detectarSistema();
@@ -313,23 +308,11 @@ const box=document.getElementById("instalarApp");
 const texto=document.getElementById("textoInstalacao");
 
 if(sistema==="android"){
-texto.innerHTML=`
-<b>📲 Instale o App no Android:</b><br><br>
-1️⃣ Toque nos <b>⋮ três pontinhos</b> no navegador<br>
-2️⃣ Toque em <b>"Adicionar à tela inicial"</b><br>
-3️⃣ Confirme em <b>"Instalar"</b><br><br>
-Assim você terá acesso rápido como aplicativo.
-`;
+texto.innerHTML=`📲 Para instalar: Menu ⋮ → "Adicionar à tela inicial" → Instalar`;
 }
 
 if(sistema==="ios"){
-texto.innerHTML=`
-<b>📲 Instale no iPhone:</b><br><br>
-1️⃣ Toque no botão <b>Compartilhar ⬆️</b><br>
-2️⃣ Toque em <b>"Adicionar à Tela de Início"</b><br>
-3️⃣ Toque em <b>"Adicionar"</b><br><br>
-O app ficará como aplicativo no seu celular.
-`;
+texto.innerHTML=`📲 Para instalar: Botão Compartilhar ⬆️ → "Adicionar à Tela de Início"`;
 }
 
 box.style.display="flex";
@@ -342,13 +325,4 @@ localStorage.setItem("instalacaoFechada","sim");
 
 setTimeout(mostrarInstalacao,3000);
 
-function voltarCarrinho(){
-document.getElementById("modalCheckout").style.display="none";
-}
-
-function adicionarPromo(nome){
-if(!carrinho[nome]) carrinho[nome]=0;
-carrinho[nome]+=1;
-atualizarCarrinho();
-alert("✨ Oferta adicionada ao carrinho!");
-}
+carregar();
