@@ -454,25 +454,14 @@ overflow-x:hidden;
 
 /* Mantém borda laranja elegante */
 .produto.quase-esgotado{
-border:2px solid #ff9800;
+  border:2px solid #ff9800;
 }
 
-/* Selo discreto no canto inferior esquerdo */
-.produto.quase-esgotado::after{
-content:"⚠ Poucas unidades";
-position:absolute;
-bottom:12px;
-left:12px;
-background:rgba(255,152,0,0.95);
-color:white;
-font-size:11px;
-padding:4px 8px;
-border-radius:8px;
-font-weight:600;
-box-shadow:0 4px 10px rgba(0,0,0,0.12);
-}
-
-/* Evita conflito visual com faixa PROMOÇÃO */
-.produto.promo.quase-esgotado::before{
-z-index:2;
+/* Aviso discreto abaixo do estoque */
+.aviso-estoque{
+  margin-top:4px;
+  font-size:12px;
+  font-weight:600;
+  color:#ff9800;
+  letter-spacing:0.3px;
 }
