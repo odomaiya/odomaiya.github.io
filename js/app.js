@@ -240,13 +240,13 @@ return;
 msg+="👤 Cliente: "+nome+"\n";
 msg+="📦 Tipo: "+tipo+"\n";
 msg+="💳 Pagamento: "+document.getElementById("pagamento").value+"\n\n";
-
 if(tipo==="entrega"){
 msg+=`\n📍 Endereço: ${document.getElementById("rua").value}, ${document.getElementById("numero").value}, ${document.getElementById("cidade").value}`;
 }else{
 msg+=`\n📍 Retirada na loja`;
 }
 
+   
 msg+="\n🛍️ Itens:\n";
 
 Object.keys(carrinho).forEach(n=>{
