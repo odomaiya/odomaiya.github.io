@@ -3,74 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmàiyá Artigos Religiosos</title>
+<title>Odòmáiyà Artigos Religiosos</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
 </head>
-
 <body>
 
-<header class="topo">
-  <div class="logo-area">
-    <img src="logo.png" class="logo">
-    <div>
-      <h1>Odòmàiyá</h1>
-      <p>Artigos Religiosos</p>
+<header class="header">
+    <div class="logo-area">
+        <img src="logo.png" class="logo">
+        <div>
+            <h1>Odòmáiyà</h1>
+            <p>Artigos Religiosos</p>
+        </div>
     </div>
-  </div>
 
-  <div class="social">
-    <a href="https://wa.me/555496048808" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png">
-    </a>
-    <a href="https://instagram.com/odomaia_artigosreligiosos" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
-    </a>
-  </div>
+    <div class="icons">
+        <a href="#"><img src="whatsapp.png" class="icon"></a>
+        <a href="#"><img src="instagram.png" class="icon"></a>
+    </div>
 </header>
 
-<section class="busca-area">
-  <input type="text" id="busca" placeholder="Buscar produto...">
-  <div id="filtros"></div>
+<section class="search-area">
+    <input type="text" id="search" placeholder="Buscar produto...">
+    <div id="filtros"></div>
 </section>
 
-<section id="produtos" class="grid"></section>
+<section id="produtos" class="produtos"></section>
 
-<!-- BOTÃO FLUTUANTE -->
-<button id="btn-carrinho" onclick="abrirCarrinho()">
-  🛒 <span id="contador">0</span>
-</button>
-
-<!-- OVERLAY -->
-<div id="overlay" onclick="fecharCarrinho()"></div>
-
-<!-- CARRINHO LATERAL -->
-<div id="carrinho-lateral">
-  <div class="carrinho-topo">
-    <h3>Seu Carrinho</h3>
-    <button onclick="fecharCarrinho()">✕</button>
-  </div>
-
-  <div id="carrinho-itens"></div>
-
-  <div class="carrinho-rodape">
-    <p>Total: <strong id="total-carrinho">R$ 0,00</strong></p>
-    <button onclick="abrirCheckout()">Finalizar Pedido</button>
-  </div>
+<!-- Carrinho -->
+<div class="cart-button" onclick="toggleCarrinho()">
+    🛒 <span id="cart-count">0</span>
 </div>
 
-<!-- CHECKOUT -->
-<div id="checkout-modal" class="modal">
-  <div class="modal-content" id="checkout-content"></div>
+<div id="carrinho" class="carrinho">
+    <div class="carrinho-header">
+        <h2>Seu Carrinho</h2>
+        <button onclick="toggleCarrinho()">✕</button>
+    </div>
+
+    <div id="cart-items"></div>
+
+    <div class="carrinho-footer">
+        <h3>Total: <span id="cart-total">R$ 0,00</span></h3>
+        <button onclick="abrirCheckout()">Finalizar Pedido</button>
+    </div>
+</div>
+
+<!-- Checkout -->
+<div id="checkout" class="checkout hidden">
+    <div class="checkout-box">
+
+        <h2>Finalizar Pedido</h2>
+
+        <input id="nome" placeholder="Nome completo">
+        <input id="cep" placeholder="CEP">
+        <input id="rua" placeholder="Rua">
+        <input id="numero" placeholder="Número">
+        <input id="cidade" placeholder="Cidade">
+
+        <select id="pagamento">
+            <option value="Cartão">Cartão</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Pix">Pix</option>
+        </select>
+
+        <button onclick="finalizarPedido()">Enviar Pedido</button>
+        <button onclick="fecharCheckout()" class="secondary">Cancelar</button>
+
+    </div>
 </div>
 
 <footer>
-  <strong>Odòmàiyá Artigos Religiosos</strong><br>
-  R. Sete de Agosto, 28 - Centro<br>
-  Passo Fundo - RS, 99025-030
+    <p><strong>Odòmáiyà Artigos Religiosos</strong></p>
+    <p>R. Sete de Agosto, 28 – Centro</p>
+    <p>Passo Fundo – RS</p>
 </footer>
 
-<script src="js/app.js"></script>
 </body>
 </html>
