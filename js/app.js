@@ -129,6 +129,76 @@ document.getElementById("checkoutConteudo").innerHTML=`
 <option>Pix</option>
 </select>
 
+// SUGESTÃO INTELIGENTE BASEADA NA CATEGORIA
+
+function sugerirPromocaoInteligente(){
+
+// descobrir categoria predominante no carrinho
+let categoriasCarrinho={};
+
+Object.keys(carrinho).forEach(nome=>{
+if(carrinho[nome]>0){
+const produto=produtos.find(p=>p.nome===nome);
+if(produto){
+categoriasCarrinho[produto.categoria] =
+(categoriasCarrinho[produto.categoria]||0)+carrinho[nome];
+}
+}
+});
+
+if(Object.keys(categoriasCarrinho).length===0) return;
+
+// pegar categoria mais comprada
+const categoriaPrincipal = Object.keys(categoriasCarrinho)
+.sort((a,b)=>categoriasCarrinho[b]-categoriasCarrinho[a])[0];
+
+// filtrar promoções dessa categoria
+const promocoes = produtos
+.filter(p=>p.categoria===categoriaPrincipal && p.promocao>0 && !carrinho[p.nome])
+.sort((a,b)=>Number(a.promocao)-Number(b.promocao));
+
+if(promocoes.length===0) return;
+
+const oferta = promocoes[0];
+
+document.getElementById("checkoutConteudo").innerHTML += `
+<div style="
+margin-top:20px;
+padding:15px;
+background:linear-gradient(135deg,#ffffff,#f0f8ff);
+border:1px solid #0077cc;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+animation:fadeUp 0.4s ease;
+">
+🔥 <b>Oferta Especial para você:</b><br><br>
+${oferta.nome}<br>
+De ${money(oferta.preco)} por <b style="color:#0077cc">${money(oferta.promocao)}</b><br><br>
+
+<button onclick="adicionarPromo('${oferta.nome}')" 
+style="
+padding:10px 14px;
+background:#0077cc;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+">
+Adicionar e aproveitar ✨
+</button>
+</div>
+`;
+}
+
+sugerirPromocaoInteligente();
+
+<button onclick="voltarCarrinho()" 
+style="width:100%;padding:10px;margin-top:10px;
+background:#eee;border:none;border-radius:10px;cursor:pointer">
+⬅ Voltar ao Carrinho
+</button>
+
 <button onclick="finalizar()" style="width:100%;padding:12px;background:#0077cc;color:white;border:none;border-radius:12px;margin-top:10px">
 Enviar Pedido
 </button>
@@ -271,3 +341,14 @@ localStorage.setItem("instalacaoFechada","sim");
 }
 
 setTimeout(mostrarInstalacao,3000);
+
+function voltarCarrinho(){
+document.getElementById("modalCheckout").style.display="none";
+}
+
+function adicionarPromo(nome){
+if(!carrinho[nome]) carrinho[nome]=0;
+carrinho[nome]+=1;
+atualizarCarrinho();
+alert("✨ Oferta adicionada ao carrinho!");
+}
