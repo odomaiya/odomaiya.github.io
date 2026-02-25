@@ -69,7 +69,7 @@ function alterar(nome,v){
 if(!carrinho[nome]) carrinho[nome]=0;
 carrinho[nome]+=v;
 if(carrinho[nome]<0) carrinho[nome]=0;
-aplicarFiltro(); // mantém na categoria atual
+aplicarFiltro();
 }
 
 /* ATUALIZAR CARRINHO */
@@ -110,6 +110,7 @@ function abrirCarrinho(){
 document.getElementById("carrinho").classList.toggle("ativo");
 }
 
+/* CHECKOUT */
 function abrirCheckout(){
 
 document.getElementById("modalCheckout").style.display="flex";
@@ -149,99 +150,89 @@ Enviar Pedido
 </button>
 `;
 
-const tipoSelect = document.getElementById("tipo");
-const enderecoArea = document.getElementById("enderecoArea");
-const cepInput = document.getElementById("cep");
+const tipoSelect=document.getElementById("tipo");
+const enderecoArea=document.getElementById("enderecoArea");
 
-tipoSelect.addEventListener("change", function(){
-enderecoArea.style.display = this.value === "entrega" ? "block" : "none";
+tipoSelect.addEventListener("change",function(){
+enderecoArea.style.display=this.value==="entrega"?"block":"none";
 });
 
-cepInput.addEventListener("blur", buscarCEP);
+setTimeout(()=>{
+const cepInput=document.getElementById("cep");
+if(cepInput){
+cepInput.addEventListener("blur",buscarCEP);
+}
+},200);
 
 sugerirPromocaoInteligente();
 }
 
+/* SUGESTÃO INTELIGENTE PROFISSIONAL */
 function sugerirPromocaoInteligente(){
 
+let total=0;
 let categoriasCarrinho={};
 
-// descobrir categoria predominante no carrinho
 Object.keys(carrinho).forEach(nome=>{
 if(carrinho[nome]>0){
 const produto=produtos.find(p=>p.nome===nome);
 if(produto){
-categoriasCarrinho[produto.categoria] =
-(categoriasCarrinho[produto.categoria]||0)+carrinho[nome];
+categoriasCarrinho[produto.categoria]=(categoriasCarrinho[produto.categoria]||0)+carrinho[nome];
+const preco=produto.promocao>0?Number(produto.promocao):Number(produto.preco);
+total+=preco*carrinho[nome];
 }
 }
 });
 
 if(Object.keys(categoriasCarrinho).length===0) return;
 
-// categoria mais comprada
-const categoriaPrincipal = Object.keys(categoriasCarrinho)
+const categoriaPrincipal=Object.keys(categoriasCarrinho)
 .sort((a,b)=>categoriasCarrinho[b]-categoriasCarrinho[a])[0];
-
-// tentar pegar promoção da categoria
-let promocoes = produtos
-.filter(p=>p.categoria===categoriaPrincipal && p.promocao>0 && !carrinho[p.nome])
-.sort((a,b)=>Number(a.promocao)-Number(b.promocao));
 
 let oferta=null;
 
-// se tiver promoção da categoria
-if(promocoes.length>0){
-oferta=promocoes[0];
-}else{
+/* 1️⃣ Promoção da categoria */
+let promocoes=produtos
+.filter(p=>p.categoria===categoriaPrincipal && p.promocao>0 && !carrinho[p.nome])
+.sort((a,b)=>Number(a.promocao)-Number(b.promocao));
 
-// fallback: procurar VELA mais barata
-const velas = produtos
-.filter(p=> 
-p.nome.toLowerCase().includes("vela") &&
-!carrinho[p.nome]
-)
+if(promocoes.length>0) oferta=promocoes[0];
+
+/* 2️⃣ Aumentar ticket se menor que 80 */
+if(!oferta && total<80){
+const barato=produtos
+.filter(p=>!carrinho[p.nome])
 .sort((a,b)=>{
-const precoA = a.promocao>0 ? Number(a.promocao) : Number(a.preco);
-const precoB = b.promocao>0 ? Number(b.promocao) : Number(b.preco);
-return precoA - precoB;
+const precoA=a.promocao>0?Number(a.promocao):Number(a.preco);
+const precoB=b.promocao>0?Number(b.promocao):Number(b.preco);
+return precoA-precoB;
 });
-
-if(velas.length>0){
-oferta=velas[0];
+if(barato.length>0) oferta=barato[0];
 }
 
+/* 3️⃣ Complemento inteligente */
+if(!oferta){
+const velas=produtos
+.filter(p=>p.nome.toLowerCase().includes("vela") && !carrinho[p.nome])
+.sort((a,b)=>{
+const precoA=a.promocao>0?Number(a.promocao):Number(a.preco);
+const precoB=b.promocao>0?Number(b.promocao):Number(b.preco);
+return precoA-precoB;
+});
+if(velas.length>0) oferta=velas[0];
 }
 
 if(!oferta) return;
 
-const precoFinal = oferta.promocao>0 ? oferta.promocao : oferta.preco;
+const precoFinal=oferta.promocao>0?oferta.promocao:oferta.preco;
 
-document.getElementById("checkoutConteudo").innerHTML += `
-<div style="
-margin-top:20px;
-padding:15px;
-background:linear-gradient(135deg,#ffffff,#f0f8ff);
-border:1px solid #0077cc;
-border-radius:15px;
-box-shadow:0 10px 25px rgba(0,0,0,0.05);
-animation:fadeUp 0.4s ease;
-">
-🔥 <b>Oferta Especial para você:</b><br><br>
+document.getElementById("checkoutConteudo").innerHTML+=`
+<div style="margin-top:20px;padding:15px;background:linear-gradient(135deg,#ffffff,#f0f8ff);border:1px solid #0077cc;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.05);">
+✨ <b>Você pode aproveitar também:</b><br><br>
 ${oferta.nome}<br>
 Por apenas <b style="color:#0077cc">${money(precoFinal)}</b><br><br>
-
-<button onclick="adicionarPromo('${oferta.nome}')" 
-style="
-padding:10px 14px;
-background:#0077cc;
-color:white;
-border:none;
-border-radius:10px;
-cursor:pointer;
-font-weight:600;
-">
-Adicionar e aproveitar ✨
+<button onclick="adicionarPromo('${oferta.nome}')" style="padding:10px 14px;background:#0077cc;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:600;">
+Adicionar ao pedido ✨
 </button>
 </div>
 `;
@@ -258,29 +249,24 @@ function voltarCarrinho(){
 document.getElementById("modalCheckout").style.display="none";
 }
 
+/* CEP */
 async function buscarCEP(){
-
-const cep = document.getElementById("cep").value.replace(/\D/g,'');
-
-if(cep.length !== 8) return;
+const cep=document.getElementById("cep").value.replace(/\D/g,'');
+if(cep.length!==8) return;
 
 try{
-
-const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-const data = await response.json();
-
+const response=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+const data=await response.json();
 if(!data.erro){
-document.getElementById("rua").value = data.logradouro || "";
-document.getElementById("cidade").value = data.localidade || "";
+document.getElementById("rua").value=data.logradouro||"";
+document.getElementById("cidade").value=data.localidade||"";
 }
-
 }catch(error){
-console.log("Erro ao buscar CEP", error);
+console.log("Erro ao buscar CEP",error);
+}
 }
 
-}
-
-/* FINALIZAR WHATSAPP */
+/* FINALIZAR */
 function finalizar(){
 
 let total=0;
@@ -289,19 +275,14 @@ let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
 msg+="👤 Cliente: "+document.getElementById("cliente").value+"\n";
 msg+="📦 Tipo: "+document.getElementById("tipo").value+"\n";
 msg+="💳 Pagamento: "+document.getElementById("pagamento").value+"\n\n";
+
 if(document.getElementById("tipo").value==="entrega"){
-msg+=`\n📍 Endereço: ${
-document.getElementById("rua").value
-}, ${
-document.getElementById("numero").value
-}, ${
-document.getElementById("cidade").value
-}`;
+msg+=`\n📍 Endereço: ${document.getElementById("rua").value}, ${document.getElementById("numero").value}, ${document.getElementById("cidade").value}`;
 }else{
 msg+=`\n📍 Retirada na loja`;
 }
-  
-msg+="🛍️ Itens:\n";
+
+msg+="\n🛍️ Itens:\n";
 
 Object.keys(carrinho).forEach(n=>{
 if(carrinho[n]>0){
@@ -322,59 +303,12 @@ function criarCategorias(){
 const categorias=["Todos",...new Set(produtos.map(p=>p.categoria))];
 const area=document.getElementById("categorias");
 area.innerHTML="";
-
 categorias.forEach(cat=>{
 const btn=document.createElement("button");
 btn.innerText=cat;
-btn.onclick=()=>{
-categoriaAtual=cat;
-aplicarFiltro();
-};
+btn.onclick=()=>{categoriaAtual=cat;aplicarFiltro();};
 area.appendChild(btn);
 });
 }
-
-/* INSTALAÇÃO PWA */
-function isStandalone(){
-return (
-window.matchMedia('(display-mode: standalone)').matches ||
-window.navigator.standalone === true
-);
-}
-
-function detectarSistema(){
-const ua=navigator.userAgent;
-if(/android/i.test(ua)) return "android";
-if(/iphone|ipad|ipod/i.test(ua)) return "ios";
-return "outro";
-}
-
-function mostrarInstalacao(){
-if(isStandalone()) return;
-if(localStorage.getItem("instalacaoFechada")) return;
-
-const sistema=detectarSistema();
-if(sistema==="outro") return;
-
-const box=document.getElementById("instalarApp");
-const texto=document.getElementById("textoInstalacao");
-
-if(sistema==="android"){
-texto.innerHTML=`📲 Para instalar: Menu ⋮ → "Adicionar à tela inicial" → Instalar`;
-}
-
-if(sistema==="ios"){
-texto.innerHTML=`📲 Para instalar: Botão Compartilhar ⬆️ → "Adicionar à Tela de Início"`;
-}
-
-box.style.display="flex";
-}
-
-function fecharInstalacao(){
-document.getElementById("instalarApp").style.display="none";
-localStorage.setItem("instalacaoFechada","sim");
-}
-
-setTimeout(mostrarInstalacao,3000);
 
 carregar();
