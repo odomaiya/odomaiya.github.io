@@ -223,3 +223,20 @@ background:#eef5fb;
 margin-top:40px;
 font-size:14px;
 }
+
+/* SOCIAL */
+
+.social-link{
+display:flex;
+align-items:center;
+gap:6px;
+text-decoration:none;
+font-weight:600;
+color:#0a2540;
+margin-left:15px;
+}
+
+.icon-social{
+width:18px;
+height:18px;
+}
