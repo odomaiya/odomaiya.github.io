@@ -11,12 +11,9 @@ color:#0a2540;
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:18px 25px;
+padding:18px 20px;
 background:linear-gradient(90deg,#ffffff,#f3f8ff);
 box-shadow:0 6px 25px rgba(0,0,0,0.05);
-position:sticky;
-top:0;
-z-index:1000;
 }
 
 .logo{
