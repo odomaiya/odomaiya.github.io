@@ -310,3 +310,27 @@ padding-top:10px;
 }
 
 }
+/* ===== HEADER MOBILE MELHORADO ===== */
+
+@media(max-width:768px){
+
+.logo-area{
+display:flex;
+flex-direction:column;
+align-items:center;
+text-align:center;
+gap:6px;
+}
+
+.header{
+flex-direction:column;
+gap:15px;
+}
+
+.social{
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+}
+
+}
