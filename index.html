@@ -64,5 +64,25 @@
 </footer>
 
 <script src="js/app.js"></script>
+  <!-- CARRINHO LATERAL -->
+<div id="overlay" onclick="fecharCarrinho()"></div>
+
+<div id="carrinho-lateral">
+  <div class="carrinho-header">
+    <h3>Seu Carrinho</h3>
+    <span onclick="fecharCarrinho()">✕</span>
+  </div>
+
+  <div id="carrinho-itens"></div>
+
+  <div class="carrinho-footer">
+    <p>Total: <strong id="carrinho-total">R$ 0,00</strong></p>
+    <button onclick="abrirCheckout()">Finalizar Pedido</button>
+  </div>
+</div>
+
+<button id="botao-flutuante" onclick="abrirCarrinho()">
+  🛒 <span id="contador-carrinho">0</span>
+</button>
 </body>
 </html>
