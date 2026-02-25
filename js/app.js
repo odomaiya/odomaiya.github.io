@@ -262,3 +262,66 @@ msg+=`\n💰 Total: ${money(total)}\n`;
 
 window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
 }
+
+/* =========================
+   CRIAR CATEGORIAS
+========================= */
+
+function criarCategorias(){
+
+const area=document.getElementById("categorias");
+if(!area) return;
+
+const categorias=["Todos"];
+
+produtos.forEach(p=>{
+if(p.categoria && !categorias.includes(p.categoria)){
+categorias.push(p.categoria);
+}
+});
+
+area.innerHTML="";
+
+categorias.forEach(cat=>{
+const btn=document.createElement("button");
+btn.innerText=cat;
+btn.style.margin="5px";
+btn.style.padding="8px 14px";
+btn.style.border="1px solid #0077cc";
+btn.style.background=cat===categoriaAtual?"#0077cc":"white";
+btn.style.color=cat===categoriaAtual?"white":"#0077cc";
+btn.style.borderRadius="20px";
+btn.style.cursor="pointer";
+
+btn.onclick=()=>{
+categoriaAtual=cat;
+criarCategorias();
+aplicarFiltro();
+};
+
+area.appendChild(btn);
+});
+
+}
+
+/* =========================
+   VOLTAR CARRINHO
+========================= */
+
+function voltarCarrinho(){
+document.getElementById("modalCheckout").style.display="none";
+}
+
+/* =========================
+   PROMOÇÃO INTELIGENTE (SEGURA)
+========================= */
+
+function sugerirPromocaoInteligente(){
+return; // desativado por enquanto para evitar erro
+}
+
+/* =========================
+   INICIAR SISTEMA
+========================= */
+
+document.addEventListener("DOMContentLoaded", carregar);
