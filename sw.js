@@ -3,9 +3,5 @@ self.addEventListener("install", event => {
 });
 
 self.addEventListener("activate", event => {
-  return self.clients.claim();
-});
-
-self.addEventListener("fetch", event => {
-  // apenas ativa o PWA
+  event.waitUntil(clients.claim());
 });
