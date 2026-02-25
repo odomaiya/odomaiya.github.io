@@ -456,7 +456,8 @@ overflow-x:hidden;
 border:1.5px solid #ffb74d;
 }
 
-.produto.quase-esgotado::after{
+/* Só mostra o selo se NÃO for promoção */
+.produto.quase-esgotado:not(.promo)::after{
 content:"Quase esgotando";
 position:absolute;
 top:10px;
