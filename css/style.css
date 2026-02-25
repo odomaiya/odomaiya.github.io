@@ -166,13 +166,18 @@ z-index:20;
 position:fixed;
 right:-350px;
 top:0;
-width:300px;
+width:320px;
 height:100%;
 background:white;
-box-shadow:-5px 0 25px rgba(0,0,0,0.08);
+box-shadow:-5px 0 30px rgba(0,0,0,0.12);
 padding:20px;
 transition:0.4s;
 overflow-y:auto;
+z-index:9999; /* MUITO IMPORTANTE */
+}
+
+.carrinho.ativo{
+right:0;
 }
 
 .carrinho.ativo{
