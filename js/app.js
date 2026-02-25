@@ -232,37 +232,42 @@ function sugerirPromocaoInteligente(){
 const itensNoCarrinho = Object.keys(carrinho).filter(n=>carrinho[n]>0);
 if(itensNoCarrinho.length===0) return;
 
-const produtoBase = produtos.find(p=>p.nome===itensNoCarrinho[0]);
-if(!produtoBase) return;
+/* pega categorias do que já foi escolhido */
+const categoriasSelecionadas = itensNoCarrinho.map(nome=>{
+const prod = produtos.find(p=>p.nome===nome);
+return prod?.categoria;
+});
 
-const candidatos = produtos.filter(p=>
-p.nome!==produtoBase.nome &&
-p.categoria===produtoBase.categoria &&
-p.estoque>0
+/* candidatos relacionados */
+let sugestoes = produtos.filter(p=>
+
+!itensNoCarrinho.includes(p.nome) &&   // não sugerir o mesmo
+p.estoque > 0 &&                      // precisa ter estoque
+(
+categoriasSelecionadas.includes(p.categoria) ||  // mesma categoria
+p.promocao > 0 ||                      // ou promoção
+p.estoque >= 8                         // ou estoque alto (girar estoque)
+)
 );
 
-if(candidatos.length===0) return;
+/* prioriza promoção + melhor preço */
+sugestoes.sort((a,b)=>{
+return (b.promocao>0)-(a.promocao>0) ||
+((a.promocao||a.preco)-(b.promocao||b.preco));
+});
 
-candidatos.sort((a,b)=>
-(b.promocao>0)-(a.promocao>0)||
-b.estoque-a.estoque
+if(sugestoes.length===0) return;
+
+const escolhido = sugestoes[0];
+
+setTimeout(()=>{
+alert(
+"💡 Você também pode gostar:\n\n"+
+escolhido.nome+
+"\n"+money(escolhido.promocao>0?escolhido.promocao:escolhido.preco)+
+(escolhido.promocao>0?" 🔥 Promoção!":"")
 );
-
-const sugestao=candidatos[0];
-
-const area=document.getElementById("sugestaoArea");
-if(!area) return;
-
-area.innerHTML=`
-<div style="margin-top:15px;padding:12px;border:1px solid #0077cc;border-radius:12px;background:#f0f8ff">
-💡 <strong>Você também pode gostar:</strong><br>
-${sugestao.nome}<br>
-${money(sugestao.promocao>0?sugestao.promocao:sugestao.preco)}<br>
-<button onclick="alterar('${sugestao.nome}',1)" style="margin-top:8px;padding:6px 12px;border:none;background:#0077cc;color:white;border-radius:8px;cursor:pointer">
-Adicionar ao pedido
-</button>
-</div>
-`;
+},700);
 }
 
 /* =========================
