@@ -3,76 +3,69 @@ const API_URL="https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbP
 let produtos=[];
 let carrinho={};
 
-function formatar(v){
-return v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function money(v){
+return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 }
 
 async function carregar(){
 const r=await fetch(API_URL+"?acao=produtos");
 produtos=await r.json();
-produtos.sort((a,b)=> (b.promocao>0)-(a.promocao>0)||a.nome.localeCompare(b.nome));
-criarCategorias();
+
+produtos.sort((a,b)=>
+(b.promocao>0)-(a.promocao>0)||
+a.nome.localeCompare(b.nome)
+);
+
 render(produtos);
-}
-
-function criarCategorias(){
-const cats=["Todos",...new Set(produtos.map(p=>p.categoria))];
-const area=document.getElementById("categorias");
-area.innerHTML="";
-cats.forEach(c=>{
-const b=document.createElement("button");
-b.innerText=c;
-b.onclick=()=>filtrar(c);
-area.appendChild(b);
-});
-}
-
-function filtrar(cat){
-if(cat==="Todos") render(produtos);
-else render(produtos.filter(p=>p.categoria===cat));
 }
 
 function render(lista){
 const grid=document.getElementById("produtos");
 grid.innerHTML="";
+
 lista.forEach(p=>{
-const preco=p.promocao>0?Number(p.promocao):Number(p.preco);
-const div=document.createElement("div");
-div.className="produto"+(p.promocao>0?" promo":"");
-div.innerHTML=`
+const preco=p.promocao>0?p.promocao:p.preco;
+
+const card=document.createElement("div");
+card.className="produto"+(p.promocao>0?" promo":"");
+
+card.innerHTML=`
 <img src="${p.imagem}">
 <h4>${p.nome}</h4>
-<p>${formatar(preco)}</p>
+<p>${money(preco)}</p>
 <div class="contador">
-<button onclick="alterar('${p.nome}',-1)">-</button>
+<button onclick="alterar('${p.nome}',-1)">−</button>
 <span>${carrinho[p.nome]||0}</span>
 <button onclick="alterar('${p.nome}',1)">+</button>
-</div>`;
-grid.appendChild(div);
+</div>
+`;
+
+grid.appendChild(card);
 });
+
 atualizarCarrinho();
 }
 
 function alterar(nome,v){
 if(!carrinho[nome]) carrinho[nome]=0;
 carrinho[nome]+=v;
-if(carrinho[nome]<0)carrinho[nome]=0;
+if(carrinho[nome]<0) carrinho[nome]=0;
 render(produtos);
 }
 
 function atualizarCarrinho(){
 let total=0;
-let itensHTML="";
+let html="";
 Object.keys(carrinho).forEach(n=>{
 if(carrinho[n]>0){
 const p=produtos.find(x=>x.nome===n);
-const preco=p.promocao>0?Number(p.promocao):Number(p.preco);
+const preco=p.promocao>0?p.promocao:p.preco;
 total+=preco*carrinho[n];
-itensHTML+=`<p>${n} x${carrinho[n]} - ${formatar(preco)}</p>`;
+html+=`<p>${n} x${carrinho[n]} — ${money(preco)}</p>`;
 }
 });
-document.getElementById("itensCarrinho").innerHTML=itensHTML;
-document.getElementById("valorTotal").innerText=formatar(total);
+document.getElementById("itensCarrinho").innerHTML=html;
+document.getElementById("valorTotal").innerText=money(total);
 document.getElementById("contadorCarrinho").innerText=
 Object.values(carrinho).reduce((a,b)=>a+b,0);
 }
@@ -81,52 +74,85 @@ function abrirCarrinho(){
 document.getElementById("carrinho").classList.toggle("ativo");
 }
 
+/* CHECKOUT 3 ETAPAS */
+
 function abrirCheckout(){
 document.getElementById("modalCheckout").style.display="flex";
+
 document.getElementById("checkoutConteudo").innerHTML=`
-<h3>Finalizar Pedido</h3>
-<input id="cliente" placeholder="Seu nome"><br><br>
-<select id="pagamento">
+<h3>1️⃣ Seus Dados</h3>
+<input id="cliente" placeholder="Seu nome" style="width:100%;padding:10px;margin:8px 0">
+
+<h3>2️⃣ Entrega</h3>
+<select id="tipo" style="width:100%;padding:10px;margin:8px 0">
+<option value="retirada">Retirada na loja</option>
+<option value="entrega">Entrega</option>
+</select>
+
+<div id="enderecoArea" style="display:none">
+<input id="cep" placeholder="CEP" style="width:100%;padding:10px;margin:8px 0">
+<input id="rua" placeholder="Rua" style="width:100%;padding:10px;margin:8px 0">
+<input id="numero" placeholder="Número" style="width:100%;padding:10px;margin:8px 0">
+<input id="cidade" placeholder="Cidade" style="width:100%;padding:10px;margin:8px 0">
+</div>
+
+<h3>3️⃣ Pagamento</h3>
+<select id="pagamento" style="width:100%;padding:10px;margin:8px 0">
 <option>Cartão</option>
 <option>Dinheiro</option>
 <option>Pix</option>
-</select><br><br>
-<input id="cep" placeholder="CEP"><br><br>
-<input id="rua" placeholder="Rua"><br><br>
-<input id="numero" placeholder="Número"><br><br>
-<input id="cidade" placeholder="Cidade"><br><br>
-<button onclick="buscarCEP()">Buscar CEP</button><br><br>
-<button onclick="enviarPedido()">Enviar Pedido</button>`;
+</select>
+
+<button onclick="finalizar()" style="width:100%;padding:12px;background:#0077cc;color:white;border:none;border-radius:12px;margin-top:10px">
+Enviar Pedido
+</button>
+`;
+
+document.getElementById("tipo").onchange=function(){
+document.getElementById("enderecoArea").style.display=
+this.value==="entrega"?"block":"none";
+};
+
+document.getElementById("cep").addEventListener("blur",buscarCEP);
 }
 
 async function buscarCEP(){
 const cep=document.getElementById("cep").value;
+if(!cep) return;
 const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
 const d=await r.json();
 document.getElementById("rua").value=d.logradouro||"";
 document.getElementById("cidade").value=d.localidade||"";
 }
 
-function enviarPedido(){
+function finalizar(){
 let total=0;
-let texto="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
-texto+="👤 Cliente: "+document.getElementById("cliente").value+"\n";
-texto+="💳 Pagamento: "+document.getElementById("pagamento").value+"\n\n";
-texto+="📦 Itens:\n";
+let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
+
+msg+="👤 Cliente: "+cliente.value+"\n";
+msg+="📦 Tipo: "+tipo.value+"\n";
+msg+="💳 Pagamento: "+pagamento.value+"\n\n";
+
+msg+="🛍️ Itens:\n";
 
 Object.keys(carrinho).forEach(n=>{
 if(carrinho[n]>0){
 const p=produtos.find(x=>x.nome===n);
-const preco=p.promocao>0?Number(p.promocao):Number(p.preco);
+const preco=p.promocao>0?p.promocao:p.preco;
 total+=preco*carrinho[n];
-texto+=`• ${n} x${carrinho[n]} - ${formatar(preco)}\n`;
+msg+=`• ${n} x${carrinho[n]} — ${money(preco)}\n`;
 }
 });
 
-texto+=`\n💰 Total: ${formatar(total)}\n`;
-texto+=`\n📍 Endereço: ${rua.value}, ${numero.value}, ${cidade.value}`;
+msg+=`\n💰 Total: ${money(total)}\n`;
 
-window.open("https://wa.me/555496048808?text="+encodeURIComponent(texto));
+if(tipo.value==="entrega"){
+msg+=`\n📍 Endereço: ${rua.value}, ${numero.value}, ${cidade.value}`;
+}else{
+msg+=`\n📍 Retirada na loja`;
+}
+
+window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
 }
 
 carregar();
