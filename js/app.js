@@ -44,6 +44,7 @@ render(produtos.filter(p=>p.categoria===categoriaAtual));
    RENDER GRID
 ========================= */
 function render(lista){
+
 const grid=document.getElementById("produtos");
 grid.innerHTML="";
 
@@ -59,37 +60,44 @@ card.className="produto"
 +(semEstoque?" sem-estoque":"")
 +(estoqueBaixo?" quase-esgotado":"");
 
-card.innerHTML=`
-<img src="${p.imagem || 'https://via.placeholder.com/300x200?text=Produto'}">
-<h4>${p.nome}</h4>
-<p>${money(preco)}</p>
+let html = "";
 
-${semEstoque ? 
-`<p style="color:red;font-weight:600">❌ Sem estoque</p>` 
-:
-`
+html += `<img src="${p.imagem || 'https://via.placeholder.com/300x200?text=Produto'}">`;
+html += `<h4>${p.nome}</h4>`;
+html += `<p>${money(preco)}</p>`;
+
+if(semEstoque){
+
+html += `<p style="color:red;font-weight:600">❌ Sem estoque</p>`;
+
+}else{
+
+html += `
 <p style="font-size:13px;opacity:0.75">
 Estoque: ${p.estoque}
 </p>
+`;
 
-${estoqueBaixo ? 
-`<div class="aviso-estoque">
+if(estoqueBaixo){
+html += `
+<div class="aviso-estoque">
 ⚠ Estoque quase esgotado
-</div>` 
-: ""}
-
-<div class="contador">
-`
+</div>
+`;
 }
+
+html += `
+<div class="contador">
 <button onclick="alterar('${p.nome}',-1)">−</button>
 <span>${carrinho[p.nome]||0}</span>
 <button onclick="alterar('${p.nome}',1)">+</button>
 </div>
-`
-}
 `;
+}
 
+card.innerHTML = html;
 grid.appendChild(card);
+
 });
 
 atualizarCarrinho();
