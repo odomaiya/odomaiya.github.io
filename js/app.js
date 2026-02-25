@@ -110,7 +110,6 @@ function abrirCarrinho(){
 document.getElementById("carrinho").classList.toggle("ativo");
 }
 
-/* CHECKOUT */
 function abrirCheckout(){
 
 document.getElementById("modalCheckout").style.display="flex";
@@ -150,12 +149,15 @@ Enviar Pedido
 </button>
 `;
 
-document.getElementById("tipo").onchange=function(){
-document.getElementById("enderecoArea").style.display=
-this.value==="entrega"?"block":"none";
-};
+const tipoSelect = document.getElementById("tipo");
+const enderecoArea = document.getElementById("enderecoArea");
+const cepInput = document.getElementById("cep");
 
-document.getElementById("cep").addEventListener("blur",buscarCEP);
+tipoSelect.addEventListener("change", function(){
+enderecoArea.style.display = this.value === "entrega" ? "block" : "none";
+});
+
+cepInput.addEventListener("blur", buscarCEP);
 
 sugerirPromocaoInteligente();
 }
@@ -213,19 +215,26 @@ function voltarCarrinho(){
 document.getElementById("modalCheckout").style.display="none";
 }
 
-/* CEP */
 async function buscarCEP(){
-const cep=document.getElementById("cep").value.replace(/\D/g,'');
-if(cep.length!==8) return;
+
+const cep = document.getElementById("cep").value.replace(/\D/g,'');
+
+if(cep.length !== 8) return;
 
 try{
-const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-const d=await r.json();
-if(!d.erro){
-document.getElementById("rua").value=d.logradouro||"";
-document.getElementById("cidade").value=d.localidade||"";
+
+const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+const data = await response.json();
+
+if(!data.erro){
+document.getElementById("rua").value = data.logradouro || "";
+document.getElementById("cidade").value = data.localidade || "";
 }
-}catch(e){}
+
+}catch(error){
+console.log("Erro ao buscar CEP", error);
+}
+
 }
 
 /* FINALIZAR WHATSAPP */
