@@ -1,11 +1,10 @@
 {
-  "name": "Odòmáiyà Artigos Religiosos",
+  "name": "Odòmáiyà",
   "short_name": "Odòmáiyà",
-  "start_url": ".",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0b1a2f",
-  "theme_color": "#0b1a2f",
-  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0077cc",
   "icons": [
     {
       "src": "logo.png",
