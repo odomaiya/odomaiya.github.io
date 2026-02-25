@@ -204,4 +204,91 @@ localStorage.setItem("instalacao_visto","1");
 },10000);
 }
 
+function abrirCheckout(){
+document.getElementById("modalCheckout").style.display="flex";
+
+document.getElementById("checkoutConteudo").innerHTML=`
+<h3>1️⃣ Seus Dados</h3>
+<input id="cliente" placeholder="Seu nome" style="width:100%;padding:10px;margin:8px 0">
+
+<h3>2️⃣ Entrega</h3>
+<select id="tipo" style="width:100%;padding:10px;margin:8px 0">
+<option value="retirada">Retirada na loja</option>
+<option value="entrega">Entrega</option>
+</select>
+
+<div id="enderecoArea" style="display:none">
+<input id="cep" placeholder="CEP" style="width:100%;padding:10px;margin:8px 0">
+<input id="rua" placeholder="Rua" style="width:100%;padding:10px;margin:8px 0">
+<input id="numero" placeholder="Número" style="width:100%;padding:10px;margin:8px 0">
+<input id="cidade" placeholder="Cidade" style="width:100%;padding:10px;margin:8px 0">
+</div>
+
+<h3>3️⃣ Pagamento</h3>
+<select id="pagamento" style="width:100%;padding:10px;margin:8px 0">
+<option>Cartão</option>
+<option>Dinheiro</option>
+<option>Pix</option>
+</select>
+
+<button onclick="finalizar()" style="width:100%;padding:12px;background:#0077cc;color:white;border:none;border-radius:12px;margin-top:10px">
+Enviar Pedido
+</button>
+`;
+
+document.getElementById("tipo").onchange=function(){
+document.getElementById("enderecoArea").style.display=
+this.value==="entrega"?"block":"none";
+};
+
+document.getElementById("cep").addEventListener("blur",buscarCEP);
+}
+
+async function buscarCEP(){
+const cep=document.getElementById("cep").value;
+if(!cep) return;
+
+const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+const d=await r.json();
+
+document.getElementById("rua").value=d.logradouro||"";
+document.getElementById("cidade").value=d.localidade||"";
+}
+
+function finalizar(){
+
+let total=0;
+let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
+
+msg+="👤 Cliente: "+document.getElementById("cliente").value+"\n";
+msg+="📦 Tipo: "+document.getElementById("tipo").value+"\n";
+msg+="💳 Pagamento: "+document.getElementById("pagamento").value+"\n\n";
+
+msg+="🛍️ Itens:\n";
+
+Object.keys(carrinho).forEach(n=>{
+if(carrinho[n]>0){
+const p=produtos.find(x=>x.nome===n);
+const preco=p.promocao>0?p.promocao:p.preco;
+total+=preco*carrinho[n];
+msg+=`• ${n} x${carrinho[n]} — ${money(preco)}\n`;
+}
+});
+
+msg+=`\n💰 Total: ${money(total)}\n`;
+
+if(document.getElementById("tipo").value==="entrega"){
+msg+=`\n📍 Endereço: ${
+document.getElementById("rua").value
+}, ${
+document.getElementById("numero").value
+}, ${
+document.getElementById("cidade").value
+}`;
+}else{
+msg+=`\n📍 Retirada na loja`;
+}
+
+window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
+}
 carregar();
