@@ -316,3 +316,106 @@ carregar();
 if("serviceWorker" in navigator){
   navigator.serviceWorker.register("sw.js");
 }
+
+/* ===================================== */
+/* INSTALAÇÃO PWA PROFISSIONAL COMPLETA */
+/* ===================================== */
+
+let deferredPrompt = null;
+
+/* Funções auxiliares */
+function isIos(){
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
+function isInStandaloneMode(){
+  return ('standalone' in window.navigator) && window.navigator.standalone;
+}
+
+function criarBannerInstalacao(){
+  let banner = document.getElementById("installBanner");
+
+  if(!banner){
+    banner = document.createElement("div");
+    banner.id = "installBanner";
+    banner.style.position = "fixed";
+    banner.style.bottom = "20px";
+    banner.style.left = "50%";
+    banner.style.transform = "translateX(-50%)";
+    banner.style.background = "white";
+    banner.style.padding = "18px";
+    banner.style.borderRadius = "16px";
+    banner.style.boxShadow = "0 15px 40px rgba(0,0,0,0.2)";
+    banner.style.zIndex = "9999";
+    banner.style.maxWidth = "90%";
+    banner.style.textAlign = "center";
+    banner.style.display = "none";
+    document.body.appendChild(banner);
+  }
+
+  return banner;
+}
+
+/* ANDROID - Chrome */
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  if(isInStandaloneMode()) return;
+
+  const banner = criarBannerInstalacao();
+
+  banner.innerHTML = `
+    <div style="font-weight:600;font-size:16px;margin-bottom:10px;">
+      📲 Instale o App Odòmáiyà
+    </div>
+    <button id="btnInstalarApp" style="
+      padding:10px 18px;
+      background:#0077cc;
+      color:white;
+      border:none;
+      border-radius:10px;
+      font-weight:600;
+      cursor:pointer;
+    ">
+      Instalar Agora
+    </button>
+    <div style="margin-top:10px;font-size:12px;opacity:0.6;cursor:pointer;" onclick="this.parentElement.style.display='none'">
+      Fechar
+    </div>
+  `;
+
+  banner.style.display = "block";
+
+  document.getElementById("btnInstalarApp").addEventListener("click", async () => {
+    banner.style.display = "none";
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  });
+});
+
+/* IOS - Safari */
+window.addEventListener("load", () => {
+
+  if(isIos() && !isInStandaloneMode()){
+
+    const banner = criarBannerInstalacao();
+
+    banner.innerHTML = `
+      <div style="font-weight:600;font-size:16px;margin-bottom:10px;">
+        📲 Instale o App Odòmáiyà
+      </div>
+      <div style="font-size:14px;margin-bottom:12px;">
+        1️⃣ Toque no botão <b>Compartilhar</b><br>
+        2️⃣ Depois toque em <b>Adicionar à Tela de Início</b>
+      </div>
+      <div style="font-size:12px;opacity:0.6;cursor:pointer;" onclick="this.parentElement.style.display='none'">
+        Entendi
+      </div>
+    `;
+
+    banner.style.display = "block";
+  }
+
+});
