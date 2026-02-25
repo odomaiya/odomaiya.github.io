@@ -79,7 +79,7 @@ Estoque: ${p.estoque}
 `;
 
 if(estoqueBaixo){
-html += <div class="badge-estoque">Últimas unidades</div>;
+  html += `<div class="badge-estoque">Últimas unidades</div>`;
 }
 
 html += `
