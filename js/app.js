@@ -97,6 +97,13 @@ html += `
 
 card.innerHTML = html;
 grid.appendChild(card);
+<p style="font-size:13px;opacity:0.75">
+Estoque: ${p.estoque}
+</p>
+
+${estoqueBaixo ? `
+<p class="aviso-estoque">⚠ Poucas unidades</p>
+` : ``}
 
 });
 
