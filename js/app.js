@@ -56,17 +56,34 @@ render(produtos);
 function atualizarCarrinho(){
 let total=0;
 let html="";
-Object.keys(carrinho).forEach(n=>{
-if(carrinho[n]>0){
-const p=produtos.find(x=>x.nome===n);
-const preco=p.promocao>0?p.promocao:p.preco;
-total+=preco*carrinho[n];
-html+=`<p>${n} x${carrinho[n]} — ${money(preco)}</p>`;
+
+Object.keys(carrinho).forEach(nome=>{
+if(carrinho[nome] > 0){
+
+const produto = produtos.find(p=>p.nome===nome);
+if(!produto) return;
+
+const preco = produto.promocao > 0 ? Number(produto.promocao) : Number(produto.preco);
+const subtotal = preco * carrinho[nome];
+
+total += subtotal;
+
+html += `
+<div style="margin-bottom:10px;border-bottom:1px solid #eee;padding-bottom:8px">
+<strong>${nome}</strong><br>
+${carrinho[nome]}x ${money(preco)}<br>
+Subtotal: ${money(subtotal)}
+</div>
+`;
 }
 });
-document.getElementById("itensCarrinho").innerHTML=html;
-document.getElementById("valorTotal").innerText=money(total);
-document.getElementById("contadorCarrinho").innerText=
+
+document.getElementById("itensCarrinho").innerHTML =
+html || "<p style='opacity:0.6'>Seu carrinho está vazio</p>";
+
+document.getElementById("valorTotal").innerText = money(total);
+
+document.getElementById("contadorCarrinho").innerText =
 Object.values(carrinho).reduce((a,b)=>a+b,0);
 }
 
@@ -155,4 +172,25 @@ msg+=`\n📍 Retirada na loja`;
 window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
 }
 
+function criarCategorias(){
+const categorias = ["Todos", ...new Set(produtos.map(p=>p.categoria))];
+
+const area = document.getElementById("categorias");
+area.innerHTML="";
+
+categorias.forEach(cat=>{
+const btn = document.createElement("button");
+btn.innerText = cat;
+
+btn.onclick = ()=>{
+if(cat === "Todos"){
+render(produtos);
+}else{
+render(produtos.filter(p=>p.categoria === cat));
+}
+};
+
+area.appendChild(btn);
+});
+}
 carregar();
