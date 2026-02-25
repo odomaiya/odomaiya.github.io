@@ -2,19 +2,28 @@ const API_URL="https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbP
 
 let produtos=[];
 let carrinho={};
+let categoriaAtual="Todos"; // 🔥 mantém filtro ativo
 
 function money(v){
 return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 }
 
 async function carregar(){
-const r=await fetch(API_URL+"?acao=produtos");
+
+// 🔥 Loading visual imediato
+document.getElementById("produtos").innerHTML =
+"<p style='text-align:center;padding:40px'>Carregando produtos...</p>";
+
+// 🔥 evita cache bugado
+const r=await fetch(API_URL+"?acao=produtos",{cache:"no-store"});
 produtos=await r.json();
 
+// 🔥 ordena promo primeiro e depois A-Z
 produtos.sort((a,b)=>
 (b.promocao>0)-(a.promocao>0)||
 a.nome.localeCompare(b.nome)
 );
+
 criarCategorias();
 render(produtos);
 }
@@ -50,7 +59,13 @@ function alterar(nome,v){
 if(!carrinho[nome]) carrinho[nome]=0;
 carrinho[nome]+=v;
 if(carrinho[nome]<0) carrinho[nome]=0;
+
+// 🔥 mantém filtro ativo
+if(categoriaAtual==="Todos"){
 render(produtos);
+}else{
+render(produtos.filter(p=>p.categoria===categoriaAtual));
+}
 }
 
 function atualizarCarrinho(){
@@ -91,7 +106,7 @@ function abrirCarrinho(){
 document.getElementById("carrinho").classList.toggle("ativo");
 }
 
-/* CHECKOUT 3 ETAPAS */
+/* CHECKOUT */
 
 function abrirCheckout(){
 document.getElementById("modalCheckout").style.display="flex";
@@ -183,6 +198,8 @@ const btn = document.createElement("button");
 btn.innerText = cat;
 
 btn.onclick = ()=>{
+categoriaAtual = cat; // 🔥 mantém categoria ativa
+
 if(cat === "Todos"){
 render(produtos);
 }else{
@@ -193,4 +210,5 @@ render(produtos.filter(p=>p.categoria === cat));
 area.appendChild(btn);
 });
 }
+
 carregar();
