@@ -1,88 +1,73 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmáiyà Artigos Religiosos</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odòmáiyà Artigos Religiosos</title>
 
-<link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="CSS/style.css">
+  <script defer src="js/app.js"></script>
 </head>
 <body>
 
 <header class="header">
-    <div class="logo-area">
-        <img src="logo.png" class="logo">
-        <div>
-            <h1>Odòmáiyà</h1>
-            <p>Artigos Religiosos</p>
-        </div>
-    </div>
-
-    <div class="icons">
-        <a href="#"><img src="whatsapp.png" class="icon"></a>
-        <a href="#"><img src="instagram.png" class="icon"></a>
-    </div>
+  <img src="logo.png" class="logo">
+  <h1>Odòmáiyà Artigos Religiosos</h1>
+  <button class="btn-carrinho" onclick="abrirCarrinho()">
+    🛒 <span id="contador">0</span>
+  </button>
 </header>
 
-<section class="search-area">
-    <input type="text" id="search" placeholder="Buscar produto...">
-    <div id="filtros"></div>
-</section>
+<section class="produtos" id="listaProdutos"></section>
 
-<section id="produtos" class="produtos"></section>
+<!-- CARRINHO -->
+<div class="carrinho" id="carrinho">
+  <div class="carrinho-topo">
+    <h2>Seu Carrinho</h2>
+    <button onclick="fecharCarrinho()">✖</button>
+  </div>
 
-<!-- Carrinho -->
-<div class="cart-button" onclick="toggleCarrinho()">
-    🛒 <span id="cart-count">0</span>
+  <div id="itensCarrinho"></div>
+
+  <div class="carrinho-total">
+    Total: R$ <span id="totalCarrinho">0,00</span>
+  </div>
+
+  <button class="btn-finalizar" onclick="abrirCheckout()">
+    Finalizar Pedido
+  </button>
 </div>
 
-<div id="carrinho" class="carrinho">
-    <div class="carrinho-header">
-        <h2>Seu Carrinho</h2>
-        <button onclick="toggleCarrinho()">✕</button>
-    </div>
+<!-- CHECKOUT -->
+<div class="checkout" id="checkout">
+  <h2>Finalizar Pedido</h2>
 
-    <div id="cart-items"></div>
+  <input type="text" id="cliente" placeholder="Seu nome">
 
-    <div class="carrinho-footer">
-        <h3>Total: <span id="cart-total">R$ 0,00</span></h3>
-        <button onclick="abrirCheckout()">Finalizar Pedido</button>
-    </div>
-</div>
+  <select id="tipoEntrega">
+    <option value="retirar">Retirar na loja</option>
+    <option value="entrega">Entrega</option>
+  </select>
 
-<!-- Checkout -->
-<div id="checkout" class="checkout hidden">
-    <div class="checkout-box">
+  <div id="campoEndereco" style="display:none;">
+    <input type="text" id="endereco" placeholder="Endereço completo">
+  </div>
 
-        <h2>Finalizar Pedido</h2>
+  <select id="pagamento">
+    <option value="cartao">Cartão</option>
+    <option value="dinheiro">Dinheiro</option>
+    <option value="pix">Pix</option>
+  </select>
 
-        <input id="nome" placeholder="Nome completo">
-        <input id="cep" placeholder="CEP">
-        <input id="rua" placeholder="Rua">
-        <input id="numero" placeholder="Número">
-        <input id="cidade" placeholder="Cidade">
+  <button class="btn-enviar" onclick="enviarPedido()">
+    Enviar Pedido
+  </button>
 
-        <select id="pagamento">
-            <option value="Cartão">Cartão</option>
-            <option value="Dinheiro">Dinheiro</option>
-            <option value="Pix">Pix</option>
-        </select>
-
-        <button onclick="finalizarPedido()">Enviar Pedido</button>
-        <button onclick="fecharCheckout()" class="secondary">Cancelar</button>
-
-    </div>
+  <button onclick="fecharCheckout()">Cancelar</button>
 </div>
 
 <footer>
-    <p><strong>Odòmáiyà Artigos Religiosos</strong></p>
-    <p>R. Sete de Agosto, 28 – Centro</p>
-    <p>Passo Fundo – RS</p>
+  R. Sete de Agosto, 28 - Centro, Passo Fundo - RS, 99025-030
 </footer>
 
 </body>
