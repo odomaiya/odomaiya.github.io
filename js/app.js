@@ -162,11 +162,11 @@ cepInput.addEventListener("blur", buscarCEP);
 sugerirPromocaoInteligente();
 }
 
-/* SUGESTÃO INTELIGENTE */
 function sugerirPromocaoInteligente(){
 
 let categoriasCarrinho={};
 
+// descobrir categoria predominante no carrinho
 Object.keys(carrinho).forEach(nome=>{
 if(carrinho[nome]>0){
 const produto=produtos.find(p=>p.nome===nome);
@@ -179,25 +179,68 @@ categoriasCarrinho[produto.categoria] =
 
 if(Object.keys(categoriasCarrinho).length===0) return;
 
+// categoria mais comprada
 const categoriaPrincipal = Object.keys(categoriasCarrinho)
 .sort((a,b)=>categoriasCarrinho[b]-categoriasCarrinho[a])[0];
 
-const promocoes = produtos
+// tentar pegar promoção da categoria
+let promocoes = produtos
 .filter(p=>p.categoria===categoriaPrincipal && p.promocao>0 && !carrinho[p.nome])
 .sort((a,b)=>Number(a.promocao)-Number(b.promocao));
 
-if(promocoes.length===0) return;
+let oferta=null;
 
-const oferta = promocoes[0];
+// se tiver promoção da categoria
+if(promocoes.length>0){
+oferta=promocoes[0];
+}else{
+
+// fallback: procurar VELA mais barata
+const velas = produtos
+.filter(p=> 
+p.nome.toLowerCase().includes("vela") &&
+!carrinho[p.nome]
+)
+.sort((a,b)=>{
+const precoA = a.promocao>0 ? Number(a.promocao) : Number(a.preco);
+const precoB = b.promocao>0 ? Number(b.promocao) : Number(b.preco);
+return precoA - precoB;
+});
+
+if(velas.length>0){
+oferta=velas[0];
+}
+
+}
+
+if(!oferta) return;
+
+const precoFinal = oferta.promocao>0 ? oferta.promocao : oferta.preco;
 
 document.getElementById("checkoutConteudo").innerHTML += `
-<div style="margin-top:20px;padding:15px;background:linear-gradient(135deg,#ffffff,#f0f8ff);
-border:1px solid #0077cc;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.05);">
+<div style="
+margin-top:20px;
+padding:15px;
+background:linear-gradient(135deg,#ffffff,#f0f8ff);
+border:1px solid #0077cc;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+animation:fadeUp 0.4s ease;
+">
 🔥 <b>Oferta Especial para você:</b><br><br>
 ${oferta.nome}<br>
-De ${money(oferta.preco)} por <b style="color:#0077cc">${money(oferta.promocao)}</b><br><br>
+Por apenas <b style="color:#0077cc">${money(precoFinal)}</b><br><br>
+
 <button onclick="adicionarPromo('${oferta.nome}')" 
-style="padding:10px 14px;background:#0077cc;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:600;">
+style="
+padding:10px 14px;
+background:#0077cc;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+">
 Adicionar e aproveitar ✨
 </button>
 </div>
