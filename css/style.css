@@ -452,40 +452,33 @@ overflow-x:hidden;
 
 /* ================= QUASE ESGOTANDO ================= */
 
+/* Mantém borda laranja elegante */
 .produto.quase-esgotado{
-border:1.5px solid #ffb74d;
+border:2px solid #ff9800;
 }
 
-/* Só mostra o selo se NÃO for promoção */
-.produto.quase-esgotado:not(.promo)::after{
-content:"Quase esgotando";
+/* Selo discreto no canto inferior esquerdo */
+.produto.quase-esgotado::after{
+content:"⚠ Poucas unidades";
 position:absolute;
-top:10px;
-left:10px;
-background:#fff3e0;
-color:#e65100;
+bottom:12px;
+left:12px;
+background:rgba(255,152,0,0.95);
+color:white;
 font-size:11px;
 padding:4px 8px;
 border-radius:8px;
 font-weight:600;
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
+box-shadow:0 4px 10px rgba(0,0,0,0.12);
 }
 
-/* Mantém a borda laranja */
-.quase-esgotado {
-  border: 2px solid #ff9800;
+/* Se for promoção + estoque baixo */
+/* Mantém faixa azul de promoção intacta */
+.produto.promo.quase-esgotado{
+border:2px solid #ff9800;
 }
 
-/* Aviso discreto mas visível */
-.aviso-estoque {
-  margin-top: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #ff9800;
-  letter-spacing: 0.3px;
-}
-
-/* Se for promoção + estoque baixo continua elegante */
-.produto.promo.quase-esgotado {
-  border: 2px solid #ff9800;
+/* Evita conflito visual com faixa PROMOÇÃO */
+.produto.promo.quase-esgotado::before{
+z-index:2;
 }
