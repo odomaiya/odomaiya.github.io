@@ -136,20 +136,39 @@ function mostrarEtapa(){
  }
 }
 
-async function buscarCEP(){
- const cep=document.getElementById("cep").value;
- const res=await fetch("https://viacep.com.br/ws/"+cep+"/json/");
- const data=await res.json();
- document.getElementById("rua").value=data.logradouro||"";
- document.getElementById("cidade").value=data.localidade||"";
+async function buscarCEP(cep){
+  const limpa = cep.replace(/\D/g,'');
+  const res = await fetch(`https://viacep.com.br/ws/${limpa}/json/`);
+  return await res.json();
 }
 
 async function finalizarPedido(){
- alert("Pedido enviado com sucesso!");
- fecharCarrinho();
- document.getElementById("modalCheckout").style.display="none";
- carrinho={};
- renderizar(produtos);
-}
+  const nome = document.getElementById("nome").value;
+  const cep = document.getElementById("cep").value;
+  const numero = document.getElementById("numero").value;
+  const pagamento = document.getElementById("pagamento").value;
 
-carregarProdutos();
+  const dadosCEP = await buscarCEP(cep);
+
+  const enderecoCompleto = `${dadosCEP.logradouro}, ${numero} - ${dadosCEP.bairro}, ${dadosCEP.localidade} - ${dadosCEP.uf}`;
+
+  let mensagem = `✨ *Novo Pedido Odòmàiyá* ✨\n\n`;
+  mensagem += `👤 Cliente: ${nome}\n`;
+  mensagem += `📦 Entrega: ${enderecoCompleto}\n`;
+  mensagem += `💳 Pagamento: ${pagamento}\n\n`;
+  mensagem += `🛍️ Itens:\n`;
+
+  let total = 0;
+
+  Object.keys(carrinho).forEach(nomeProduto=>{
+    const item = carrinho[nomeProduto];
+    mensagem += `• ${nomeProduto} (${item.qtd}x) - R$ ${(item.preco * item.qtd).toFixed(2).replace('.',',')}\n`;
+    total += item.preco * item.qtd;
+  });
+
+  mensagem += `\n💰 Total: R$ ${total.toFixed(2).replace('.',',')}`;
+
+  const url = `https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`;
+
+  window.open(url, "_blank");
+}
