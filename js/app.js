@@ -54,7 +54,10 @@ const semEstoque = p.estoque <= 0;
 const estoqueBaixo = p.estoque > 0 && p.estoque <= 3;
 
 const card=document.createElement("div");
-card.className="produto"+(p.promocao>0?" promo":"")+(semEstoque?" sem-estoque":"");
+card.className="produto"
++(p.promocao>0?" promo":"")
++(semEstoque?" sem-estoque":"")
++(estoqueBaixo?" quase-esgotado":"");
 
 card.innerHTML=`
 <img src="${p.imagem || 'https://via.placeholder.com/300x200?text=Produto'}">
@@ -65,12 +68,8 @@ ${semEstoque ?
 `<p style="color:red;font-weight:600">❌ Sem estoque</p>` 
 :
 `
-<p style="font-size:13px;opacity:0.8">
-${estoqueBaixo ? 
-`⚠️ Últimas unidades (${p.estoque})`
-:
-`Estoque disponível: ${p.estoque}`
-}
+<p style="font-size:13px;opacity:0.75">
+Estoque: ${p.estoque}
 </p>
 
 <div class="contador">
