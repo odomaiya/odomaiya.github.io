@@ -72,10 +72,23 @@ if(carrinho[nome]<0) carrinho[nome]=0;
 aplicarFiltro();
 }
 
+/* FECHAR CARRINHO */
+function fecharCarrinho(){
+document.getElementById("carrinho").classList.remove("ativo");
+}
+
 /* ATUALIZAR CARRINHO */
 function atualizarCarrinho(){
 let total=0;
 let html="";
+
+/* HEADER DO CARRINHO COM FECHAR */
+html+=`
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+<strong style="font-size:18px;">Seu Carrinho</strong>
+<button onclick="fecharCarrinho()" style="background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
+</div>
+`;
 
 Object.keys(carrinho).forEach(nome=>{
 if(carrinho[nome]>0){
@@ -97,11 +110,12 @@ Subtotal: ${money(subtotal)}
 }
 });
 
-document.getElementById("itensCarrinho").innerHTML=
-html || "<p style='opacity:0.6'>Seu carrinho está vazio</p>";
+if(Object.values(carrinho).reduce((a,b)=>a+b,0)===0){
+html+="<p style='opacity:0.6'>Seu carrinho está vazio</p>";
+}
 
+document.getElementById("itensCarrinho").innerHTML=html;
 document.getElementById("valorTotal").innerText=money(total);
-
 document.getElementById("contadorCarrinho").innerText=
 Object.values(carrinho).reduce((a,b)=>a+b,0);
 }
@@ -150,118 +164,52 @@ Enviar Pedido
 </button>
 `;
 
+/* AGUARDAR DOM DO MODAL */
+setTimeout(()=>{
+
 const tipoSelect=document.getElementById("tipo");
 const enderecoArea=document.getElementById("enderecoArea");
+const cepInput=document.getElementById("cep");
 
 tipoSelect.addEventListener("change",function(){
 enderecoArea.style.display=this.value==="entrega"?"block":"none";
 });
 
-setTimeout(()=>{
-const cepInput=document.getElementById("cep");
+/* BUSCAR CEP AUTOMÁTICO */
 if(cepInput){
 cepInput.addEventListener("blur",buscarCEP);
 }
-},200);
+
+},100);
 
 sugerirPromocaoInteligente();
 }
 
-/* SUGESTÃO INTELIGENTE PROFISSIONAL */
-function sugerirPromocaoInteligente(){
-
-let total=0;
-let categoriasCarrinho={};
-
-Object.keys(carrinho).forEach(nome=>{
-if(carrinho[nome]>0){
-const produto=produtos.find(p=>p.nome===nome);
-if(produto){
-categoriasCarrinho[produto.categoria]=(categoriasCarrinho[produto.categoria]||0)+carrinho[nome];
-const preco=produto.promocao>0?Number(produto.promocao):Number(produto.preco);
-total+=preco*carrinho[nome];
-}
-}
-});
-
-if(Object.keys(categoriasCarrinho).length===0) return;
-
-const categoriaPrincipal=Object.keys(categoriasCarrinho)
-.sort((a,b)=>categoriasCarrinho[b]-categoriasCarrinho[a])[0];
-
-let oferta=null;
-
-/* 1️⃣ Promoção da categoria */
-let promocoes=produtos
-.filter(p=>p.categoria===categoriaPrincipal && p.promocao>0 && !carrinho[p.nome])
-.sort((a,b)=>Number(a.promocao)-Number(b.promocao));
-
-if(promocoes.length>0) oferta=promocoes[0];
-
-/* 2️⃣ Aumentar ticket se menor que 80 */
-if(!oferta && total<80){
-const barato=produtos
-.filter(p=>!carrinho[p.nome])
-.sort((a,b)=>{
-const precoA=a.promocao>0?Number(a.promocao):Number(a.preco);
-const precoB=b.promocao>0?Number(b.promocao):Number(b.preco);
-return precoA-precoB;
-});
-if(barato.length>0) oferta=barato[0];
-}
-
-/* 3️⃣ Complemento inteligente */
-if(!oferta){
-const velas=produtos
-.filter(p=>p.nome.toLowerCase().includes("vela") && !carrinho[p.nome])
-.sort((a,b)=>{
-const precoA=a.promocao>0?Number(a.promocao):Number(a.preco);
-const precoB=b.promocao>0?Number(b.promocao):Number(b.preco);
-return precoA-precoB;
-});
-if(velas.length>0) oferta=velas[0];
-}
-
-if(!oferta) return;
-
-const precoFinal=oferta.promocao>0?oferta.promocao:oferta.preco;
-
-document.getElementById("checkoutConteudo").innerHTML+=`
-<div style="margin-top:20px;padding:15px;background:linear-gradient(135deg,#ffffff,#f0f8ff);border:1px solid #0077cc;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.05);">
-✨ <b>Você pode aproveitar também:</b><br><br>
-${oferta.nome}<br>
-Por apenas <b style="color:#0077cc">${money(precoFinal)}</b><br><br>
-<button onclick="adicionarPromo('${oferta.nome}')" style="padding:10px 14px;background:#0077cc;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:600;">
-Adicionar ao pedido ✨
-</button>
-</div>
-`;
-}
-
-function adicionarPromo(nome){
-if(!carrinho[nome]) carrinho[nome]=0;
-carrinho[nome]+=1;
-atualizarCarrinho();
-alert("✨ Oferta adicionada ao carrinho!");
-}
-
-function voltarCarrinho(){
-document.getElementById("modalCheckout").style.display="none";
-}
-
-/* CEP */
+/* CEP MELHORADO */
 async function buscarCEP(){
-const cep=document.getElementById("cep").value.replace(/\D/g,'');
+
+const cepInput=document.getElementById("cep");
+const cep=cepInput.value.replace(/\D/g,'');
+
 if(cep.length!==8) return;
+
+cepInput.style.border="1px solid #0077cc";
 
 try{
 const response=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
 const data=await response.json();
+
 if(!data.erro){
 document.getElementById("rua").value=data.logradouro||"";
 document.getElementById("cidade").value=data.localidade||"";
+cepInput.style.border="1px solid #2ecc71";
+}else{
+cepInput.style.border="1px solid red";
+alert("CEP não encontrado.");
 }
+
 }catch(error){
+cepInput.style.border="1px solid red";
 console.log("Erro ao buscar CEP",error);
 }
 }
@@ -272,11 +220,28 @@ function finalizar(){
 let total=0;
 let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
 
-msg+="👤 Cliente: "+document.getElementById("cliente").value+"\n";
-msg+="📦 Tipo: "+document.getElementById("tipo").value+"\n";
+const nome=document.getElementById("cliente").value.trim();
+const tipo=document.getElementById("tipo").value;
+
+if(!nome){
+alert("Informe seu nome.");
+return;
+}
+
+if(tipo==="entrega"){
+if(!document.getElementById("rua").value ||
+!document.getElementById("numero").value ||
+!document.getElementById("cidade").value){
+alert("Preencha o endereço completo.");
+return;
+}
+}
+
+msg+="👤 Cliente: "+nome+"\n";
+msg+="📦 Tipo: "+tipo+"\n";
 msg+="💳 Pagamento: "+document.getElementById("pagamento").value+"\n\n";
 
-if(document.getElementById("tipo").value==="entrega"){
+if(tipo==="entrega"){
 msg+=`\n📍 Endereço: ${document.getElementById("rua").value}, ${document.getElementById("numero").value}, ${document.getElementById("cidade").value}`;
 }else{
 msg+=`\n📍 Retirada na loja`;
@@ -297,125 +262,3 @@ msg+=`\n💰 Total: ${money(total)}\n`;
 
 window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
 }
-
-/* CATEGORIAS */
-function criarCategorias(){
-const categorias=["Todos",...new Set(produtos.map(p=>p.categoria))];
-const area=document.getElementById("categorias");
-area.innerHTML="";
-categorias.forEach(cat=>{
-const btn=document.createElement("button");
-btn.innerText=cat;
-btn.onclick=()=>{categoriaAtual=cat;aplicarFiltro();};
-area.appendChild(btn);
-});
-}
-
-carregar();
-
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js");
-}
-
-/* ===================================== */
-/* INSTALAÇÃO PWA PROFISSIONAL COMPLETA */
-/* ===================================== */
-
-let deferredPrompt = null;
-
-/* Funções auxiliares */
-function isIos(){
-  return /iphone|ipad|ipod/i.test(navigator.userAgent);
-}
-
-function isInStandaloneMode(){
-  return ('standalone' in window.navigator) && window.navigator.standalone;
-}
-
-function criarBannerInstalacao(){
-  let banner = document.getElementById("installBanner");
-
-  if(!banner){
-    banner = document.createElement("div");
-    banner.id = "installBanner";
-    banner.style.position = "fixed";
-    banner.style.bottom = "20px";
-    banner.style.left = "50%";
-    banner.style.transform = "translateX(-50%)";
-    banner.style.background = "white";
-    banner.style.padding = "18px";
-    banner.style.borderRadius = "16px";
-    banner.style.boxShadow = "0 15px 40px rgba(0,0,0,0.2)";
-    banner.style.zIndex = "9999";
-    banner.style.maxWidth = "90%";
-    banner.style.textAlign = "center";
-    banner.style.display = "none";
-    document.body.appendChild(banner);
-  }
-
-  return banner;
-}
-
-/* ANDROID - Chrome */
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-
-  if(isInStandaloneMode()) return;
-
-  const banner = criarBannerInstalacao();
-
-  banner.innerHTML = `
-    <div style="font-weight:600;font-size:16px;margin-bottom:10px;">
-      📲 Instale o App Odòmáiyà
-    </div>
-    <button id="btnInstalarApp" style="
-      padding:10px 18px;
-      background:#0077cc;
-      color:white;
-      border:none;
-      border-radius:10px;
-      font-weight:600;
-      cursor:pointer;
-    ">
-      Instalar Agora
-    </button>
-    <div style="margin-top:10px;font-size:12px;opacity:0.6;cursor:pointer;" onclick="this.parentElement.style.display='none'">
-      Fechar
-    </div>
-  `;
-
-  banner.style.display = "block";
-
-  document.getElementById("btnInstalarApp").addEventListener("click", async () => {
-    banner.style.display = "none";
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-  });
-});
-
-/* IOS - Safari */
-window.addEventListener("load", () => {
-
-  if(isIos() && !isInStandaloneMode()){
-
-    const banner = criarBannerInstalacao();
-
-    banner.innerHTML = `
-      <div style="font-weight:600;font-size:16px;margin-bottom:10px;">
-        📲 Instale o App Odòmáiyà
-      </div>
-      <div style="font-size:14px;margin-bottom:12px;">
-        1️⃣ Toque no botão <b>Compartilhar</b><br>
-        2️⃣ Depois toque em <b>Adicionar à Tela de Início</b>
-      </div>
-      <div style="font-size:12px;opacity:0.6;cursor:pointer;" onclick="this.parentElement.style.display='none'">
-        Entendi
-      </div>
-    `;
-
-    banner.style.display = "block";
-  }
-
-});
