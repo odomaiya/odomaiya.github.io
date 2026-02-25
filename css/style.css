@@ -409,3 +409,43 @@ overflow-x:hidden;
     padding-right:env(safe-area-inset-right);
   }
 }
+
+/* ================= AJUSTE FULL SCREEN REAL ================= */
+
+/* Remove qualquer limite invisível */
+*{
+box-sizing:border-box;
+}
+
+/* Garante que a página ocupe 100% da altura */
+html, body{
+margin:0;
+padding:0;
+min-height:100vh;
+width:100%;
+}
+
+/* Faz o layout ocupar a tela inteira corretamente */
+body{
+display:flex;
+flex-direction:column;
+}
+
+/* Faz o conteúdo crescer e empurrar o footer */
+.grid{
+flex:1;
+}
+
+/* Remove possíveis margens laterais invisíveis */
+.header,
+.filtros,
+.grid,
+footer{
+width:100%;
+max-width:100%;
+}
+
+/* Garante que nada ultrapasse horizontalmente */
+body{
+overflow-x:hidden;
+}
