@@ -213,50 +213,56 @@ area.appendChild(btn);
 }
 
 carregar();
-/* ORIENTAÇÃO DE INSTALAÇÃO */
+/* ORIENTAÇÃO DE INSTALAÇÃO - VERSÃO CORRIGIDA */
+
+function isStandalone(){
+return (
+window.matchMedia('(display-mode: standalone)').matches ||
+window.navigator.standalone === true
+);
+}
 
 function detectarSistema(){
 const ua=navigator.userAgent;
 
-if(/android/i.test(ua)){
-return "android";
-}
-if(/iphone|ipad|ipod/i.test(ua)){
-return "ios";
-}
+if(/android/i.test(ua)) return "android";
+if(/iphone|ipad|ipod/i.test(ua)) return "ios";
+
 return "outro";
 }
 
 function mostrarInstalacao(){
-if(window.matchMedia('(display-mode: standalone)').matches) return;
 
+if(isStandalone()) return; // NÃO mostra se já está instalado
 if(localStorage.getItem("instalacaoFechada")) return;
 
 const sistema=detectarSistema();
+if(sistema==="outro") return;
+
 const box=document.getElementById("instalarApp");
 const texto=document.getElementById("textoInstalacao");
 
 if(sistema==="android"){
 texto.innerHTML=`
-Para instalar no Android:<br><br>
-1️⃣ Toque nos <strong>três pontinhos</strong> no canto do navegador.<br>
-2️⃣ Toque em <strong>"Adicionar à tela inicial"</strong>.<br>
-3️⃣ Confirme em <strong>"Instalar"</strong>.<br><br>
-Assim você terá o app como aplicativo no seu celular.
+<b>📲 Instale o App no Android:</b><br><br>
+1️⃣ Toque nos <b>⋮ três pontinhos</b> no navegador<br>
+2️⃣ Toque em <b>"Adicionar à tela inicial"</b><br>
+3️⃣ Confirme em <b>"Instalar"</b><br><br>
+Assim você terá acesso rápido como aplicativo.
 `;
-box.style.display="flex";
 }
 
 if(sistema==="ios"){
 texto.innerHTML=`
-Para instalar no iPhone:<br><br>
-1️⃣ Toque no botão <strong>Compartilhar</strong> (ícone ⬆️).<br>
-2️⃣ Role e toque em <strong>"Adicionar à Tela de Início"</strong>.<br>
-3️⃣ Toque em <strong>"Adicionar"</strong>.<br><br>
-Assim o app ficará como aplicativo no seu celular.
+<b>📲 Instale no iPhone:</b><br><br>
+1️⃣ Toque no botão <b>Compartilhar ⬆️</b><br>
+2️⃣ Toque em <b>"Adicionar à Tela de Início"</b><br>
+3️⃣ Toque em <b>"Adicionar"</b><br><br>
+O app ficará como aplicativo no seu celular.
 `;
-box.style.display="flex";
 }
+
+box.style.display="flex";
 }
 
 function fecharInstalacao(){
