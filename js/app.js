@@ -105,8 +105,6 @@ ${estoqueBaixo ? `
 <p class="aviso-estoque">⚠ Poucas unidades</p>
 ` : ``}
 
-});
-
 atualizarCarrinho();
 }
 
