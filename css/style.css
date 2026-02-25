@@ -450,18 +450,22 @@ body{
 overflow-x:hidden;
 }
 
-/* ================= QUASE ESGOTANDO ================= */
+/* ================= ESTOQUE BAIXO PREMIUM ================= */
 
-/* Mantém borda laranja elegante */
 .produto.quase-esgotado{
-  border:2px solid #ff9800;
+  border:1.5px solid #ffb74d;
 }
 
-/* Aviso discreto abaixo do estoque */
-.aviso-estoque{
-  margin-top:4px;
-  font-size:12px;
+.badge-estoque{
+  position:absolute;
+  top:12px;
+  left:12px;
+  background:rgba(255,152,0,0.95);
+  color:white;
+  font-size:10px;
   font-weight:600;
-  color:#ff9800;
-  letter-spacing:0.3px;
+  padding:5px 10px;
+  border-radius:20px;
+  letter-spacing:0.4px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
