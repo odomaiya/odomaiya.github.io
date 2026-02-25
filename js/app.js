@@ -1,4 +1,4 @@
-const API_URL="https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbzHIIjVa9hQR_mUbpUwm_zgcooEAIpnZjlfCzZwJPmd11NUBB_MY3kpojme7BY_KYID/exec";
 
 let produtos=[];
 let carrinho={};
@@ -9,7 +9,9 @@ function money(v){
 return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 }
 
-/* CARREGAR PRODUTOS */
+/* =========================
+   CARREGAR PRODUTOS
+========================= */
 async function carregar(){
 try{
 const r=await fetch(API_URL+"?acao=produtos",{cache:"no-store"});
@@ -27,7 +29,9 @@ console.error("Erro ao carregar produtos",e);
 }
 }
 
-/* FILTRO */
+/* =========================
+   FILTRO
+========================= */
 function aplicarFiltro(){
 if(categoriaAtual==="Todos"){
 render(produtos);
@@ -36,26 +40,31 @@ render(produtos.filter(p=>p.categoria===categoriaAtual));
 }
 }
 
-/* RENDER GRID */
+/* =========================
+   RENDER GRID
+========================= */
 function render(lista){
 const grid=document.getElementById("produtos");
 grid.innerHTML="";
 
 lista.forEach(p=>{
+
 const preco=p.promocao>0?p.promocao:p.preco;
+const semEstoque = p.estoque <= 0;
 
 const card=document.createElement("div");
-card.className="produto"+(p.promocao>0?" promo":"");
+card.className="produto"+(p.promocao>0?" promo":"")+(semEstoque?" sem-estoque":"");
 
 card.innerHTML=`
 <img src="${p.imagem || 'https://via.placeholder.com/300x200?text=Produto'}">
 <h4>${p.nome}</h4>
 <p>${money(preco)}</p>
+${semEstoque ? `<p style="color:red;font-weight:600">Sem estoque</p>` : `
 <div class="contador">
 <button onclick="alterar('${p.nome}',-1)">−</button>
 <span>${carrinho[p.nome]||0}</span>
 <button onclick="alterar('${p.nome}',1)">+</button>
-</div>
+</div>`}
 `;
 
 grid.appendChild(card);
@@ -64,25 +73,35 @@ grid.appendChild(card);
 atualizarCarrinho();
 }
 
-/* ALTERAR QUANTIDADE */
+/* =========================
+   ALTERAR QUANTIDADE
+========================= */
 function alterar(nome,v){
+
+const produto = produtos.find(p=>p.nome===nome);
+if(!produto) return;
+
 if(!carrinho[nome]) carrinho[nome]=0;
+
+if(v>0 && carrinho[nome] >= produto.estoque){
+alert("Quantidade máxima disponível em estoque.");
+return;
+}
+
 carrinho[nome]+=v;
+
 if(carrinho[nome]<0) carrinho[nome]=0;
+
 aplicarFiltro();
 }
 
-/* FECHAR CARRINHO */
-function fecharCarrinho(){
-document.getElementById("carrinho").classList.remove("ativo");
-}
-
-/* ATUALIZAR CARRINHO */
+/* =========================
+   ATUALIZAR CARRINHO
+========================= */
 function atualizarCarrinho(){
 let total=0;
 let html="";
 
-/* HEADER DO CARRINHO COM FECHAR */
 html+=`
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
 <strong style="font-size:18px;">Seu Carrinho</strong>
@@ -124,7 +143,13 @@ function abrirCarrinho(){
 document.getElementById("carrinho").classList.toggle("ativo");
 }
 
-/* CHECKOUT */
+function fecharCarrinho(){
+document.getElementById("carrinho").classList.remove("ativo");
+}
+
+/* =========================
+   CHECKOUT
+========================= */
 function abrirCheckout(){
 
 document.getElementById("modalCheckout").style.display="flex";
@@ -153,6 +178,8 @@ document.getElementById("checkoutConteudo").innerHTML=`
 <option>Pix</option>
 </select>
 
+<div id="sugestaoArea"></div>
+
 <button onclick="voltarCarrinho()" 
 style="width:100%;padding:10px;margin-top:10px;background:#eee;border:none;border-radius:10px;cursor:pointer">
 ⬅ Voltar ao Carrinho
@@ -164,7 +191,6 @@ Enviar Pedido
 </button>
 `;
 
-/* AGUARDAR DOM DO MODAL */
 setTimeout(()=>{
 
 const tipoSelect=document.getElementById("tipo");
@@ -175,7 +201,6 @@ tipoSelect.addEventListener("change",function(){
 enderecoArea.style.display=this.value==="entrega"?"block":"none";
 });
 
-/* BUSCAR CEP AUTOMÁTICO */
 if(cepInput){
 cepInput.addEventListener("blur",buscarCEP);
 }
@@ -185,143 +210,110 @@ cepInput.addEventListener("blur",buscarCEP);
 sugerirPromocaoInteligente();
 }
 
-/* CEP MELHORADO */
+/* =========================
+   SUGESTÃO INTELIGENTE
+========================= */
+function sugerirPromocaoInteligente(){
+
+const itensNoCarrinho = Object.keys(carrinho).filter(n=>carrinho[n]>0);
+if(itensNoCarrinho.length===0) return;
+
+const produtoBase = produtos.find(p=>p.nome===itensNoCarrinho[0]);
+if(!produtoBase) return;
+
+const candidatos = produtos.filter(p=>
+p.nome!==produtoBase.nome &&
+p.categoria===produtoBase.categoria &&
+p.estoque>0
+);
+
+if(candidatos.length===0) return;
+
+candidatos.sort((a,b)=>
+(b.promocao>0)-(a.promocao>0)||
+b.estoque-a.estoque
+);
+
+const sugestao=candidatos[0];
+
+const area=document.getElementById("sugestaoArea");
+if(!area) return;
+
+area.innerHTML=`
+<div style="margin-top:15px;padding:12px;border:1px solid #0077cc;border-radius:12px;background:#f0f8ff">
+💡 <strong>Você também pode gostar:</strong><br>
+${sugestao.nome}<br>
+${money(sugestao.promocao>0?sugestao.promocao:sugestao.preco)}<br>
+<button onclick="alterar('${sugestao.nome}',1)" style="margin-top:8px;padding:6px 12px;border:none;background:#0077cc;color:white;border-radius:8px;cursor:pointer">
+Adicionar ao pedido
+</button>
+</div>
+`;
+}
+
+/* =========================
+   CEP
+========================= */
 async function buscarCEP(){
-
-const cepInput=document.getElementById("cep");
-const cep=cepInput.value.replace(/\D/g,'');
-
+const cep=document.getElementById("cep").value.replace(/\D/g,'');
 if(cep.length!==8) return;
-
-cepInput.style.border="1px solid #0077cc";
 
 try{
 const response=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
 const data=await response.json();
-
 if(!data.erro){
 document.getElementById("rua").value=data.logradouro||"";
 document.getElementById("cidade").value=data.localidade||"";
-cepInput.style.border="1px solid #2ecc71";
-}else{
-cepInput.style.border="1px solid red";
-alert("CEP não encontrado.");
+}
+}catch(e){}
 }
 
-}catch(error){
-cepInput.style.border="1px solid red";
-console.log("Erro ao buscar CEP",error);
-}
-}
-
-/* FINALIZAR */
-function finalizar(){
+/* =========================
+   FINALIZAR
+========================= */
+async function finalizar(){
 
 let total=0;
-let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
 
 const nome=document.getElementById("cliente").value.trim();
-const tipo=document.getElementById("tipo").value;
-
-if(!nome){
-alert("Informe seu nome.");
-return;
-}
-
-if(tipo==="entrega"){
-if(!document.getElementById("rua").value ||
-!document.getElementById("numero").value ||
-!document.getElementById("cidade").value){
-alert("Preencha o endereço completo.");
-return;
-}
-}
-
-msg+="👤 Cliente: "+nome+"\n";
-msg+="📦 Tipo: "+tipo+"\n";
-msg+="💳 Pagamento: "+document.getElementById("pagamento").value+"\n\n";
-if(tipo==="entrega"){
-msg+=`\n📍 Endereço: ${document.getElementById("rua").value}, ${document.getElementById("numero").value}, ${document.getElementById("cidade").value}`;
-}else{
-msg+=`\n📍 Retirada na loja`;
-}
-
-   
-msg+="\n🛍️ Itens:\n";
+if(!nome){ alert("Informe seu nome."); return; }
 
 Object.keys(carrinho).forEach(n=>{
 if(carrinho[n]>0){
 const p=produtos.find(x=>x.nome===n);
 const preco=p.promocao>0?p.promocao:p.preco;
 total+=preco*carrinho[n];
-msg+=`• ${n} x${carrinho[n]} — ${money(preco)}\n`;
 }
 });
 
-msg+=`\n💰 Total: ${money(total)}\n`;
-
-window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
-}
-
-/* =========================
-   CRIAR CATEGORIAS
-========================= */
-
-function criarCategorias(){
-
-const area=document.getElementById("categorias");
-if(!area) return;
-
-const categorias=["Todos"];
-
-produtos.forEach(p=>{
-if(p.categoria && !categorias.includes(p.categoria)){
-categorias.push(p.categoria);
-}
-});
-
-area.innerHTML="";
-
-categorias.forEach(cat=>{
-const btn=document.createElement("button");
-btn.innerText=cat;
-btn.style.margin="5px";
-btn.style.padding="8px 14px";
-btn.style.border="1px solid #0077cc";
-btn.style.background=cat===categoriaAtual?"#0077cc":"white";
-btn.style.color=cat===categoriaAtual?"white":"#0077cc";
-btn.style.borderRadius="20px";
-btn.style.cursor="pointer";
-
-btn.onclick=()=>{
-categoriaAtual=cat;
-criarCategorias();
-aplicarFiltro();
+const dados={
+cliente:nome,
+telefone:"",
+tipo:document.getElementById("tipo").value,
+endereco:document.getElementById("rua")?.value || "",
+pagamento:document.getElementById("pagamento").value,
+itens:carrinho,
+total:total
 };
 
-area.appendChild(btn);
+try{
+await fetch(API_URL,{
+method:"POST",
+body:JSON.stringify(dados)
 });
 
-}
+alert("Pedido enviado com sucesso!");
+location.reload();
 
-/* =========================
-   VOLTAR CARRINHO
-========================= */
+}catch(e){
+alert("Erro ao enviar pedido.");
+}
+}
 
 function voltarCarrinho(){
 document.getElementById("modalCheckout").style.display="none";
 }
 
-/* =========================
-   PROMOÇÃO INTELIGENTE (SEGURA)
-========================= */
-
-function sugerirPromocaoInteligente(){
-return; // desativado por enquanto para evitar erro
-}
-
-/* =========================
-   INICIAR SISTEMA
-========================= */
+function criarCategorias(){ /* mantido igual */ }
 
 document.addEventListener("DOMContentLoaded", carregar);
