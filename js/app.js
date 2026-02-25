@@ -79,11 +79,7 @@ Estoque: ${p.estoque}
 `;
 
 if(estoqueBaixo){
-html += `
-<div class="aviso-estoque">
-⚠ Estoque quase esgotado
-</div>
-`;
+html += <div class="badge-estoque">Últimas unidades</div>;
 }
 
 html += `
