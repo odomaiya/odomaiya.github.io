@@ -1,12 +1,5 @@
 const API_URL="https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
 
-const VERSAO_ATUAL="1.3";
-
-if(localStorage.getItem("versaoSite")!==VERSAO_ATUAL){
-  localStorage.setItem("versaoSite",VERSAO_ATUAL);
-  window.location.reload(true);
-}
-
 let produtos=[];
 let carrinho={};
 let categoriaAtual="Todos";
@@ -47,7 +40,7 @@ const card=document.createElement("div");
 card.className="produto"+(p.promocao>0?" promo":"");
 
 card.innerHTML=`
-<img src="${p.imagem}">
+<img src="${p.imagem || 'https://via.placeholder.com/300x200?text=Produto'}">
 <h4>${p.nome}</h4>
 <p>${money(preco)}</p>
 <div class="contador">
@@ -67,7 +60,6 @@ function alterar(nome,v){
 if(!carrinho[nome]) carrinho[nome]=0;
 carrinho[nome]+=v;
 if(carrinho[nome]<0) carrinho[nome]=0;
-
 aplicarFiltro();
 }
 
@@ -77,6 +69,7 @@ let html="";
 
 Object.keys(carrinho).forEach(nome=>{
 if(carrinho[nome]>0){
+
 const produto=produtos.find(p=>p.nome===nome);
 if(!produto) return;
 
@@ -95,7 +88,7 @@ Subtotal: ${money(subtotal)}
 });
 
 document.getElementById("itensCarrinho").innerHTML=
-html||"<p style='opacity:0.6'>Seu carrinho está vazio</p>";
+html || "<p style='opacity:0.6'>Seu carrinho está vazio</p>";
 
 document.getElementById("valorTotal").innerText=money(total);
 
@@ -106,6 +99,8 @@ Object.values(carrinho).reduce((a,b)=>a+b,0);
 function abrirCarrinho(){
 document.getElementById("carrinho").classList.toggle("ativo");
 }
+
+/* CHECKOUT */
 
 function abrirCheckout(){
 document.getElementById("modalCheckout").style.display="flex";
@@ -143,11 +138,32 @@ document.getElementById("tipo").onchange=function(){
 document.getElementById("enderecoArea").style.display=
 this.value==="entrega"?"block":"none";
 };
+
+document.getElementById("cep").addEventListener("blur",buscarCEP);
+}
+
+async function buscarCEP(){
+const cep=document.getElementById("cep").value.replace(/\D/g,'');
+if(cep.length!==8) return;
+
+try{
+const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+const d=await r.json();
+if(!d.erro){
+document.getElementById("rua").value=d.logradouro||"";
+document.getElementById("cidade").value=d.localidade||"";
+}
+}catch(e){}
 }
 
 function finalizar(){
+
 let total=0;
 let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
+
+msg+="👤 Cliente: "+document.getElementById("cliente").value+"\n";
+msg+="📦 Tipo: "+document.getElementById("tipo").value+"\n";
+msg+="💳 Pagamento: "+document.getElementById("pagamento").value+"\n\n";
 
 msg+="🛍️ Itens:\n";
 
@@ -162,11 +178,24 @@ msg+=`• ${n} x${carrinho[n]} — ${money(preco)}\n`;
 
 msg+=`\n💰 Total: ${money(total)}\n`;
 
+if(document.getElementById("tipo").value==="entrega"){
+msg+=`\n📍 Endereço: ${
+document.getElementById("rua").value
+}, ${
+document.getElementById("numero").value
+}, ${
+document.getElementById("cidade").value
+}`;
+}else{
+msg+=`\n📍 Retirada na loja`;
+}
+
 window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
 }
 
 function criarCategorias(){
 const categorias=["Todos",...new Set(produtos.map(p=>p.categoria))];
+
 const area=document.getElementById("categorias");
 area.innerHTML="";
 
@@ -183,34 +212,56 @@ area.appendChild(btn);
 });
 }
 
-/* BANNER INSTALAÇÃO */
-
-function detectarInstalacao(){
-const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-const isAndroid=/android/i.test(navigator.userAgent);
-const isStandalone=window.matchMedia('(display-mode: standalone)').matches;
-
-if(isStandalone) return;
-if(localStorage.getItem("installOculto")) return;
-
-const banner=document.getElementById("installBanner");
-
-if(isAndroid){
-banner.innerHTML=`📲 Instale nosso app<br><br>Toque nos 3 pontinhos do navegador e depois em <b>"Adicionar à tela inicial"</b>.<br><br><button onclick="fecharInstall()" style="background:#0077cc;color:white;border:none;padding:8px 15px;border-radius:10px;">Entendi</button>`;
-banner.style.display="block";
-}
-
-if(isIOS){
-banner.innerHTML=`📲 Instale nosso app<br><br>Toque em <b>Compartilhar</b> e depois <b>"Adicionar à Tela de Início"</b>.<br><br><button onclick="fecharInstall()" style="background:#0077cc;color:white;border:none;padding:8px 15px;border-radius:10px;">Entendi</button>`;
-banner.style.display="block";
-}
-}
-
-function fecharInstall(){
-document.getElementById("installBanner").style.display="none";
-localStorage.setItem("installOculto",true);
-}
-
-window.addEventListener("load",detectarInstalacao);
-
 carregar();
+/* ORIENTAÇÃO DE INSTALAÇÃO */
+
+function detectarSistema(){
+const ua=navigator.userAgent;
+
+if(/android/i.test(ua)){
+return "android";
+}
+if(/iphone|ipad|ipod/i.test(ua)){
+return "ios";
+}
+return "outro";
+}
+
+function mostrarInstalacao(){
+if(window.matchMedia('(display-mode: standalone)').matches) return;
+
+if(localStorage.getItem("instalacaoFechada")) return;
+
+const sistema=detectarSistema();
+const box=document.getElementById("instalarApp");
+const texto=document.getElementById("textoInstalacao");
+
+if(sistema==="android"){
+texto.innerHTML=`
+Para instalar no Android:<br><br>
+1️⃣ Toque nos <strong>três pontinhos</strong> no canto do navegador.<br>
+2️⃣ Toque em <strong>"Adicionar à tela inicial"</strong>.<br>
+3️⃣ Confirme em <strong>"Instalar"</strong>.<br><br>
+Assim você terá o app como aplicativo no seu celular.
+`;
+box.style.display="flex";
+}
+
+if(sistema==="ios"){
+texto.innerHTML=`
+Para instalar no iPhone:<br><br>
+1️⃣ Toque no botão <strong>Compartilhar</strong> (ícone ⬆️).<br>
+2️⃣ Role e toque em <strong>"Adicionar à Tela de Início"</strong>.<br>
+3️⃣ Toque em <strong>"Adicionar"</strong>.<br><br>
+Assim o app ficará como aplicativo no seu celular.
+`;
+box.style.display="flex";
+}
+}
+
+function fecharInstalacao(){
+document.getElementById("instalarApp").style.display="none";
+localStorage.setItem("instalacaoFechada","sim");
+}
+
+setTimeout(mostrarInstalacao,3000);
