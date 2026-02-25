@@ -1,139 +1,106 @@
-const API_URL="https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
 
-let produtos=[];
-let carrinho={};
-let etapa=1;
-
-function formatar(v){
- return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-}
-
-async function carregarProdutos(){
- const res=await fetch(API_URL+"?acao=produtos&t="+Date.now(),{cache:"no-store"});
- const dados=await res.json();
-
- produtos=dados.sort((a,b)=>{
-   if(a.promocao>0&&b.promocao==0)return -1;
-   if(a.promocao==0&&b.promocao>0)return 1;
-   return a.nome.localeCompare(b.nome);
- });
-
- criarFiltros();
- renderizar(produtos);
-}
-
-function criarFiltros(){
- const area=document.getElementById("filtros");
- const categorias=["Todos",...new Set(produtos.map(p=>p.categoria))];
- area.innerHTML="";
- categorias.forEach(cat=>{
-   const btn=document.createElement("button");
-   btn.innerText=cat;
-   btn.onclick=()=>filtrar(cat);
-   area.appendChild(btn);
- });
-}
-
-function filtrar(cat){
- if(cat==="Todos")renderizar(produtos);
- else renderizar(produtos.filter(p=>p.categoria===cat));
-}
-
-function renderizar(lista){
- const grid=document.getElementById("produtos");
- grid.innerHTML="";
- lista.forEach(p=>{
-   const precoFinal=p.promocao>0?p.promocao:p.preco;
-   const card=document.createElement("div");
-   card.className="produto-card";
-   if(p.promocao>0)card.classList.add("promo");
-
-   card.innerHTML=`
-   <img src="${p.imagem}">
-   <h4>${p.nome}</h4>
-   ${p.promocao>0?`<div class="preco-antigo">${formatar(p.preco)}</div>`:""}
-   <div class="preco">${formatar(precoFinal)}</div>
-   <div class="contador">
-     <button onclick="alterar('${p.nome}',-1)">-</button>
-     <span>${carrinho[p.nome]||0}</span>
-     <button onclick="alterar('${p.nome}',1)">+</button>
-   </div>
-   `;
-   grid.appendChild(card);
- });
- atualizarContador();
-}
-
-function alterar(nome,valor){
- if(!carrinho[nome])carrinho[nome]=0;
- carrinho[nome]+=valor;
- if(carrinho[nome]<0)carrinho[nome]=0;
- renderizar(produtos);
-}
-
-function atualizarContador(){
- document.getElementById("contadorCarrinho").innerText=
- Object.values(carrinho).reduce((a,b)=>a+b,0);
-}
+let carrinho = {};
 
 function abrirCarrinho(){
- atualizarCarrinho();
- document.getElementById("modalCarrinho").style.display="flex";
+  document.getElementById("carrinho-lateral").classList.add("ativo");
+  document.getElementById("overlay").style.display="block";
 }
 
 function fecharCarrinho(){
- document.getElementById("modalCarrinho").style.display="none";
+  document.getElementById("carrinho-lateral").classList.remove("ativo");
+  document.getElementById("overlay").style.display="none";
 }
 
-function atualizarCarrinho(){
- const div=document.getElementById("itensCarrinho");
- div.innerHTML="";
- let total=0;
+function atualizarCarrinhoUI(){
+  const container = document.getElementById("carrinho-itens");
+  const contador = document.getElementById("contador-carrinho");
+  const totalEl = document.getElementById("carrinho-total");
 
- Object.keys(carrinho).forEach(nome=>{
-   if(carrinho[nome]>0){
-     const p=produtos.find(x=>x.nome===nome);
-     const preco=p.promocao>0?p.promocao:p.preco;
-     total+=preco*carrinho[nome];
-     div.innerHTML+=`<p>${nome} x${carrinho[nome]} - ${formatar(preco*carrinho[nome])}</p>`;
-   }
- });
+  container.innerHTML="";
+  let total=0;
+  let quantidadeTotal=0;
 
- document.getElementById("valorTotal").innerText=formatar(total);
+  Object.keys(carrinho).forEach(nome=>{
+    const item = carrinho[nome];
+    total += item.qtd * item.preco;
+    quantidadeTotal += item.qtd;
+
+    container.innerHTML += `
+      <p>${nome} (${item.qtd}x)<br>
+      R$ ${(item.qtd * item.preco).toFixed(2).replace('.',',')}</p>
+    `;
+  });
+
+  totalEl.innerText="R$ "+total.toFixed(2).replace('.',',');
+  contador.innerText=quantidadeTotal;
 }
+
+function adicionar(nome, preco){
+  if(!carrinho[nome]){
+    carrinho[nome]={qtd:0, preco:preco};
+  }
+  carrinho[nome].qtd++;
+  atualizarCarrinhoUI();
+}
+
+function remover(nome){
+  if(carrinho[nome]){
+    carrinho[nome].qtd--;
+    if(carrinho[nome].qtd<=0){
+      delete carrinho[nome];
+    }
+  }
+  atualizarCarrinhoUI();
+}
+
+/* CHECKOUT 3 ETAPAS */
 
 function abrirCheckout(){
- etapa=1;
- mostrarEtapa();
- document.getElementById("modalCheckout").style.display="flex";
+  fecharCarrinho();
+
+  const modal = document.createElement("div");
+  modal.className="modal";
+  modal.innerHTML=`
+    <div class="modal-content">
+      <div class="progresso">
+        <span class="ativo">Dados</span>
+        <span>Entrega</span>
+        <span>Pagamento</span>
+      </div>
+
+      <div class="checkout-etapa ativa" id="etapa1">
+        <input type="text" id="nome" placeholder="Nome completo">
+        <button onclick="proximaEtapa(2)">Continuar</button>
+      </div>
+
+      <div class="checkout-etapa" id="etapa2">
+        <input type="text" id="cep" placeholder="CEP">
+        <input type="text" id="numero" placeholder="Número">
+        <button onclick="proximaEtapa(3)">Continuar</button>
+      </div>
+
+      <div class="checkout-etapa" id="etapa3">
+        <select id="pagamento">
+          <option>Cartão</option>
+          <option>Pix</option>
+          <option>Dinheiro</option>
+        </select>
+        <button onclick="finalizarPedido()">Finalizar</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
 }
 
-function mostrarEtapa(){
- const div=document.getElementById("conteudoCheckout");
+function proximaEtapa(n){
+  document.querySelectorAll(".checkout-etapa").forEach(e=>e.classList.remove("ativa"));
+  document.getElementById("etapa"+n).classList.add("ativa");
 
- if(etapa===1){
-   div.innerHTML=`
-   <h3>Seus Dados</h3>
-   <input id="nome" placeholder="Nome completo">
-   <input id="cep" placeholder="CEP" onblur="buscarCEP()">
-   <input id="rua" placeholder="Rua">
-   <input id="numero" placeholder="Número">
-   <input id="cidade" placeholder="Cidade">
-   <button class="btn-primario" onclick="etapa=2;mostrarEtapa()">Continuar</button>
-   `;
- }
-
- if(etapa===2){
-   div.innerHTML=`
-   <h3>Pagamento</h3>
-   <select id="pagamento">
-     <option>Cartão</option>
-     <option>Pix</option>
-     <option>Dinheiro</option>
-   </select>
-   <button class="btn-primario" onclick="finalizarPedido()">Finalizar</button>
-   `;
- }
+  const progresso = document.querySelectorAll(".progresso span");
+  progresso.forEach(p=>p.classList.remove("ativo"));
+  progresso[n-1].classList.add("ativo");
 }
 
 async function buscarCEP(cep){
@@ -150,25 +117,27 @@ async function finalizarPedido(){
 
   const dadosCEP = await buscarCEP(cep);
 
-  const enderecoCompleto = `${dadosCEP.logradouro}, ${numero} - ${dadosCEP.bairro}, ${dadosCEP.localidade} - ${dadosCEP.uf}`;
+  const endereco = `${dadosCEP.logradouro}, ${numero} - ${dadosCEP.bairro}, ${dadosCEP.localidade} - ${dadosCEP.uf}`;
 
-  let mensagem = `✨ *Novo Pedido Odòmàiyá* ✨\n\n`;
-  mensagem += `👤 Cliente: ${nome}\n`;
-  mensagem += `📦 Entrega: ${enderecoCompleto}\n`;
-  mensagem += `💳 Pagamento: ${pagamento}\n\n`;
-  mensagem += `🛍️ Itens:\n`;
+  let msg = `✨ *Novo Pedido Odòmàiyá* ✨\n\n`;
+  msg += `👤 Cliente: ${nome}\n`;
+  msg += `📦 Entrega: ${endereco}\n`;
+  msg += `💳 Pagamento: ${pagamento}\n\n`;
+  msg += `🛍️ Itens:\n`;
 
-  let total = 0;
+  let total=0;
 
   Object.keys(carrinho).forEach(nomeProduto=>{
     const item = carrinho[nomeProduto];
-    mensagem += `• ${nomeProduto} (${item.qtd}x) - R$ ${(item.preco * item.qtd).toFixed(2).replace('.',',')}\n`;
-    total += item.preco * item.qtd;
+    msg += `• ${nomeProduto} (${item.qtd}x)\n`;
+    total+=item.qtd*item.preco;
   });
 
-  mensagem += `\n💰 Total: R$ ${total.toFixed(2).replace('.',',')}`;
+  msg+=`\n💰 Total: R$ ${total.toFixed(2).replace('.',',')}`;
 
-  const url = `https://wa.me/555496048808?text=${encodeURIComponent(mensagem)}`;
+  window.open(`https://wa.me/555496048808?text=${encodeURIComponent(msg)}`, "_blank");
 
-  window.open(url, "_blank");
+  carrinho={};
+  atualizarCarrinhoUI();
+  location.reload();
 }
