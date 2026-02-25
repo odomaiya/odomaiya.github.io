@@ -449,3 +449,23 @@ max-width:100%;
 body{
 overflow-x:hidden;
 }
+
+/* ================= QUASE ESGOTANDO ================= */
+
+.produto.quase-esgotado{
+border:1.5px solid #ffb74d;
+}
+
+.produto.quase-esgotado::after{
+content:"Quase esgotando";
+position:absolute;
+top:10px;
+left:10px;
+background:#fff3e0;
+color:#e65100;
+font-size:11px;
+padding:4px 8px;
+border-radius:8px;
+font-weight:600;
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
