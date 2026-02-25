@@ -284,3 +284,29 @@ padding:15px;
 }
 
 }
+/* ===== HEADER MOBILE FIX ===== */
+
+@media(max-width:768px){
+
+.header{
+flex-direction:column;
+gap:12px;
+padding:15px;
+}
+
+.logo{
+width:55px;
+height:55px;
+}
+
+.social{
+width:100%;
+justify-content:center;
+gap:20px;
+}
+
+.filtros{
+padding-top:10px;
+}
+
+}
