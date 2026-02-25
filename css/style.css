@@ -472,12 +472,6 @@ font-weight:600;
 box-shadow:0 4px 10px rgba(0,0,0,0.12);
 }
 
-/* Se for promoção + estoque baixo */
-/* Mantém faixa azul de promoção intacta */
-.produto.promo.quase-esgotado{
-border:2px solid #ff9800;
-}
-
 /* Evita conflito visual com faixa PROMOÇÃO */
 .produto.promo.quase-esgotado::before{
 z-index:2;
