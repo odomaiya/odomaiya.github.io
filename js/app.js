@@ -31,6 +31,7 @@ async function carregar(){
     );
 
     render(produtos);
+   carregarCategorias();
   }catch(e){
     console.error("Erro ao carregar produtos",e);
   }
@@ -39,6 +40,26 @@ async function carregar(){
 /* ===========================================
    RENDER PRODUTOS
 =========================================== */
+function carregarCategorias(){
+  const select = document.getElementById("filtroCategoria");
+  const categorias = [...new Set(produtos.map(p=>p.categoria))];
+
+  categorias.forEach(cat=>{
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.innerText = cat;
+    select.appendChild(opt);
+  });
+}
+
+function filtrarCategoria(){
+  const cat = document.getElementById("filtroCategoria").value;
+  if(!cat){
+    render(produtos);
+  }else{
+    render(produtos.filter(p=>p.categoria===cat));
+  }
+}
 
 function render(lista){
   const grid = document.getElementById("produtos");
@@ -239,12 +260,10 @@ async function finalizar(){
   let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
 
   const nome = document.getElementById("cliente").value;
-  const telefone = document.getElementById("telefone").value;
   const tipo = document.getElementById("tipo").value;
   const pagamento = document.getElementById("pagamento").value;
 
   msg+="👤 Cliente: "+nome+"\n";
-  msg+="📞 Telefone: "+telefone+"\n";
   msg+="📦 Tipo: "+tipo+"\n";
   msg+="💳 Pagamento: "+pagamento+"\n\n";
 
