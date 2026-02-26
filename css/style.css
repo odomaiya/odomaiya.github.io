@@ -1,166 +1,401 @@
-body{
-margin:0;
-font-family:'Poppins',sans-serif;
-background:#ffffff;
-color:#0a2540;
+/* ======================================================
+   ODÒMÁIYÀ — LUXO ESPIRITUAL ABSOLUTO
+   Branco dominante • Azul espiritual • Prata premium
+====================================================== */
+
+:root{
+
+  --branco:#ffffff;
+  --fundo:#f6f9ff;
+  --azul-espiritual:#0b2a4a;
+  --azul-premium:#0077cc;
+  --azul-profundo:#005fa3;
+  --prata:#cfd8e3;
+  --prata-suave:#e8eef5;
+  --laranja-estoque:#ff9800;
+  --vermelho-sem:#e53935;
+
+  --sombra-suave:0 10px 30px rgba(0,0,0,0.06);
+  --sombra-media:0 20px 60px rgba(0,0,0,0.12);
+  --sombra-forte:0 30px 80px rgba(0,0,0,0.18);
+
+  --transicao: all .35s cubic-bezier(.4,0,.2,1);
+
 }
 
-/* HEADER */
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100vh;
+  font-family:'Poppins',sans-serif;
+  background:var(--branco);
+  color:var(--azul-espiritual);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+
 .header{
-padding:30px;
-background:#ffffff;
-box-shadow:0 8px 30px rgba(0,0,0,0.05);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 30px;
+  background:linear-gradient(90deg,var(--branco),var(--prata-suave));
+  box-shadow:var(--sombra-suave);
+  position:sticky;
+  top:0;
+  z-index:1000;
 }
 
-/* GRID */
+.logo-area{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.logo{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  object-fit:cover;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  transition:var(--transicao);
+}
+
+.logo:hover{
+  transform:scale(1.06);
+}
+
+.header h1{
+  margin:0;
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+.header p{
+  margin:0;
+  font-size:13px;
+  color:#5f6f85;
+}
+
+/* ======================================================
+   SOCIAL
+====================================================== */
+
+.social{
+  display:flex;
+  gap:20px;
+}
+
+.social-link{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  font-weight:600;
+  color:var(--azul-espiritual);
+  transition:var(--transicao);
+}
+
+.social-link:hover{
+  color:var(--azul-premium);
+  transform:translateY(-2px);
+}
+
+/* ======================================================
+   FILTROS
+====================================================== */
+
+.filtros{
+  padding:30px 20px;
+  text-align:center;
+  background:var(--fundo);
+  border-bottom:1px solid var(--prata-suave);
+}
+
+#busca{
+  width:100%;
+  max-width:420px;
+  padding:14px 18px;
+  border-radius:18px;
+  border:1px solid var(--prata);
+  outline:none;
+  font-size:14px;
+  transition:var(--transicao);
+  box-shadow:var(--sombra-suave);
+}
+
+#busca:focus{
+  border-color:var(--azul-premium);
+  box-shadow:0 0 0 3px rgba(0,119,204,0.15);
+}
+
+/* ======================================================
+   GRID
+====================================================== */
+
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:25px;
-padding:40px;
+  padding:40px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:30px;
+  flex:1;
 }
 
-/* PRODUTO */
+/* ======================================================
+   CARD PRODUTO
+====================================================== */
+
 .produto{
-background:white;
-padding:20px;
-border-radius:22px;
-box-shadow:0 10px 35px rgba(0,0,0,0.06);
-position:relative;
-transition:.4s;
+  background:var(--branco);
+  border-radius:24px;
+  padding:20px;
+  position:relative;
+  box-shadow:var(--sombra-suave);
+  transition:var(--transicao);
+  overflow:hidden;
+  border:1px solid var(--prata-suave);
 }
 
 .produto:hover{
-transform:translateY(-6px);
+  transform:translateY(-8px);
+  box-shadow:var(--sombra-media);
 }
 
-/* PROMOÇÃO */
+.produto h3{
+  font-size:15px;
+  margin:8px 0;
+  font-weight:600;
+}
+
+.produto p{
+  margin:4px 0;
+  font-size:14px;
+}
+
+/* ======================================================
+   PROMOÇÃO — BRILHO AZUL ESPIRITUAL
+====================================================== */
+
 .produto.promo{
-border:1.5px solid #2f6ed3;
-animation:brilhoAzul 3s infinite;
+  border:1.8px solid var(--azul-premium);
+  animation:glowAzul 3s infinite;
 }
 
-@keyframes brilhoAzul{
-0%{box-shadow:0 0 0 rgba(47,110,211,0.2);}
-50%{box-shadow:0 0 30px rgba(47,110,211,0.35);}
-100%{box-shadow:0 0 0 rgba(47,110,211,0.2);}
+@keyframes glowAzul{
+  0%{ box-shadow:0 0 0 rgba(0,119,204,0.2);}
+  50%{ box-shadow:0 0 35px rgba(0,119,204,0.35);}
+  100%{ box-shadow:0 0 0 rgba(0,119,204,0.2);}
 }
 
 .produto.promo::before{
-content:"OFERTA";
-position:absolute;
-top:10px;
-right:-45px;
-background:#2f6ed3;
-color:white;
-padding:6px 45px;
-font-size:11px;
-transform:rotate(45deg);
+  content:"OFERTA ESPECIAL";
+  position:absolute;
+  top:15px;
+  right:-50px;
+  background:linear-gradient(135deg,var(--azul-premium),var(--azul-profundo));
+  color:white;
+  font-size:10px;
+  font-weight:600;
+  padding:6px 50px;
+  transform:rotate(45deg);
+  letter-spacing:.6px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.25);
 }
 
-/* ESTOQUE BAIXO */
-.produto.quase{
-border:1px solid #ff9800;
-animation:brilhoLaranja 3s infinite;
+/* ======================================================
+   ESTOQUE BAIXO — BRILHO LARANJA SUTIL
+====================================================== */
+
+.produto.quase-esgotado{
+  border:1.5px solid var(--laranja-estoque);
+  animation:glowLaranja 3s infinite;
 }
 
-@keyframes brilhoLaranja{
-0%{box-shadow:0 0 0 rgba(255,152,0,0.2);}
-50%{box-shadow:0 0 30px rgba(255,152,0,0.35);}
-100%{box-shadow:0 0 0 rgba(255,152,0,0.2);}
+@keyframes glowLaranja{
+  0%{ box-shadow:0 0 0 rgba(255,152,0,0.25);}
+  50%{ box-shadow:0 0 30px rgba(255,152,0,0.4);}
+  100%{ box-shadow:0 0 0 rgba(255,152,0,0.25);}
 }
 
-.badge{
-position:absolute;
-top:12px;
-left:12px;
-background:#ff9800;
-color:white;
-font-size:10px;
-padding:4px 10px;
-border-radius:20px;
+.badge-estoque{
+  position:absolute;
+  top:15px;
+  left:15px;
+  background:var(--laranja-estoque);
+  color:white;
+  font-size:10px;
+  padding:6px 12px;
+  border-radius:20px;
+  font-weight:600;
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
 }
 
-/* CARRINHO */
+/* ======================================================
+   CONTADOR
+====================================================== */
+
+.contador{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  margin-top:12px;
+}
+
+.contador button{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:none;
+  background:linear-gradient(135deg,var(--azul-premium),var(--azul-profundo));
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+  transition:var(--transicao);
+  box-shadow:0 8px 18px rgba(0,0,0,0.2);
+}
+
+.contador button:hover{
+  transform:scale(1.15);
+}
+
+/* ======================================================
+   BOTÃO CARRINHO FLUTUANTE
+====================================================== */
+
+.btn-carrinho{
+  position:fixed;
+  bottom:25px;
+  right:25px;
+  background:linear-gradient(135deg,var(--azul-premium),var(--azul-profundo));
+  color:white;
+  border:none;
+  padding:20px;
+  border-radius:50%;
+  font-size:20px;
+  box-shadow:var(--sombra-forte);
+  cursor:pointer;
+  z-index:2000;
+  transition:var(--transicao);
+}
+
+.btn-carrinho:hover{
+  transform:scale(1.1);
+}
+
+/* ======================================================
+   CARRINHO DRAWER MODERNO
+====================================================== */
+
 .carrinho{
-position:fixed;
-right:0;
-top:0;
-width:340px;
-height:100%;
-background:white;
-padding:25px;
-box-shadow:-15px 0 60px rgba(0,0,0,0.2);
-transform:translateX(100%);
-transition:.4s;
-z-index:999;
+  position:fixed;
+  right:0;
+  top:0;
+  width:380px;
+  max-width:100%;
+  height:100%;
+  background:var(--branco);
+  box-shadow:-20px 0 80px rgba(0,0,0,0.2);
+  padding:30px;
+  transform:translateX(100%);
+  transition:var(--transicao);
+  overflow-y:auto;
+  z-index:5000;
 }
 
 .carrinho.ativo{
-transform:translateX(0);
+  transform:translateX(0);
 }
 
-.fechar-x{
-background:none;
-border:none;
-font-size:18px;
-cursor:pointer;
+.carrinho h3{
+  margin-top:0;
 }
 
-.carrinho-topo{
-display:flex;
-justify-content:space-between;
-align-items:center;
+.carrinho .total{
+  font-size:18px;
+  font-weight:700;
+  margin-top:20px;
 }
 
-.carrinho-backdrop{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.3);
-opacity:0;
-pointer-events:none;
-transition:.4s;
+.btn-finalizar{
+  width:100%;
+  padding:15px;
+  margin-top:20px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,var(--azul-premium),var(--azul-profundo));
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:var(--sombra-media);
+  transition:var(--transicao);
 }
 
-.carrinho-backdrop.ativo{
-opacity:1;
-pointer-events:all;
+.btn-finalizar:hover{
+  transform:translateY(-3px);
 }
 
-/* CHECKOUT */
+/* ======================================================
+   MODAL CHECKOUT
+====================================================== */
+
 .modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.4);
-justify-content:center;
-align-items:center;
-z-index:9999;
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.45);
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
 }
 
 .modal-content{
-background:white;
-padding:30px;
-border-radius:20px;
-width:90%;
-max-width:420px;
+  background:var(--branco);
+  padding:35px;
+  border-radius:26px;
+  width:95%;
+  max-width:480px;
+  box-shadow:var(--sombra-forte);
+  animation:fadeUp .4s ease;
 }
 
-.modal-content input,
-.modal-content select{
-width:100%;
-padding:12px;
-margin-bottom:15px;
-border-radius:12px;
-border:1px solid #dce3ec;
-color:#0a2540;
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
-/* SUGESTÃO */
-.sugestao{
-background:#f3f7ff;
-padding:15px;
-border-radius:15px;
-border:1px solid #dbe6f3;
-margin-bottom:20px;
+/* ======================================================
+   RESPONSIVO
+====================================================== */
+
+@media(max-width:768px){
+
+  .grid{
+    padding:25px;
+    gap:20px;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  }
+
+  .header{
+    flex-direction:column;
+    gap:15px;
+  }
+
+  .logo{
+    width:60px;
+    height:60px;
+  }
+
+  .carrinho{
+    width:100%;
+  }
+
 }
