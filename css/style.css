@@ -373,16 +373,36 @@ p{
   z-index:2000;
 }
 
-.modal-content{
-  background:white;
+.modal-conteudo{
+  background:#fff;
   width:95%;
   max-width:480px;
-  border-radius:30px;
-  padding:35px;
-  box-shadow:0 40px 80px rgba(0,0,0,0.3);
-  animation:fadeUp .4s ease;
+  border-radius:28px;
+  padding:24px;
+  max-height:92vh;
+  overflow-y:auto;
+  box-shadow:0 40px 90px rgba(0,0,0,0.25);
 }
+@media(max-width:768px){
 
+  .modal-conteudo{
+    width:94%;
+    padding:20px;
+    border-radius:24px;
+  }
+
+  .modal-conteudo input,
+  .modal-conteudo select{
+    font-size:16px;
+    padding:14px;
+  }
+
+  .modal-conteudo button{
+    padding:16px;
+    font-size:15px;
+  }
+
+}
 @keyframes fadeUp{
   from{opacity:0;transform:translateY(30px);}
   to{opacity:1;transform:translateY(0);}
