@@ -130,6 +130,20 @@ ${sugestaoPremium()}
 <button onclick="finalizar()">Enviar Pedido</button>
 </div>`;
 }
+function inserirSugestaoCheckout(){
+const sugestoes = produtos.filter(p=>p.promocao>0 || p.estoque<10);
+if(sugestoes.length===0) return;
+
+const s = sugestoes[0];
+
+document.getElementById("sugestaoCheckout").innerHTML=`
+<div class="sugestao-checkout">
+<h4>✨ Você também pode incluir</h4>
+<p><strong>${s.nome}</strong></p>
+<p>${money(s.promocao>0?s.promocao:s.preco)}</p>
+</div>
+`;
+}
 
 function sugestaoPremium(){
 const itens=Object.keys(carrinho).filter(n=>carrinho[n]>0);
@@ -155,3 +169,32 @@ document.getElementById("modalCheckout").style.display="none";
 }
 
 document.addEventListener("DOMContentLoaded",carregar);
+function finalizar(){
+let total=0;
+let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
+
+msg+="👤 Cliente: "+document.getElementById("cliente").value+"\n";
+msg+="📦 Tipo: "+document.getElementById("tipo").value+"\n";
+msg+="💳 Pagamento: "+document.getElementById("pagamento").value+"\n\n";
+
+if(document.getElementById("tipo").value==="entrega"){
+msg+=`\n📍 Endereço: ${document.getElementById("rua").value}, ${document.getElementById("numero").value}, ${document.getElementById("cidade").value}\n`;
+}else{
+msg+=`\n📍 Retirada na loja\n`;
+}
+
+msg+="\n🛍️ Itens:\n";
+
+Object.keys(carrinho).forEach(n=>{
+if(carrinho[n]>0){
+const p=produtos.find(x=>x.nome===n);
+const preco=p.promocao>0?p.promocao:p.preco;
+total+=preco*carrinho[n];
+msg+=`• ${n} x${carrinho[n]} — ${money(preco)}\n`;
+}
+});
+
+msg+=`\n💰 Total: ${money(total)}\n`;
+
+window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
+}
