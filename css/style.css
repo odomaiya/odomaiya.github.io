@@ -1,342 +1,188 @@
-/* ============================= */
-/* ODÒMÁIYÀ – LUXO ESPIRITUAL ABSOLUTO */
-/* ============================= */
-
 :root{
---azul-noite:#071426;
---azul-profundo:#0b1f3a;
---azul-real:#123c6b;
---azul-luz:#1f5fa8;
---prata:#cfd8e3;
---prata-brilho:#eef3f9;
---grad-azul:linear-gradient(135deg,#0b1f3a,#1f5fa8);
---grad-ritual:linear-gradient(180deg,#071426,#0b1f3a);
+--branco:#ffffff;
+--azul-profundo:#0f2e4d;
+--azul-luxo:#1e4f88;
+--azul-destaque:#2f6ed3;
+--prata:#e9eef5;
+--cinza-bg:#f5f8fc;
+--laranja:#ff7a00;
+--texto:#1a1a1a;
 }
 
-*{
-box-sizing:border-box;
-}
-
-html,body{
+body{
 margin:0;
-padding:0;
-font-family:'Poppins',sans-serif;
-background:var(--grad-ritual);
-color:white;
-min-height:100vh;
-overflow-x:hidden;
+background:var(--cinza-bg);
+font-family:'Segoe UI',sans-serif;
+color:var(--texto);
 }
 
-/* ================= HEADER ================= */
-
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:25px 40px;
-background:rgba(255,255,255,0.03);
-backdrop-filter:blur(12px);
-border-bottom:1px solid rgba(255,255,255,0.08);
-}
-
-.logo{
-width:70px;
-height:70px;
-border-radius:50%;
-box-shadow:0 0 30px rgba(255,255,255,0.15);
-transition:0.5s;
-}
-
-.logo:hover{
-transform:scale(1.05);
-box-shadow:0 0 45px rgba(255,255,255,0.25);
-}
-
-.social-link{
-color:var(--prata);
-text-decoration:none;
-font-weight:500;
-margin-left:20px;
-transition:0.3s;
-}
-
-.social-link:hover{
-color:white;
-}
-
-/* ================= BUSCA ================= */
-
-.filtros{
-padding:30px;
-text-align:center;
-}
-
-#busca{
-width:100%;
-max-width:450px;
-padding:14px 18px;
-border-radius:30px;
-border:1px solid rgba(255,255,255,0.1);
-background:rgba(255,255,255,0.05);
-color:white;
-font-size:14px;
-outline:none;
-}
-
-/* ================= GRID ================= */
+/* GRID */
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-gap:35px;
-padding:50px;
-max-width:1500px;
-margin:0 auto;
-flex:1;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:24px;
+padding:40px;
+max-width:1400px;
+margin:auto;
 }
 
-/* ================= CARD ================= */
+/* PRODUTO */
 
 .produto{
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(18px);
-border:1px solid rgba(255,255,255,0.1);
-border-radius:28px;
-padding:25px;
-transition:0.6s;
+background:var(--branco);
+border-radius:22px;
+padding:20px;
 position:relative;
-overflow:hidden;
-}
-
-.produto::before{
-content:"";
-position:absolute;
-inset:0;
-background:linear-gradient(45deg,transparent,rgba(255,255,255,0.08),transparent);
-transform:translateX(-100%);
-transition:1.2s;
-}
-
-.produto:hover::before{
-transform:translateX(100%);
+box-shadow:0 10px 30px rgba(0,0,0,0.06);
+border:1px solid #eef2f7;
+transition:.3s;
 }
 
 .produto:hover{
-transform:translateY(-12px);
-box-shadow:0 30px 80px rgba(0,0,0,0.5);
+transform:translateY(-6px);
+box-shadow:0 20px 50px rgba(0,0,0,0.08);
 }
 
 .produto h3{
-font-size:17px;
+margin:0 0 8px 0;
+font-size:16px;
+color:var(--azul-profundo);
+}
+
+.preco-antigo{
+text-decoration:line-through;
+font-size:13px;
+color:#999;
+}
+
+.preco{
+font-size:18px;
+font-weight:700;
+color:var(--azul-destaque);
+}
+
+.faixa-promocao{
+position:absolute;
+top:12px;
+left:-8px;
+background:linear-gradient(135deg,var(--azul-destaque),var(--azul-luxo));
+color:white;
+padding:6px 14px;
+font-size:12px;
 font-weight:600;
-margin-bottom:10px;
-color:var(--prata-brilho);
+border-radius:0 12px 12px 0;
 }
 
-.produto p{
-font-size:14px;
-opacity:0.9;
+.estoque-baixo{
+margin-top:6px;
+font-size:12px;
+color:var(--laranja);
+border:1px solid var(--laranja);
+padding:4px 8px;
+border-radius:12px;
+display:inline-block;
 }
 
-.contador{
+/* BOTÕES + / - */
+
+.controle{
 display:flex;
 justify-content:center;
-align-items:center;
-gap:12px;
+gap:10px;
 margin-top:15px;
 }
 
-.contador button{
-width:36px;
-height:36px;
+.controle button{
+width:32px;
+height:32px;
 border-radius:50%;
 border:none;
-background:var(--grad-azul);
+background:var(--azul-luxo);
 color:white;
+cursor:pointer;
+}
+
+/* CARRINHO */
+
+#carrinho{
+position:fixed;
+right:0;
+top:0;
+height:100%;
+width:340px;
+background:white;
+box-shadow:-10px 0 40px rgba(0,0,0,0.15);
+padding:25px;
+overflow:auto;
+z-index:1000;
+}
+
+.fechar-carrinho{
+position:absolute;
+top:15px;
+right:15px;
+background:transparent;
+border:none;
 font-size:18px;
 cursor:pointer;
-box-shadow:0 10px 25px rgba(0,0,0,0.5);
-transition:0.3s;
+color:#777;
 }
 
-.contador button:hover{
-transform:scale(1.15);
+.fechar-carrinho:hover{
+color:var(--azul-destaque);
 }
 
-/* ================= BOTÃO CARRINHO ================= */
-
-.btn-carrinho{
-position:fixed;
-bottom:25px;
-right:25px;
-background:var(--grad-azul);
-color:white;
+.finalizar-btn{
+width:100%;
+margin-top:20px;
+padding:14px;
 border:none;
+border-radius:16px;
+background:linear-gradient(135deg,var(--azul-destaque),var(--azul-luxo));
+color:white;
+font-weight:600;
+cursor:pointer;
+}
+
+/* CHECKOUT */
+
+.checkout-box{
+margin-top:20px;
 padding:20px;
-border-radius:50%;
-font-size:22px;
-box-shadow:0 20px 50px rgba(0,0,0,0.6);
-cursor:pointer;
-z-index:2000;
-transition:0.4s;
-}
-
-.btn-carrinho:hover{
-transform:scale(1.12);
-}
-
-/* ================= OVERLAY ================= */
-
-.overlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.6);
-backdrop-filter:blur(8px);
-opacity:0;
-pointer-events:none;
-transition:0.4s;
-z-index:3000;
-}
-
-.overlay.ativo{
-opacity:1;
-pointer-events:all;
-}
-
-/* ================= CARRINHO DRAWER ================= */
-
-.carrinho{
-position:fixed;
-top:0;
-right:0;
-width:420px;
-max-width:95%;
-height:100%;
-background:var(--azul-profundo);
-padding:35px;
-transform:translateX(100%);
-transition:0.6s cubic-bezier(.77,0,.18,1);
-overflow-y:auto;
-z-index:4000;
-box-shadow:-20px 0 80px rgba(0,0,0,0.7);
-}
-
-.carrinho.ativo{
-transform:translateX(0);
-}
-
-.btn-finalizar{
-width:100%;
-padding:16px;
-margin-top:25px;
+background:white;
 border-radius:20px;
-border:none;
-background:var(--grad-azul);
-color:white;
+box-shadow:0 8px 25px rgba(0,0,0,0.05);
+}
+
+.checkout-box label{
 font-weight:600;
-cursor:pointer;
-box-shadow:0 15px 40px rgba(0,0,0,0.6);
-transition:0.3s;
+color:var(--azul-profundo);
+font-size:13px;
 }
 
-.btn-finalizar:hover{
-transform:translateY(-3px);
-}
-
-/* ================= CHECKOUT ================= */
-
-.modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.8);
-justify-content:center;
-align-items:center;
-z-index:5000;
-}
-
-.modal-content{
-background:var(--azul-profundo);
-padding:40px;
-border-radius:32px;
-width:95%;
-max-width:520px;
-box-shadow:0 40px 100px rgba(0,0,0,0.8);
-animation:fadeUp 0.5s ease;
-}
-
-@keyframes fadeUp{
-from{opacity:0;transform:translateY(40px);}
-to{opacity:1;transform:translateY(0);}
-}
-
-.checkout-steps{
-display:flex;
-align-items:center;
-justify-content:center;
-margin-bottom:30px;
-}
-
-.step{
-width:38px;
-height:38px;
-border-radius:50%;
-background:rgba(255,255,255,0.1);
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:600;
-}
-
-.step.ativo{
-background:var(--grad-azul);
-box-shadow:0 10px 30px rgba(0,0,0,0.6);
-}
-
-.linha{
-flex:1;
-height:3px;
-background:rgba(255,255,255,0.15);
-}
-
-.checkout-body input,
-.checkout-body select{
+.checkout-box input,
+.checkout-box select{
 width:100%;
-padding:14px;
-margin-bottom:18px;
-border-radius:18px;
-border:1px solid rgba(255,255,255,0.15);
-background:rgba(255,255,255,0.05);
-color:white;
+padding:12px;
+margin:6px 0 14px 0;
+border-radius:12px;
+border:1px solid #dbe6f3;
+font-size:14px;
+color:#000;
 }
 
-.checkout-nav{
-display:flex;
-gap:15px;
-}
-
-.checkout-nav button{
-flex:1;
-padding:14px;
-border-radius:20px;
-border:none;
-font-weight:600;
-cursor:pointer;
-}
-
-.checkout-nav button:last-child{
-background:var(--grad-azul);
-color:white;
-box-shadow:0 15px 40px rgba(0,0,0,0.6);
-}
-
-/* ================= SUGESTÃO PREMIUM ================= */
+/* SUGESTÃO */
 
 .sugestao-checkout{
-margin-top:20px;
-padding:18px;
-border-radius:24px;
-background:rgba(255,255,255,0.05);
-border:1px solid rgba(255,255,255,0.1);
-box-shadow:0 15px 40px rgba(0,0,0,0.5);
+margin:20px 0;
+padding:16px;
+border-radius:20px;
+background:linear-gradient(135deg,#f4f8ff,#ffffff);
+border:1px solid #dbe6f3;
+}
+
+.sugestao-checkout h4{
+margin:0 0 8px 0;
+color:var(--azul-destaque);
 }
