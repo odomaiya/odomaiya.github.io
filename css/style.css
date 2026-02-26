@@ -121,12 +121,33 @@ p{
 /* GRID */
 /* ============================= */
 
-.grid{
+.grid-produtos{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:25px;
-  padding:30px;
-  flex:1;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:16px;
+}
+
+@media(max-width:768px){
+  .grid-produtos{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+
+  .produto img{
+    height:110px;
+  }
+
+  .produto{
+    padding:14px;
+  }
+
+  .produto h3{
+    font-size:14px;
+  }
+
+  .preco{
+    font-size:15px;
+  }
 }
 
 /* ============================= */
