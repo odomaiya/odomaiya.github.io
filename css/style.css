@@ -514,3 +514,19 @@ p{
   }
 
 }
+
+.filtros{
+  margin:20px 0;
+  display:flex;
+  justify-content:center;
+}
+
+.filtros select{
+  padding:12px 18px;
+  border-radius:30px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  font-weight:500;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,0.05);
+}
