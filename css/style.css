@@ -118,36 +118,68 @@ p{
 }
 
 /* ============================= */
-/* GRID */
+/* GRID PREMIUM 2x2 FIXO */
 /* ============================= */
 
-.grid-produtos{
+.grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:16px;
+  grid-template-columns:repeat(2,1fr);
+  gap:28px;
+  padding:35px;
+  max-width:1000px;
+  margin:0 auto;
 }
 
+/* Desktop grande mantém elegante */
+@media(min-width:1200px){
+  .grid{
+    max-width:1100px;
+  }
+}
+
+/* Mobile mantém 2 colunas */
 @media(max-width:768px){
-  .grid-produtos{
+  .grid{
     grid-template-columns:repeat(2,1fr);
-    gap:12px;
+    gap:18px;
+    padding:20px;
   }
+}
 
-  .produto img{
-    height:110px;
-  }
+/* ============================= */
+/* CATEGORIAS PREMIUM */
+/* ============================= */
 
-  .produto{
-    padding:14px;
-  }
+.categorias{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:12px;
+  margin-top:20px;
+}
 
-  .produto h3{
-    font-size:14px;
-  }
+.categoria-btn{
+  padding:10px 18px;
+  border-radius:30px;
+  border:1px solid #0d4f8b;
+  background:white;
+  color:#0d4f8b;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  transition:.3s;
+}
 
-  .preco{
-    font-size:15px;
-  }
+.categoria-btn:hover{
+  background:#0d4f8b;
+  color:white;
+  transform:translateY(-2px);
+}
+
+.categoria-btn.ativa{
+  background:#0d4f8b;
+  color:white;
+  box-shadow:0 10px 25px rgba(13,79,139,0.3);
 }
 
 /* ============================= */
