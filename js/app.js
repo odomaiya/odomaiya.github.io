@@ -225,3 +225,21 @@ async function finalizar(){
 
 /* INIT */
 document.addEventListener("DOMContentLoaded",carregar);
+
+/* ============================= */
+/* ATUALIZAR ESTOQUE */
+/* ============================= */
+
+async function atualizarEstoqueServidor(itens){
+  try{
+    await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        acao:"atualizarEstoque",
+        itens:itens
+      })
+    });
+  }catch(e){
+    console.error("Erro ao atualizar estoque:",e);
+  }
+}
