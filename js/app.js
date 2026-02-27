@@ -35,27 +35,33 @@ function mostrarLoader(){
 async function carregar(){
   mostrarLoader();
 
-  try{
-    const r = await fetch(API_URL+"?acao=produtos",{cache:"no-store"});
-    if(!r.ok) throw new Error("Erro na API");
+  try {
 
-    produtos = await r.json();
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      acao: "pedido",
+      cliente: nome,
+      tipo: tipo,
+      pagamento: pagamento,
+      itens: carrinho,
+      total: total,
+      data: new Date().toISOString()
+    })
+  });
 
-    produtos.sort((a,b)=>
-      (b.promocao>0)-(a.promocao>0) ||
-      a.nome.localeCompare(b.nome)
-    );
+  await atualizarEstoqueServidor(carrinho);
 
-    render(produtos);
+  registrarEvento("pedido_finalizado", { total: total });
 
-  }catch(e){
-    document.getElementById("produtos").innerHTML=`
-      <div class="erro-api">
-        Não foi possível carregar os produtos.  
-        Verifique sua conexão.
-      </div>
-    `;
-  }
+  localStorage.removeItem("carrinho");
+
+  window.open("https://wa.me/555496048808?text=" + encodeURIComponent(msg));
+
+  location.reload();
+
+} catch (e) {
+  alert("Erro ao enviar pedido. Tente novamente.");
 }
 
 /* ============================= */
@@ -139,6 +145,7 @@ function removerItem(nome){
 /* ============================= */
 
 function atualizarCarrinho(){
+  registrarEvento("add_carrinho", { produto: nome });
   const area = document.getElementById("itensCarrinho");
   const contador = document.getElementById("contadorCarrinho");
 
@@ -241,5 +248,39 @@ async function atualizarEstoqueServidor(itens){
     });
   }catch(e){
     console.error("Erro ao atualizar estoque:",e);
+  }
+}
+
+/* ============================= */
+/* ANALYTICS SISTEMA */
+/* ============================= */
+
+function registrarEvento(evento, dados = {}) {
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      acao: "analytics",
+      evento: evento,
+      dados: dados,
+      data: new Date().toISOString()
+    })
+  });
+}
+
+/* ============================= */
+/* ATUALIZAÇÃO DE ESTOQUE */
+/* ============================= */
+
+async function atualizarEstoqueServidor(itens) {
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        acao: "atualizarEstoque",
+        itens: itens
+      })
+    });
+  } catch (e) {
+    console.error("Erro ao atualizar estoque:", e);
   }
 }
