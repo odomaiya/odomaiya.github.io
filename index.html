@@ -1,123 +1,80 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmáiyà Artigos Religiosos</title>
 
-<link rel="icon" href="logo.png">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>Odòmáiyà</title>
 
-<link rel="stylesheet" href="css/style.css">
-<script defer src="js/app.js"></script>
+<meta name="theme-color" content="#0b1a2f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<meta name="theme-color" content="#0B2A4A">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="overlay"></div>
-
+<!-- HEADER -->
 <header class="header">
-
   <div class="logo-area">
     <img src="logo.png" class="logo">
-    <div>
-      <h1>Odòmáiyà</h1>
-      <p>Artigos Religiosos</p>
-    </div>
+    <h1>Odòmáiyà</h1>
   </div>
 
-  <div id="categorias" class="categorias"></div>
-
-  <div class="social">
-    <a href="https://wa.me/555496048808" target="_blank" class="social-link">
-      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" class="icon-mini">
-      WhatsApp
-    </a>
-    <a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank" class="social-link">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" class="icon-mini">
-      Instagram
-    </a>
+  <div class="header-actions">
+    <input type="text" id="busca" placeholder="Buscar produtos...">
+    <button onclick="abrirCarrinho()" class="btn-carrinho">
+      🛒 <span id="contadorCarrinho">0</span>
+    </button>
   </div>
-
 </header>
 
-<section class="filtros">
-  <input type="text" id="busca" placeholder="Buscar produto...">
-  <select id="filtroCategoria"></select>
-</section>
+<!-- CATEGORIAS -->
+<div class="categorias-container">
+  <div id="categorias"></div>
+</div>
 
-<section id="produtos" class="grid"></section>
+<!-- GRID PRODUTOS -->
+<main>
+  <div id="produtos" class="grid-produtos"></div>
+</main>
 
-<button class="btn-carrinho" onclick="abrirCarrinho()">
-🛒 <span id="contadorCarrinho">0</span>
-</button>
+<!-- DRAWER CARRINHO -->
+<div id="overlay"></div>
 
-<div class="carrinho" id="carrinho">
-  <div class="carrinho-header">
-    <h3>Seu Carrinho</h3>
-    <button onclick="fecharCarrinho()">✕</button>
-  </div>
-
+<div id="carrinho" class="drawer">
   <div id="itensCarrinho"></div>
-
-  <div class="carrinho-footer">
-    <div class="total">Total: <span id="valorTotal">R$ 0,00</span></div>
-    <button onclick="abrirCheckout()" class="btn-finalizar">Finalizar Pedido</button>
+  <div class="footer-carrinho">
+    <h3>Total: <span id="valorTotal">R$ 0,00</span></h3>
+    <button onclick="abrirCheckout()" class="btn-principal">Finalizar Pedido</button>
   </div>
 </div>
 
-<div class="modal" id="modalCheckout">
+<!-- MODAL CHECKOUT -->
+<div id="modalCheckout" class="modal">
   <div class="modal-content">
-
-    <div class="progress-bar">
-      <div class="step active" id="step1"></div>
-      <div class="step" id="step2"></div>
-      <div class="step" id="step3"></div>
-    </div>
-
-    <div class="etapa ativa" id="etapa1">
-      <h3>Seus Dados</h3>
-      <input type="text" id="cliente" placeholder="Seu nome">
-      <input type="text" id="telefone" placeholder="Telefone">
-      <button onclick="proximaEtapa(2)" class="btn-etapa">Continuar</button>
-    </div>
-
-    <div class="etapa" id="etapa2">
-      <h3>Entrega</h3>
-      <select id="tipo">
-        <option value="retirada">Retirada</option>
-        <option value="entrega">Entrega</option>
-      </select>
-
-      <div id="enderecoArea" style="display:none;">
-        <input type="text" id="cep" placeholder="CEP">
-        <input type="text" id="rua" placeholder="Rua">
-        <input type="text" id="numero" placeholder="Número">
-        <input type="text" id="cidade" placeholder="Cidade">
-      </div>
-
-      <button onclick="voltarEtapa(1)" class="btn-secundario">Voltar</button>
-      <button onclick="proximaEtapa(3)" class="btn-etapa">Continuar</button>
-    </div>
-
-    <div class="etapa" id="etapa3">
-      <h3>Pagamento</h3>
-      <select id="pagamento">
-        <option value="cartao">Cartão</option>
-        <option value="pix">Pix</option>
-        <option value="dinheiro">Dinheiro</option>
-      </select>
-
-      <div id="sugestaoArea"></div>
-
-      <button onclick="voltarEtapa(2)" class="btn-secundario">Voltar</button>
-      <button onclick="finalizar()" class="btn-finalizar-modal">Enviar Pedido</button>
-    </div>
-
+    <div id="checkoutEtapas"></div>
   </div>
 </div>
 
+<!-- MODAL SUGESTÃO INTELIGENTE -->
+<div id="modalSugestao" class="modal">
+  <div class="modal-content sugestao-box">
+    <div id="sugestaoConteudo"></div>
+  </div>
+</div>
+
+<!-- LOADING GLOBAL -->
+<div id="loadingGlobal" class="loading-global">
+  <div class="spinner"></div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
