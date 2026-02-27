@@ -1,151 +1,316 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec"
+/* ==========================================================
+   ODÒMÁIYÀ ENTERPRISE SYSTEM
+   Sistema completo, robusto e profissional
+========================================================== */
 
-let produtos = []
-let carrinho = []
-let categoriaAtiva = "Todos"
+const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
 
-document.addEventListener("DOMContentLoaded",()=>{
-buscarProdutos()
-document.getElementById("busca").addEventListener("input",renderProdutos)
-document.getElementById("filtroCategoria").addEventListener("change",e=>{
-categoriaAtiva = e.target.value
-renderProdutos()
-})
-document.getElementById("tipo").addEventListener("change",e=>{
-document.getElementById("enderecoArea").style.display =
-e.target.value === "entrega" ? "block" : "none"
-})
-})
+let produtos = [];
+let carrinho = {};
+let categoriaAtual = "todas";
+let buscaAtual = "";
+let etapaCheckout = 1;
 
-async function buscarProdutos(){
-const res = await fetch(API_URL)
-produtos = await res.json()
-criarCategorias()
-renderProdutos()
+/* ==========================================================
+   UTIL
+========================================================== */
+
+function money(v){
+  return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 }
 
-function criarCategorias(){
-const categorias = ["Todos",...new Set(produtos.map(p=>p.categoria))]
-const container = document.getElementById("categorias")
-const select = document.getElementById("filtroCategoria")
-
-container.innerHTML=""
-select.innerHTML=""
-
-categorias.forEach(cat=>{
-const btn=document.createElement("button")
-btn.textContent=cat
-btn.onclick=()=>{
-categoriaAtiva=cat
-document.querySelectorAll(".categorias button").forEach(b=>b.classList.remove("ativo"))
-btn.classList.add("ativo")
-select.value=cat
-renderProdutos()
+function showLoading(state){
+  const l = document.getElementById("loadingGlobal");
+  if(!l) return;
+  l.style.display = state ? "flex" : "none";
 }
-if(cat==="Todos") btn.classList.add("ativo")
-container.appendChild(btn)
 
-const option=document.createElement("option")
-option.value=cat
-option.textContent=cat
-select.appendChild(option)
-})
+/* ==========================================================
+   CARREGAR PRODUTOS
+========================================================== */
+
+async function carregarProdutos(){
+  try{
+    showLoading(true);
+
+    const r = await fetch(API_URL+"?acao=produtos",{cache:"no-store"});
+    produtos = await r.json();
+
+    produtos.sort((a,b)=>{
+      if(b.promocao>0 && a.promocao===0) return 1;
+      if(a.promocao>0 && b.promocao===0) return -1;
+      return a.nome.localeCompare(b.nome);
+    });
+
+    montarCategorias();
+    renderProdutos();
+
+  }catch(e){
+    alert("Erro ao carregar produtos.");
+  }finally{
+    showLoading(false);
+  }
 }
+
+/* ==========================================================
+   CATEGORIAS DINÂMICAS
+========================================================== */
+
+function montarCategorias(){
+  const container = document.getElementById("categorias");
+  if(!container) return;
+
+  const categorias = [...new Set(produtos.map(p=>p.categoria).filter(Boolean))];
+
+  container.innerHTML = "";
+
+  criarBotaoCategoria("todas","Todas");
+
+  categorias.forEach(cat=>{
+    criarBotaoCategoria(cat,cat);
+  });
+}
+
+function criarBotaoCategoria(valor,label){
+  const btn = document.createElement("button");
+  btn.className = "categoria-btn" + (categoriaAtual===valor?" ativa":"");
+  btn.innerText = label;
+  btn.onclick = ()=>{
+    categoriaAtual = valor;
+    atualizarCategoriasUI();
+    renderProdutos();
+  };
+  document.getElementById("categorias").appendChild(btn);
+}
+
+function atualizarCategoriasUI(){
+  document.querySelectorAll(".categoria-btn").forEach(btn=>{
+    btn.classList.remove("ativa");
+    if(btn.innerText.toLowerCase()===categoriaAtual.toLowerCase()
+      || (categoriaAtual==="todas" && btn.innerText==="Todas")){
+        btn.classList.add("ativa");
+    }
+  });
+}
+
+/* ==========================================================
+   FILTRO + BUSCA
+========================================================== */
 
 function renderProdutos(){
-const termo=document.getElementById("busca").value.toLowerCase()
-const grid=document.getElementById("produtos")
-grid.innerHTML=""
+  const grid = document.getElementById("produtos");
+  grid.innerHTML = "";
 
-produtos
-.filter(p=>
-(categoriaAtiva==="Todos"||p.categoria===categoriaAtiva) &&
-p.nome.toLowerCase().includes(termo)
-)
-.forEach(p=>{
-const div=document.createElement("div")
-div.className="produto"
+  let lista = produtos.filter(p=>{
+    const matchCategoria = categoriaAtual==="todas" || p.categoria===categoriaAtual;
+    const matchBusca = p.nome.toLowerCase().includes(buscaAtual.toLowerCase());
+    return matchCategoria && matchBusca;
+  });
 
-if(p.promocao) div.classList.add("glow-promo")
-if(p.estoque<=3) div.classList.add("glow-estoque")
+  lista.forEach(p=>{
+    const preco = p.promocao>0?p.promocao:p.preco;
+    const estoqueBaixo = p.estoque>0 && p.estoque<10;
 
-div.innerHTML=`
-<img src="${p.imagem}">
-<h4>${p.nome}</h4>
-<div class="preco ${p.promocao?'promo':''}">
-R$ ${p.preco}
-</div>
-<small>Estoque: ${p.estoque}</small>
-<button class="btn-add" onclick='adicionar(${JSON.stringify(p)})'>
-Adicionar
-</button>
-`
-grid.appendChild(div)
-})
+    const card = document.createElement("div");
+    card.className = "produto"
+      + (p.promocao>0?" promo":"")
+      + (estoqueBaixo?" quase-esgotado":"");
+
+    card.innerHTML = `
+      <img src="${p.imagem}" alt="${p.nome}">
+      <h4>${p.nome}</h4>
+      <p>${money(preco)}</p>
+      ${estoqueBaixo?'<div class="aviso-estoque">⚠ Poucas unidades</div>':''}
+      <div class="contador">
+        <button onclick="alterarQtd('${p.nome}',-1)">−</button>
+        <span>${carrinho[p.nome]||0}</span>
+        <button onclick="alterarQtd('${p.nome}',1)">+</button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  atualizarCarrinhoUI();
 }
 
-function adicionar(p){
-carrinho.push(p)
-atualizarCarrinho()
+/* ==========================================================
+   ALTERAR QUANTIDADE
+========================================================== */
+
+function alterarQtd(nome,valor){
+  const produto = produtos.find(p=>p.nome===nome);
+  if(!produto) return;
+
+  if(!carrinho[nome]) carrinho[nome]=0;
+
+  if(valor>0 && carrinho[nome]>=produto.estoque){
+    alert("Estoque máximo atingido.");
+    return;
+  }
+
+  carrinho[nome]+=valor;
+  if(carrinho[nome]<0) carrinho[nome]=0;
+
+  renderProdutos();
 }
 
-function atualizarCarrinho(){
-document.getElementById("contadorCarrinho").textContent=carrinho.length
-const area=document.getElementById("itensCarrinho")
-area.innerHTML=""
-let total=0
-
-carrinho.forEach((p,i)=>{
-total+=Number(p.preco)
-area.innerHTML+=`
-<div class="item">
-${p.nome}
-<span>R$ ${p.preco}</span>
-</div>
-`
-})
-
-document.getElementById("valorTotal").textContent=
-"R$ "+total.toFixed(2)
-}
+/* ==========================================================
+   CARRINHO DRAWER
+========================================================== */
 
 function abrirCarrinho(){
-document.getElementById("carrinho").classList.add("aberto")
+  document.getElementById("drawer").classList.add("ativo");
+  document.getElementById("overlay").style.display="block";
 }
 
 function fecharCarrinho(){
-document.getElementById("carrinho").classList.remove("aberto")
+  document.getElementById("drawer").classList.remove("ativo");
+  document.getElementById("overlay").style.display="none";
 }
+
+function atualizarCarrinhoUI(){
+  const lista = document.getElementById("listaCarrinho");
+  const totalEl = document.getElementById("totalCarrinho");
+
+  let total = 0;
+  let html = "";
+
+  Object.keys(carrinho).forEach(nome=>{
+    if(carrinho[nome]>0){
+      const p = produtos.find(x=>x.nome===nome);
+      const preco = p.promocao>0?p.promocao:p.preco;
+      total += preco*carrinho[nome];
+
+      html+=`
+      <div style="margin-bottom:10px;">
+        <strong>${nome}</strong><br>
+        ${carrinho[nome]}x ${money(preco)}
+      </div>
+      `;
+    }
+  });
+
+  if(!html) html="<p>Seu carrinho está vazio</p>";
+
+  lista.innerHTML = html;
+  totalEl.innerText = money(total);
+}
+
+/* ==========================================================
+   CHECKOUT MULTI ETAPA
+========================================================== */
 
 function abrirCheckout(){
-document.getElementById("modalCheckout").style.display="flex"
+  fecharCarrinho();
+  document.getElementById("modalCheckout").style.display="flex";
+  etapaCheckout=1;
+  atualizarEtapas();
 }
 
-function proximaEtapa(n){
-document.querySelectorAll(".etapa").forEach(e=>e.classList.remove("ativa"))
-document.getElementById("etapa"+n).classList.add("ativa")
-document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"))
-document.getElementById("step"+n).classList.add("active")
+function proximaEtapa(){
+  if(etapaCheckout<3){
+    etapaCheckout++;
+    atualizarEtapas();
+  }
 }
 
-function voltarEtapa(n){
-proximaEtapa(n)
+function voltarEtapa(){
+  if(etapaCheckout>1){
+    etapaCheckout--;
+    atualizarEtapas();
+  }
 }
 
-async function finalizar(){
-const dados={
-cliente:document.getElementById("cliente").value,
-telefone:document.getElementById("telefone").value,
-tipo:document.getElementById("tipo").value,
-pagamento:document.getElementById("pagamento").value,
-itens:carrinho
+function atualizarEtapas(){
+  document.querySelectorAll(".etapa").forEach((e,i)=>{
+    e.style.display = (i+1===etapaCheckout)?"block":"none";
+  });
 }
 
-await fetch(API_URL,{
-method:"POST",
-body:JSON.stringify(dados)
-})
+/* ==========================================================
+   SUGESTÃO INTELIGENTE
+========================================================== */
 
-alert("Pedido enviado com sucesso!")
-location.reload()
+function sugerirProduto(){
+  const itens = Object.keys(carrinho).filter(n=>carrinho[n]>0);
+  if(itens.length===0) return null;
+
+  const base = produtos.find(p=>p.nome===itens[0]);
+  if(!base) return null;
+
+  const sugestao = produtos
+    .filter(p=>p.categoria===base.categoria && !itens.includes(p.nome))
+    .sort((a,b)=>b.promocao-a.promocao || a.preco-b.preco)[0];
+
+  return sugestao||null;
 }
+
+/* ==========================================================
+   FINALIZAR PEDIDO
+========================================================== */
+
+async function finalizarPedido(){
+
+  const nome = document.getElementById("cliente").value.trim();
+  const telefone = document.getElementById("telefone").value.trim();
+
+  if(!nome || !telefone){
+    alert("Preencha nome e telefone.");
+    return;
+  }
+
+  let total = 0;
+  let mensagem = "✨ *Novo Pedido Odòmáiyà* ✨\n\n";
+  mensagem += "👤 Cliente: "+nome+"\n";
+  mensagem += "📞 Telefone: "+telefone+"\n\n";
+  mensagem += "🛍️ Itens:\n";
+
+  Object.keys(carrinho).forEach(n=>{
+    if(carrinho[n]>0){
+      const p = produtos.find(x=>x.nome===n);
+      const preco = p.promocao>0?p.promocao:p.preco;
+      total+=preco*carrinho[n];
+      mensagem+=`• ${n} x${carrinho[n]} — ${money(preco)}\n`;
+    }
+  });
+
+  mensagem+=`\n💰 Total: ${money(total)}\n`;
+
+  try{
+    await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        cliente:nome,
+        telefone:telefone,
+        itens:carrinho,
+        total:total
+      })
+    });
+
+    window.open("https://wa.me/555496048808?text="+encodeURIComponent(mensagem));
+    location.reload();
+
+  }catch{
+    alert("Erro ao enviar pedido.");
+  }
+}
+
+/* ==========================================================
+   BUSCA
+========================================================== */
+
+document.addEventListener("input",e=>{
+  if(e.target.id==="busca"){
+    buscaAtual = e.target.value;
+    renderProdutos();
+  }
+});
+
+/* ==========================================================
+   INIT
+========================================================== */
+
+document.addEventListener("DOMContentLoaded",()=>{
+  carregarProdutos();
+});
