@@ -1,176 +1,227 @@
-
-/* ========================================
-   ODÒMÁIYÀ - APP.JS PROFISSIONAL
-   Versão Blindada 2.0
-======================================== */
-
 const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
 
 let produtos = [];
-let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+let carrinho = JSON.parse(localStorage.getItem("carrinho")) || {};
+let etapaAtual = 1;
 
-/* ========================================
-   INIT
-======================================== */
+/* ============================= */
+/* UTIL */
+/* ============================= */
 
-document.addEventListener("DOMContentLoaded", () => {
-    carregarProdutos();
-    atualizarCarrinhoUI();
-});
+function money(v){
+  return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
 
-/* ========================================
-   LOADER
-======================================== */
+function salvarCarrinho(){
+  localStorage.setItem("carrinho",JSON.stringify(carrinho));
+}
 
-function mostrarLoader() {
-    document.getElementById("produtos").innerHTML = `
-        <div style="text-align:center;padding:40px;font-weight:600;">
-            Carregando produtos...
-        </div>
+/* ============================= */
+/* LOADER */
+/* ============================= */
+
+function mostrarLoader(){
+  document.getElementById("produtos").innerHTML=`
+    <div class="loader-area">
+      <div class="loader"></div>
+    </div>
+  `;
+}
+
+/* ============================= */
+/* CARREGAR PRODUTOS */
+/* ============================= */
+
+async function carregar(){
+  mostrarLoader();
+
+  try{
+    const r = await fetch(API_URL+"?acao=produtos",{cache:"no-store"});
+    if(!r.ok) throw new Error("Erro na API");
+
+    produtos = await r.json();
+
+    produtos.sort((a,b)=>
+      (b.promocao>0)-(a.promocao>0) ||
+      a.nome.localeCompare(b.nome)
+    );
+
+    render(produtos);
+
+  }catch(e){
+    document.getElementById("produtos").innerHTML=`
+      <div class="erro-api">
+        Não foi possível carregar os produtos.  
+        Verifique sua conexão.
+      </div>
     `;
+  }
 }
 
-/* ========================================
-   BUSCAR PRODUTOS
-======================================== */
+/* ============================= */
+/* RENDER */
+/* ============================= */
 
-async function carregarProdutos() {
-    mostrarLoader();
+function render(lista){
+  const grid = document.getElementById("produtos");
+  grid.innerHTML="";
 
-    try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error("Erro na API");
+  lista.forEach(p=>{
+    const preco = p.promocao>0?p.promocao:p.preco;
+    const estoqueBaixo = p.estoque>0 && p.estoque<10;
 
-        const data = await response.json();
+    const card = document.createElement("div");
+    card.className="produto"
+      +(p.promocao>0?" promo":"")
+      +(estoqueBaixo?" quase-esgotado":"");
 
-        produtos = data.filter(p => p.estoque > 0);
+    card.innerHTML=`
+      ${p.promocao>0?'<div class="faixa-promo">OFERTA ESPECIAL</div>':''}
+      ${estoqueBaixo?'<div class="badge-estoque">Poucas unidades</div>':''}
+      <img src="${p.imagem}">
+      <h3>${p.nome}</h3>
+      <div class="preco">${money(preco)}</div>
+      <div class="contador">
+        <button onclick="alterar('${p.nome}',-1)">−</button>
+        <span>${carrinho[p.nome]||0}</span>
+        <button onclick="alterar('${p.nome}',1)">+</button>
+      </div>
+    `;
 
-        renderProdutos(produtos);
-    } catch (error) {
-        console.error("Erro:", error);
-        document.getElementById("produtos").innerHTML = `
-            <div style="text-align:center;padding:40px;color:red;">
-                Não foi possível carregar os produtos.
-            </div>
-        `;
-    }
+    grid.appendChild(card);
+  });
+
+  atualizarCarrinho();
 }
 
-/* ========================================
-   RENDER PRODUTOS
-======================================== */
+/* ============================= */
+/* ALTERAR QUANTIDADE */
+/* ============================= */
 
-function renderProdutos(lista) {
-    const container = document.getElementById("produtos");
-    container.innerHTML = "";
+function alterar(nome,valor){
+  const produto = produtos.find(p=>p.nome===nome);
+  if(!produto) return;
 
-    lista.forEach(produto => {
-        const promoClass = produto.promocao ? "promo" : "";
-        const estoqueBaixo = produto.estoque < 10 ? "quase-esgotado" : "";
+  if(!carrinho[nome]) carrinho[nome]=0;
 
-        container.innerHTML += `
-            <div class="produto ${promoClass} ${estoqueBaixo}">
-                <img src="${produto.imagem}" alt="${produto.nome}">
-                <h3>${produto.nome}</h3>
-                <p class="preco">
-                    ${produto.promocao ? 
-                        `<span class="preco-antigo">R$ ${produto.preco}</span> 
-                         R$ ${produto.promocao}` 
-                        : `R$ ${produto.preco}`
-                    }
-                </p>
-                <p class="estoque">Estoque: ${produto.estoque}</p>
-                ${produto.estoque < 10 ? `<p class="aviso-estoque">⚠ Poucas unidades</p>` : ""}
-                <button onclick="adicionarCarrinho('${produto.nome}')">
-                    Adicionar
-                </button>
-            </div>
-        `;
+  if(valor>0 && carrinho[nome]>=produto.estoque){
+    alert("Quantidade máxima disponível.");
+    return;
+  }
+
+  carrinho[nome]+=valor;
+  if(carrinho[nome]<=0) delete carrinho[nome];
+
+  salvarCarrinho();
+  render(produtos);
+
+  const card = [...document.querySelectorAll(".produto")]
+    .find(el=>el.innerText.includes(nome));
+
+  if(card){
+    card.classList.add("adicionado");
+    setTimeout(()=>card.classList.remove("adicionado"),400);
+  }
+}
+
+/* ============================= */
+/* REMOVER ITEM */
+/* ============================= */
+
+function removerItem(nome){
+  delete carrinho[nome];
+  salvarCarrinho();
+  render(produtos);
+}
+
+/* ============================= */
+/* CARRINHO */
+/* ============================= */
+
+function atualizarCarrinho(){
+  const area = document.getElementById("itensCarrinho");
+  const contador = document.getElementById("contadorCarrinho");
+
+  let total=0;
+  let html="";
+
+  Object.keys(carrinho).forEach(nome=>{
+    const p = produtos.find(x=>x.nome===nome);
+    if(!p) return;
+
+    const preco=p.promocao>0?p.promocao:p.preco;
+    total+=preco*carrinho[nome];
+
+    html+=`
+      <div class="item-carrinho">
+        <div class="item-info">
+          <strong>${nome}</strong><br>
+          ${money(preco)}
+        </div>
+        <div class="item-acoes">
+          <button onclick="alterar('${nome}',-1)">−</button>
+          <span>${carrinho[nome]}</span>
+          <button onclick="alterar('${nome}',1)">+</button>
+          <button class="btn-remover" onclick="removerItem('${nome}')">×</button>
+        </div>
+      </div>
+    `;
+  });
+
+  if(!html) html="<p>Seu carrinho está vazio</p>";
+
+  area.innerHTML=html;
+  document.getElementById("valorTotal").innerText=money(total);
+  contador.innerText=Object.values(carrinho).reduce((a,b)=>a+b,0);
+}
+
+/* ============================= */
+/* FINALIZAR */
+/* ============================= */
+
+async function finalizar(){
+  let total=0;
+  let msg="✨ *Novo Pedido Odòmáiyà* ✨\n\n";
+
+  const nome=document.getElementById("cliente").value;
+  const tipo=document.getElementById("tipo").value;
+  const pagamento=document.getElementById("pagamento").value;
+
+  msg+="👤 Cliente: "+nome+"\n";
+  msg+="📦 Tipo: "+tipo+"\n";
+  msg+="💳 Pagamento: "+pagamento+"\n\n";
+
+  if(tipo==="entrega"){
+    msg+=`📍 Endereço: ${rua.value}, ${numero.value}, ${cidade.value}\n`;
+  }else{
+    msg+="📍 Retirada na loja\n";
+  }
+
+  msg+="\n🛍️ Itens:\n";
+
+  Object.keys(carrinho).forEach(n=>{
+    const p=produtos.find(x=>x.nome===n);
+    const preco=p.promocao>0?p.promocao:p.preco;
+    total+=preco*carrinho[n];
+    msg+=`• ${n} x${carrinho[n]} — ${money(preco)}\n`;
+  });
+
+  msg+=`\n💰 Total: ${money(total)}\n`;
+
+  try{
+    await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify({cliente:nome,itens:carrinho,total})
     });
+
+    localStorage.removeItem("carrinho");
+    window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg));
+    location.reload();
+
+  }catch(e){
+    alert("Erro ao enviar pedido. Tente novamente.");
+  }
 }
 
-/* ========================================
-   CARRINHO
-======================================== */
-
-function adicionarCarrinho(nome) {
-    const produto = produtos.find(p => p.nome === nome);
-    if (!produto) return;
-
-    const existente = carrinho.find(item => item.nome === nome);
-
-    if (existente) {
-        if (existente.quantidade < produto.estoque) {
-            existente.quantidade++;
-        } else {
-            alert("Estoque máximo atingido.");
-            return;
-        }
-    } else {
-        carrinho.push({
-            nome: produto.nome,
-            preco: produto.promocao || produto.preco,
-            quantidade: 1
-        });
-    }
-
-    salvarCarrinho();
-    atualizarCarrinhoUI();
-}
-
-function salvarCarrinho() {
-    localStorage.setItem("carrinho", JSON.stringify(carrinho));
-}
-
-function atualizarCarrinhoUI() {
-    const total = carrinho.reduce((soma, item) => {
-        return soma + (item.preco * item.quantidade);
-    }, 0);
-
-    document.getElementById("total").innerText = `Total: R$ ${total.toFixed(2)}`;
-}
-
-/* ========================================
-   CHECKOUT
-======================================== */
-
-async function finalizarPedido() {
-
-    if (carrinho.length === 0) {
-        alert("Carrinho vazio.");
-        return;
-    }
-
-    const nome = prompt("Seu nome:");
-    const telefone = prompt("Seu telefone:");
-
-    if (!nome || !telefone) {
-        alert("Preencha corretamente.");
-        return;
-    }
-
-    const pedido = {
-        cliente: nome,
-        telefone: telefone,
-        itens: carrinho,
-        total: carrinho.reduce((soma, item) => soma + (item.preco * item.quantidade), 0)
-    };
-
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(pedido)
-        });
-
-        if (!response.ok) throw new Error("Erro ao enviar");
-
-        alert("Pedido enviado com sucesso!");
-        carrinho = [];
-        salvarCarrinho();
-        atualizarCarrinhoUI();
-
-    } catch (error) {
-        alert("Erro ao enviar pedido.");
-        console.error(error);
-    }
-}
+/* INIT */
+document.addEventListener("DOMContentLoaded",carregar);
