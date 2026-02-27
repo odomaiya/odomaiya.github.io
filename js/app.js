@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby5tJVh9IT6lyHOjjM5PhRGDgT7Fs7MOJiQ2-C4ErIK6sDGYmeW6_JWjFmXTXbRl9Ng/exec?acao=produtos";
 
 let produtos = [];
 let carrinho = JSON.parse(localStorage.getItem("carrinho")) || {};
