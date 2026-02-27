@@ -1,314 +1,337 @@
+/* =========================
+   RESET & BASE
+========================= */
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
 }
 
 body{
+font-family: 'Poppins', sans-serif;
 background:#f4f6f9;
-color:#222;
+color:#1a1a1a;
+overflow-x:hidden;
 }
 
+button{
+cursor:pointer;
+border:none;
+font-family:inherit;
+}
+
+/* =========================
+   HEADER
+========================= */
 .header{
-background:#0B2A4A;
-color:white;
-padding:15px 25px;
 display:flex;
-flex-wrap:wrap;
-align-items:center;
 justify-content:space-between;
-gap:15px;
+align-items:center;
+padding:15px 25px;
+background:#0b1a2f;
+color:white;
+position:sticky;
+top:0;
+z-index:1000;
+box-shadow:0 4px 20px rgba(0,0,0,0.15);
 }
 
 .logo-area{
 display:flex;
 align-items:center;
-gap:15px;
+gap:12px;
 }
 
 .logo{
-height:60px;
+width:45px;
+height:45px;
+border-radius:50%;
+object-fit:cover;
 }
 
-.logo-area h1{
-font-size:20px;
-font-weight:600;
-}
-
-.logo-area p{
-font-size:12px;
-opacity:.8;
-}
-
-.categorias{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-}
-
-.categorias button{
-background:white;
-border:none;
-padding:6px 14px;
-border-radius:20px;
-cursor:pointer;
-font-size:13px;
-transition:.3s;
-}
-
-.categorias button.ativo{
-background:#0077ff;
-color:white;
-}
-
-.social{
-display:flex;
-gap:10px;
-}
-
-.social-link{
+.header-actions{
 display:flex;
 align-items:center;
-gap:5px;
-color:white;
-text-decoration:none;
-font-size:13px;
+gap:12px;
 }
 
-.icon-mini{
-width:16px;
+#busca{
+padding:8px 12px;
+border-radius:10px;
+border:none;
+width:200px;
+outline:none;
 }
 
-.filtros{
-padding:15px 25px;
+.btn-carrinho{
+background:white;
+color:#0b1a2f;
+padding:8px 14px;
+border-radius:12px;
+font-weight:600;
+transition:0.2s;
+}
+
+.btn-carrinho:hover{
+transform:scale(1.05);
+}
+
+/* =========================
+   CATEGORIAS
+========================= */
+.categorias-container{
+background:white;
+padding:10px 20px;
+box-shadow:0 3px 12px rgba(0,0,0,0.05);
+}
+
+#categorias{
 display:flex;
 gap:10px;
-flex-wrap:wrap;
+overflow-x:auto;
 }
 
-.filtros input,
-.filtros select{
-padding:8px;
-border-radius:8px;
-border:1px solid #ddd;
+.categoria-btn{
+padding:6px 14px;
+border-radius:20px;
+background:#eee;
+font-size:14px;
+white-space:nowrap;
+transition:0.2s;
 }
 
-.grid{
-padding:25px;
+.categoria-btn.ativa{
+background:#0b1a2f;
+color:white;
+}
+
+/* =========================
+   GRID PRODUTOS
+========================= */
+.grid-produtos{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
 gap:20px;
+padding:25px;
 }
 
 .produto{
 background:white;
-border-radius:14px;
+border-radius:16px;
 padding:15px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
 position:relative;
+transition:0.3s;
 display:flex;
 flex-direction:column;
-gap:8px;
-box-shadow:0 6px 18px rgba(0,0,0,.05);
-transition:.3s;
 }
 
 .produto:hover{
-transform:translateY(-4px);
+transform:translateY(-5px);
+box-shadow:0 12px 25px rgba(0,0,0,0.15);
 }
 
 .produto img{
 width:100%;
 height:180px;
 object-fit:cover;
-border-radius:10px;
+border-radius:12px;
+margin-bottom:10px;
 }
 
-.preco{
+.produto h4{
+font-size:15px;
+margin-bottom:6px;
+}
+
+.produto p{
 font-weight:600;
+color:#0b1a2f;
+margin-bottom:6px;
 }
 
-.promo{
-color:#0077ff;
-font-weight:700;
-}
-
-.glow-promo{
+/* =========================
+   PROMOÇÃO GLOW AZUL
+========================= */
+.produto.promo{
+border:2px solid #2196f3;
 animation:glowBlue 2s infinite alternate;
 }
 
 @keyframes glowBlue{
-from{box-shadow:0 0 5px #0077ff}
-to{box-shadow:0 0 15px #0077ff}
+from{box-shadow:0 0 5px #2196f3;}
+to{box-shadow:0 0 20px #2196f3;}
 }
 
-.glow-estoque{
+/* =========================
+   ESTOQUE BAIXO GLOW LARANJA
+========================= */
+.produto.quase-esgotado{
+border:2px solid #ff9800;
 animation:glowOrange 2s infinite alternate;
 }
 
 @keyframes glowOrange{
-from{box-shadow:0 0 5px #ff9800}
-to{box-shadow:0 0 15px #ff9800}
+from{box-shadow:0 0 5px #ff9800;}
+to{box-shadow:0 0 18px #ff9800;}
 }
 
-.btn-add{
+.aviso-estoque{
+font-size:12px;
+color:#ff9800;
+font-weight:600;
+margin-top:4px;
+}
+
+/* =========================
+   CONTADOR
+========================= */
+.contador{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
 margin-top:auto;
-background:#0B2A4A;
-color:white;
-border:none;
-padding:8px;
-border-radius:8px;
-cursor:pointer;
-transition:.3s;
 }
 
-.btn-add:hover{
-background:#0077ff;
-}
-
-.btn-carrinho{
-position:fixed;
-bottom:20px;
-right:20px;
-background:#0077ff;
-color:white;
-border:none;
-padding:14px;
+.contador button{
+width:28px;
+height:28px;
 border-radius:50%;
-font-size:18px;
-cursor:pointer;
-box-shadow:0 8px 20px rgba(0,0,0,.2);
+background:#0b1a2f;
+color:white;
+font-weight:bold;
 }
 
-.carrinho{
+/* =========================
+   DRAWER CARRINHO
+========================= */
+#overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.4);
+display:none;
+z-index:1500;
+}
+
+.drawer{
 position:fixed;
 right:-400px;
 top:0;
-width:350px;
 height:100%;
+width:350px;
 background:white;
-box-shadow:-5px 0 20px rgba(0,0,0,.2);
-transition:.4s;
+box-shadow:-8px 0 30px rgba(0,0,0,0.2);
+padding:20px;
+transition:0.4s;
+z-index:2000;
 display:flex;
 flex-direction:column;
-z-index:1000;
 }
 
-.carrinho.aberto{
+.drawer.ativo{
 right:0;
 }
 
-.carrinho-header{
-display:flex;
-justify-content:space-between;
-padding:15px;
-background:#0B2A4A;
-color:white;
+.footer-carrinho{
+margin-top:auto;
+padding-top:15px;
+border-top:1px solid #eee;
 }
 
-#itensCarrinho{
-flex:1;
-overflow-y:auto;
-padding:15px;
-}
-
-.item{
-display:flex;
-justify-content:space-between;
-margin-bottom:10px;
-font-size:13px;
-}
-
-.carrinho-footer{
-padding:15px;
-border-top:1px solid #ddd;
-}
-
-.total{
-font-weight:600;
-margin-bottom:10px;
-}
-
-.btn-finalizar{
+.btn-principal{
 width:100%;
-background:#0077ff;
+padding:12px;
+background:#0b1a2f;
 color:white;
-border:none;
-padding:10px;
-border-radius:8px;
-cursor:pointer;
+border-radius:12px;
+margin-top:10px;
+font-weight:600;
 }
 
+/* =========================
+   MODAL
+========================= */
 .modal{
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.6);
+inset:0;
+background:rgba(0,0,0,0.6);
 display:none;
-align-items:center;
 justify-content:center;
-z-index:2000;
+align-items:center;
+z-index:3000;
 }
 
 .modal-content{
 background:white;
+padding:25px;
+border-radius:18px;
 width:95%;
 max-width:420px;
-border-radius:16px;
-padding:20px;
-max-height:90vh;
-overflow-y:auto;
+animation:fadeIn 0.3s ease;
 }
 
-.progress-bar{
-display:flex;
-gap:5px;
-margin-bottom:15px;
+@keyframes fadeIn{
+from{opacity:0; transform:scale(0.9);}
+to{opacity:1; transform:scale(1);}
 }
 
-.step{
-flex:1;
-height:6px;
-background:#ddd;
-border-radius:4px;
+/* =========================
+   SUGESTÃO
+========================= */
+.sugestao-box h3{
+margin-bottom:10px;
 }
 
-.step.active{
-background:#0077ff;
-}
-
-.etapa{
-display:none;
-flex-direction:column;
-gap:10px;
-}
-
-.etapa.ativa{
-display:flex;
-}
-
-input,select{
-padding:8px;
-border-radius:8px;
-border:1px solid #ddd;
-}
-
-.btn-etapa,
-.btn-finalizar-modal{
-background:#0B2A4A;
+.sugestao-box button{
+margin-top:15px;
+width:100%;
+padding:10px;
+border-radius:10px;
+background:#0b1a2f;
 color:white;
-border:none;
-padding:10px;
-border-radius:8px;
-cursor:pointer;
 }
 
-.btn-secundario{
-background:#ccc;
-border:none;
-padding:10px;
-border-radius:8px;
-cursor:pointer;
+/* =========================
+   LOADING GLOBAL
+========================= */
+.loading-global{
+position:fixed;
+inset:0;
+background:rgba(255,255,255,0.7);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:5000;
+}
+
+.spinner{
+width:45px;
+height:45px;
+border:4px solid #ccc;
+border-top:4px solid #0b1a2f;
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+to{transform:rotate(360deg);}
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+@media(max-width:768px){
+
+#busca{
+width:120px;
+}
+
+.drawer{
+width:100%;
+}
+
+.grid-produtos{
+grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+}
 }
