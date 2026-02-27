@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Painel Administrativo - Odòmáiyà</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#f4f6f9;padding:30px;font-family:sans-serif;}
+.admin-card{background:#fff;padding:30px;border-radius:12px;max-width:900px;margin:auto;box-shadow:0 10px 30px rgba(0,0,0,.1);}
+.admin-card h2{margin-bottom:20px}
+input,button{padding:10px;border-radius:8px;border:1px solid #ccc}
+button{background:#0b2a4a;color:#fff;cursor:pointer}
+.metricas{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:30px}
+.metricas div{background:#0b2a4a;color:#fff;padding:15px;border-radius:10px}
+</style>
+</head>
+<body>
+
+<div class="admin-card" id="loginArea">
+  <h2>Acesso Administrativo</h2>
+  <input type="password" id="senhaAdmin" placeholder="Senha">
+  <button onclick="loginAdmin()">Entrar</button>
+</div>
+
+<div class="admin-card" id="painelAdmin" style="display:none;">
+  <h2>Dashboard Odòmáiyà</h2>
+  <div class="metricas" id="metricas"></div>
+  <div id="listaPedidos"></div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
