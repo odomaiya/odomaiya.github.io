@@ -320,3 +320,92 @@ footer{
   padding:15px;
   margin-top:40px;
 }
+
+/* ============================= */
+/* LOADER PREMIUM */
+/* ============================= */
+
+.loader-area{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:60px;
+}
+
+.loader{
+  width:45px;
+  height:45px;
+  border:4px solid #e3ecf7;
+  border-top:4px solid #0d4f8b;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg);}
+}
+
+/* ============================= */
+/* MICRO INTERAÇÕES */
+/* ============================= */
+
+.produto.adicionado{
+  animation:pulseAdd .4s ease;
+}
+
+@keyframes pulseAdd{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.05);}
+  100%{transform:scale(1);}
+}
+
+/* ============================= */
+/* ITEM CARRINHO PROFISSIONAL */
+/* ============================= */
+
+.item-carrinho{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #edf2f7;
+}
+
+.item-info{
+  font-size:13px;
+}
+
+.item-acoes{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.item-acoes button{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  border:none;
+  background:#0d4f8b;
+  color:white;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.btn-remover{
+  background:#ff4d4d !important;
+}
+
+/* ============================= */
+/* ERRO VISUAL */
+/* ============================= */
+
+.erro-api{
+  background:#ffe6e6;
+  color:#b30000;
+  padding:15px;
+  border-radius:12px;
+  text-align:center;
+  margin:20px;
+  font-size:13px;
+}
