@@ -1,58 +1,102 @@
-const App = (function () {
+document.addEventListener("DOMContentLoaded", async () => {
+  const produtosContainer = document.getElementById("produtos");
+  const loader = document.getElementById("loaderGlobal");
 
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || {};
+  loader.style.display = "flex";
 
-  function salvarCarrinho() {
-    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  try {
+    let produtos = [];
+
+    // Tenta buscar da API
+    if (typeof API !== "undefined" && API.getProdutos) {
+      produtos = await API.getProdutos();
+    }
+
+    // Fallback caso API falhe ou retorne vazio
+    if (!produtos || produtos.length === 0) {
+      produtos = [
+        {
+          id: 1,
+          nome: "Guia de Oxum",
+          preco: 89.9,
+          imagem: "https://via.placeholder.com/300x300?text=Guia+Oxum"
+        },
+        {
+          id: 2,
+          nome: "Imagem de Ogum",
+          preco: 159.9,
+          imagem: "https://via.placeholder.com/300x300?text=Ogum"
+        },
+        {
+          id: 3,
+          nome: "Incenso Natural",
+          preco: 19.9,
+          imagem: "https://via.placeholder.com/300x300?text=Incenso"
+        }
+      ];
+    }
+
+    renderizarProdutos(produtos);
+
+  } catch (erro) {
+    console.error("Erro ao carregar produtos:", erro);
+    produtosContainer.innerHTML = `
+      <div style="text-align:center; padding:40px;">
+        <h2>Não foi possível carregar os produtos</h2>
+        <p>Verifique a conexão ou a API.</p>
+      </div>
+    `;
   }
 
-  function adicionar(nome) {
-    if (!carrinho[nome]) carrinho[nome] = 0;
-    carrinho[nome]++;
-    salvarCarrinho();
-    UI.toast("Produto adicionado");
-    UIRender.carrinho(carrinho);
+  loader.style.display = "none";
+});
+
+function renderizarProdutos(lista) {
+  const container = document.getElementById("produtos");
+
+  if (!lista.length) {
+    container.innerHTML = `
+      <div style="text-align:center; padding:40px;">
+        <h2>Nenhum produto encontrado</h2>
+      </div>
+    `;
+    return;
   }
 
-  function remover(nome) {
-    delete carrinho[nome];
-    salvarCarrinho();
-    UIRender.carrinho(carrinho);
-  }
+  container.innerHTML = lista.map(produto => `
+    <div class="produto">
+      <img src="${produto.imagem}" alt="${produto.nome}">
+      <h3>${produto.nome}</h3>
+      <div class="preco">R$ ${produto.preco.toFixed(2)}</div>
+      <button onclick="adicionarCarrinho(${produto.id})">
+        Adicionar
+      </button>
+    </div>
+  `).join("");
+}
 
-  async function finalizar() {
+/* ============================
+   CARRINHO SIMPLES
+============================ */
 
-    const cliente = {
-      nome: document.getElementById("cliente").value,
-      tipo: document.getElementById("tipo").value,
-      pagamento: document.getElementById("pagamento").value
-    };
+let carrinho = [];
 
-    const total = await Checkout.finalizar(carrinho, cliente);
+function adicionarCarrinho(id) {
+  carrinho.push(id);
+  atualizarCarrinho();
+  mostrarToast("Produto adicionado!");
+}
 
-    const msg = `✨ Novo Pedido Odòmáiyà ✨\nTotal: ${UI.money(total)}`;
+function atualizarCarrinho() {
+  document.getElementById("contadorCarrinho").innerText = carrinho.length;
+}
 
-    window.open("https://wa.me/555496048808?text=" + encodeURIComponent(msg));
+function mostrarToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.innerText = msg;
+  toast.classList.add("show");
 
-    carrinho = {};
-    salvarCarrinho();
-    location.reload();
-  }
-
-  function init() {
-    Estoque.carregar();
-    Estoque.iniciarPolling();
-  }
-
-  return {
-    init,
-    adicionar,
-    remover,
-    finalizar
-  };
-
-})();
-
-window.App = App;
-
-document.addEventListener("DOMContentLoaded", App.init);
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
+}
