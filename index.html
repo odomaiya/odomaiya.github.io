@@ -1,120 +1,59 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Odòmáiyà Artigos Religiosos</title>
 
-<link rel="icon" href="logo.png">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="css/style.css?v=6.0">
-<script defer src="js/app.js?v=6.0"></script>
-
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0B2A4A">
-</head>
+<link rel="icon" href="favicon.png">
 
+<link rel="stylesheet" href="css/style.css">
+</head>
 <body>
 
-<div id="overlay"></div>
+<!-- ================= HEADER ================= -->
 
 <header class="header">
-  <div class="logo-area">
+  <div class="header-inner">
     <img src="logo.png" class="logo">
-    <div>
-      <h1>Odòmáiyà</h1>
-      <p>Artigos Religiosos</p>
+    <div class="cart-area" id="btnCheckout">
+      <span class="cart-icon">🛍</span>
+      <span id="contadorCarrinho">0</span>
     </div>
-  </div>
-
-  <div class="social">
-    <a href="https://wa.me/555496048808" target="_blank" class="social-link">WhatsApp</a>
-    <a href="https://www.instagram.com/odomaia_artigosreligiosos" target="_blank" class="social-link">Instagram</a>
   </div>
 </header>
 
-<section class="filtros">
-  <input type="text" id="busca" placeholder="Buscar produto...">
-</section>
+<!-- ================= LOADER GLOBAL ================= -->
 
-<section id="produtos" class="grid"></section>
+<div id="globalLoader" class="global-loader hidden">
+  <div class="loader"></div>
+</div>
 
-<button class="btn-carrinho" onclick="abrirCarrinho()">
-🛒 <span id="contadorCarrinho">0</span>
-</button>
+<!-- ================= PRODUTOS ================= -->
 
-<div class="carrinho" id="carrinho">
+<main>
+  <section class="produtos-grid" id="produtos"></section>
+</main>
 
-  <div class="carrinho-header">
-    <h3>Seu Carrinho</h3>
-    <button onclick="fecharCarrinho()" class="btn-fechar-carrinho">✕</button>
-  </div>
+<!-- ================= CHECKOUT MODAL ================= -->
 
-  <div id="itensCarrinho"></div>
-
-  <div class="carrinho-footer">
-    <div class="total">
-      Total: <span id="valorTotal">R$ 0,00</span>
-    </div>
-    <button class="btn-finalizar" onclick="abrirCheckout()">Finalizar Pedido</button>
+<div id="modalCheckout" class="checkout-modal hidden">
+  <div class="checkout-box">
+    <button class="fechar" onclick="Checkout.fechar()">✕</button>
+    <div id="checkoutSteps"></div>
   </div>
 </div>
 
-<div class="modal" id="modalCheckout">
-  <div class="modal-content">
+<!-- ================= JS ================= -->
 
-    <div class="progress-bar">
-      <div class="step active" id="step1"></div>
-      <div class="step" id="step2"></div>
-      <div class="step" id="step3"></div>
-    </div>
-
-    <div id="etapa1" class="etapa ativa">
-      <h3>Seus Dados</h3>
-      <input type="text" id="cliente" placeholder="Nome">
-      <input type="text" id="telefone" placeholder="Telefone">
-      <button onclick="proximaEtapa(2)" class="btn-etapa">Continuar</button>
-    </div>
-
-    <div id="etapa2" class="etapa">
-      <h3>Entrega</h3>
-      <select id="tipo">
-        <option value="retirada">Retirada na loja</option>
-        <option value="entrega">Entrega</option>
-      </select>
-
-      <div id="enderecoArea" style="display:none;">
-        <input type="text" id="cep" placeholder="CEP">
-        <input type="text" id="rua" placeholder="Rua">
-        <input type="text" id="numero" placeholder="Número">
-        <input type="text" id="cidade" placeholder="Cidade">
-      </div>
-
-      <button onclick="proximaEtapa(1)" class="btn-secundario">Voltar</button>
-      <button onclick="proximaEtapa(3)" class="btn-etapa">Continuar</button>
-    </div>
-
-    <div id="etapa3" class="etapa">
-      <h3>Pagamento</h3>
-      <select id="pagamento">
-        <option value="pix">Pix</option>
-        <option value="cartao">Cartão</option>
-        <option value="dinheiro">Dinheiro</option>
-      </select>
-
-      <div id="sugestaoArea"></div>
-
-      <button onclick="proximaEtapa(2)" class="btn-secundario">Voltar</button>
-      <button onclick="finalizar()" class="btn-finalizar-modal">Enviar Pedido</button>
-    </div>
-
-  </div>
-</div>
-
-<footer>
-R. Sete de Agosto, 28 - Centro, Passo Fundo - RS
-</footer>
+<script src="js/api.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/estoque.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/checkout.js"></script>
+<script src="js/app.js"></script>
 
 </body>
 </html>
