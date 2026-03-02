@@ -1,59 +1,58 @@
-// ===============================
-// CORE APP
-// ===============================
+const App = (function () {
 
-const Carrinho = {
+  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || {};
 
-  itens: {},
-
-  aumentar(nome) {
-    this.itens[nome] = (this.itens[nome] || 0) + 1;
-    this.update();
-  },
-
-  diminuir(nome) {
-    if (!this.itens[nome]) return;
-    this.itens[nome]--;
-    if (this.itens[nome] <= 0) delete this.itens[nome];
-    this.update();
-  },
-
-  getQtd(nome) {
-    return this.itens[nome] || 0;
-  },
-
-  total() {
-    let total = 0;
-    Estoque.produtos.forEach(p => {
-      if (this.itens[p.nome]) {
-        total += p.preco * this.itens[p.nome];
-      }
-    });
-    return total;
-  },
-
-  limpar() {
-    this.itens = {};
-    this.update();
-  },
-
-  update() {
-    document.getElementById("contadorCarrinho").innerText =
-      Object.values(this.itens).reduce((a,b)=>a+b,0);
-
-    UI.renderProdutos(Estoque.produtos);
+  function salvarCarrinho() {
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
   }
 
-};
+  function adicionar(nome) {
+    if (!carrinho[nome]) carrinho[nome] = 0;
+    carrinho[nome]++;
+    salvarCarrinho();
+    UI.toast("Produto adicionado");
+    UIRender.carrinho(carrinho);
+  }
 
-// INICIALIZAÇÃO
+  function remover(nome) {
+    delete carrinho[nome];
+    salvarCarrinho();
+    UIRender.carrinho(carrinho);
+  }
 
-document.addEventListener("DOMContentLoaded", async () => {
+  async function finalizar() {
 
-  await Estoque.carregar();
-  Estoque.iniciarPolling();
+    const cliente = {
+      nome: document.getElementById("cliente").value,
+      tipo: document.getElementById("tipo").value,
+      pagamento: document.getElementById("pagamento").value
+    };
 
-  document.getElementById("btnCheckout")
-    .addEventListener("click", () => Checkout.abrir());
+    const total = await Checkout.finalizar(carrinho, cliente);
 
-});
+    const msg = `✨ Novo Pedido Odòmáiyà ✨\nTotal: ${UI.money(total)}`;
+
+    window.open("https://wa.me/555496048808?text=" + encodeURIComponent(msg));
+
+    carrinho = {};
+    salvarCarrinho();
+    location.reload();
+  }
+
+  function init() {
+    Estoque.carregar();
+    Estoque.iniciarPolling();
+  }
+
+  return {
+    init,
+    adicionar,
+    remover,
+    finalizar
+  };
+
+})();
+
+window.App = App;
+
+document.addEventListener("DOMContentLoaded", App.init);
