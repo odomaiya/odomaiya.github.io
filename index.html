@@ -11,6 +11,26 @@
 </head>
 <body>
 
+<div id="produtos" class="grid"></div>
+
+<div class="carrinho">
+  <h2>Seu Carrinho</h2>
+  <div id="carrinho-itens"></div>
+  <div class="total">Total: <span id="carrinho-total">R$ 0,00</span></div>
+
+  <input id="cliente" placeholder="Seu nome">
+  <select id="entrega">
+    <option>Entrega</option>
+    <option>Retirada</option>
+  </select>
+  <select id="pagamento">
+    <option>Pix</option>
+    <option>Dinheiro</option>
+  </select>
+
+  <button id="btn-finalizar">Finalizar Pedido</button>
+</div>
+  
 <!-- LOADER GLOBAL -->
 <div id="loaderGlobal" class="loader-global">
   <div class="loader"></div>
