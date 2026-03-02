@@ -1,35 +1,26 @@
-const Estoque = (function () {
+window.ESTOQUE = {
 
-  let produtos = [];
-  let polling;
+  lista: [],
 
-  async function carregar() {
-    UI.loader(true);
-    produtos = await API.getProdutos();
-    UI.loader(false);
-    UIRender.produtos(produtos);
+  async carregar() {
+    try {
+      this.lista = await API.getProdutos();
+      UI.renderProdutos(this.lista);
+    } catch (e) {
+      UI.erro("Erro ao carregar produtos.");
+    }
+  },
+
+  iniciarPolling() {
+    setInterval(async () => {
+      try {
+        const atualizada = await API.getProdutos();
+        this.lista = atualizada;
+        UI.renderProdutos(this.lista);
+      } catch (e) {
+        console.warn("Polling falhou.");
+      }
+    }, 15000);
   }
 
-  async function revalidar() {
-    const novos = await API.getProdutos();
-    produtos = novos;
-    UIRender.produtos(produtos);
-  }
-
-  function iniciarPolling() {
-    polling = setInterval(revalidar, 20000);
-  }
-
-  function getProdutos() {
-    return produtos;
-  }
-
-  return {
-    carregar,
-    iniciarPolling,
-    getProdutos
-  };
-
-})();
-
-window.Estoque = Estoque;
+};
