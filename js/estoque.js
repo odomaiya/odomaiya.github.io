@@ -1,34 +1,35 @@
-// ===============================
-// ESTOQUE + POLLING
-// ===============================
+const Estoque = (function () {
 
-const Estoque = {
+  let produtos = [];
+  let polling;
 
-  produtos: [],
-  pollingInterval: null,
-
-  async carregar() {
-    UI.showLoader(true);
-    const data = await API.getProdutos();
-    if (!data) return;
-
-    this.produtos = data;
-    UI.renderProdutos(this.produtos);
-    UI.showLoader(false);
-  },
-
-  iniciarPolling() {
-    this.pollingInterval = setInterval(() => {
-      this.revalidar();
-    }, 20000);
-  },
-
-  async revalidar() {
-    const data = await API.getProdutos();
-    if (!data) return;
-
-    this.produtos = data;
-    UI.renderProdutos(this.produtos);
+  async function carregar() {
+    UI.loader(true);
+    produtos = await API.getProdutos();
+    UI.loader(false);
+    UIRender.produtos(produtos);
   }
 
-};
+  async function revalidar() {
+    const novos = await API.getProdutos();
+    produtos = novos;
+    UIRender.produtos(produtos);
+  }
+
+  function iniciarPolling() {
+    polling = setInterval(revalidar, 20000);
+  }
+
+  function getProdutos() {
+    return produtos;
+  }
+
+  return {
+    carregar,
+    iniciarPolling,
+    getProdutos
+  };
+
+})();
+
+window.Estoque = Estoque;
