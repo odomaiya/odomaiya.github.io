@@ -1,7 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
+UI.init();
 
-  ESTOQUE.carregar();
-  ESTOQUE.iniciarPolling();
-
-  UI.iniciarEventos();
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("sw.js");
+}
 });
