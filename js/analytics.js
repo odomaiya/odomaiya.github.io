@@ -1,11 +1,11 @@
-// ===============================
-// ANALYTICS ODÒMÁIYÀ
-// ===============================
+const Analytics = (function () {
 
-const Analytics = {
-
-  track(evento, dados = {}) {
-    API.registrarAnalytics(evento, JSON.stringify(dados));
+  function track(evento, dados = {}) {
+    API.analytics(evento, dados);
   }
 
-};
+  return { track };
+
+})();
+
+window.Analytics = Analytics;
