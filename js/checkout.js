@@ -1,34 +1,41 @@
-const Checkout = (function () {
+window.Checkout={
 
-  async function finalizar(carrinho, cliente) {
+finalizar(){
 
-    let total = 0;
+const nome=document.getElementById("cliente").value
+const telefone=document.getElementById("telefone").value
+const tipo=document.getElementById("tipo").value
+const pagamento=document.getElementById("pagamento").value
 
-    const produtos = Estoque.getProdutos();
+let msg="🛍️ *Novo Pedido Odòmáiyà* \n\n"
+msg+="👤 Cliente: "+nome+"\n"
+msg+="📞 Telefone: "+telefone+"\n"
+msg+="📦 Tipo: "+tipo+"\n"
+msg+="💳 Pagamento: "+pagamento+"\n\n"
 
-    Object.keys(carrinho).forEach(nome => {
-      const p = produtos.find(x => x.nome === nome);
-      const preco = p.promocao > 0 ? p.promocao : p.preco;
-      total += preco * carrinho[nome];
-    });
+if(tipo==="entrega"){
+msg+=`📍 Endereço: ${rua.value}, ${numero.value}, ${cidade.value}\n`
+}else{
+msg+="📍 Retirada na loja\n"
+}
 
-    await API.enviarPedido({
-      cliente: cliente.nome,
-      tipo: cliente.tipo,
-      pagamento: cliente.pagamento,
-      itens: carrinho,
-      total
-    });
+msg+="\n🛍️ Itens:\n"
 
-    await API.atualizarEstoque(carrinho);
+let total=0
 
-    Analytics.track("pedido_finalizado", { total });
+Object.keys(UI.carrinho).forEach(n=>{
+if(UI.carrinho[n]>0){
+const p=ESTOQUE.lista.find(x=>x.nome===n)
+const preco=p.promocao>0?p.promocao:p.preco
+total+=preco*UI.carrinho[n]
+msg+=`• ${n} x${UI.carrinho[n]} — R$ ${preco.toFixed(2)}\n`
+}
+})
 
-    return total;
-  }
+msg+=`\n💰 Total: R$ ${total.toFixed(2)}\n`
 
-  return { finalizar };
+window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg))
 
-})();
+}
 
-window.Checkout = Checkout;
+}
