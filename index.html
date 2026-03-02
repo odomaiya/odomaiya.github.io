@@ -1,57 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Odòmáiyà Artigos Religiosos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Odòmáiyà Artigos Religiosos</title>
-
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="favicon.png">
-
-<link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- ================= HEADER ================= -->
-
-<header class="header">
-  <div class="header-inner">
-    <img src="logo.png" class="logo">
-    <div class="cart-area" id="btnCheckout">
-      <span class="cart-icon">🛍</span>
-      <span id="contadorCarrinho">0</span>
-    </div>
-  </div>
-</header>
-
-<!-- ================= LOADER GLOBAL ================= -->
-
-<div id="globalLoader" class="global-loader hidden">
+<!-- LOADER GLOBAL -->
+<div id="loaderGlobal" class="loader-global">
   <div class="loader"></div>
 </div>
 
-<!-- ================= PRODUTOS ================= -->
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
 
+<!-- HEADER PREMIUM CLEAN -->
+<header class="header">
+  <div class="logo-area">
+    <img src="logo.png" class="logo">
+    <div>
+      <h1>Odòmáiyà</h1>
+      <span>Artigos Religiosos</span>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
+    <a href="#">Instagram</a>
+  </div>
+</header>
+
+<!-- BUSCA -->
+<section class="busca-area">
+  <input type="text" id="busca" placeholder="Buscar produto...">
+</section>
+
+<!-- PRODUTOS -->
 <main>
-  <section class="produtos-grid" id="produtos"></section>
+  <div id="produtos" class="grid-produtos"></div>
 </main>
 
-<!-- ================= CHECKOUT MODAL ================= -->
+<!-- CARRINHO FIXO MOBILE -->
+<button class="btn-carrinho" onclick="document.body.classList.toggle('carrinho-aberto')">
+  🛒 <span id="contadorCarrinho">0</span>
+</button>
 
-<div id="modalCheckout" class="checkout-modal hidden">
-  <div class="checkout-box">
-    <button class="fechar" onclick="Checkout.fechar()">✕</button>
-    <div id="checkoutSteps"></div>
+<!-- DRAWER CARRINHO -->
+<div class="drawer-carrinho">
+
+  <h2>Seu Carrinho</h2>
+
+  <div id="itensCarrinho"></div>
+
+  <div class="total-area">
+    <strong>Total:</strong>
+    <span id="valorTotal">R$ 0,00</span>
   </div>
+
+  <div class="checkout-area">
+    <input type="text" id="cliente" placeholder="Seu nome">
+    
+    <select id="tipo">
+      <option value="retirada">Retirada</option>
+      <option value="entrega">Entrega</option>
+    </select>
+
+    <select id="pagamento">
+      <option value="Pix">Pix</option>
+      <option value="Dinheiro">Dinheiro</option>
+      <option value="Cartão">Cartão</option>
+    </select>
+
+    <button class="btn-finalizar" onclick="App.finalizar()">Finalizar Pedido</button>
+  </div>
+
 </div>
 
-<!-- ================= JS ================= -->
-
+<!-- SCRIPTS NA ORDEM CORRETA -->
 <script src="js/api.js"></script>
 <script src="js/analytics.js"></script>
-<script src="js/estoque.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/estoque.js"></script>
 <script src="js/checkout.js"></script>
 <script src="js/app.js"></script>
 
