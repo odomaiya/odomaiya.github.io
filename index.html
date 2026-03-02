@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Odòmáiyà Artigos Religiosos</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odòmáiyà | Artigos Religiosos</title>
 
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon.png">
@@ -11,6 +11,7 @@
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="header">
   <div class="logo-area">
     <img src="logo.png" class="logo">
@@ -19,46 +20,83 @@
       <span>Artigos Religiosos</span>
     </div>
   </div>
+
+  <div class="header-actions">
+    <a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
+    <a href="https://www.instagram.com/odomaia_artigosreligiosos?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank">Instagram</a>
+  </div>
 </header>
 
+<!-- BUSCA -->
 <section class="busca-area">
   <input type="text" id="busca" placeholder="Buscar produto...">
 </section>
 
+<!-- PRODUTOS -->
 <main>
-  <div id="produtos" class="grid"></div>
+  <div id="produtos" class="grid-produtos"></div>
 </main>
 
-<button class="btn-carrinho" id="abrirCarrinho">
- 🛒 <span id="contadorCarrinho">0</span>
+<!-- BOTÃO CARRINHO MOBILE -->
+<button class="btn-carrinho" onclick="UI.toggleCarrinho()">
+  🛒 <span id="contadorCarrinho">0</span>
 </button>
 
+<!-- DRAWER -->
 <div class="drawer-carrinho" id="drawer">
-  <h2>Seu Pedido</h2>
+
+  <div class="drawer-header">
+    <h2>Seu Pedido</h2>
+    <button onclick="UI.toggleCarrinho()">✕</button>
+  </div>
+
   <div id="carrinho-itens"></div>
 
   <div class="total-area">
-    <strong>Total:</strong>
+    <strong>Total</strong>
     <span id="carrinho-total">R$ 0,00</span>
   </div>
 
+  <!-- SUGESTÃO -->
+  <div id="sugestao-area"></div>
+
+  <!-- CHECKOUT -->
   <div class="checkout-area">
     <input id="cliente" placeholder="Seu nome">
-    <select id="entrega">
-      <option value="Retirada">Retirada</option>
-      <option value="Entrega">Entrega</option>
+    <input id="telefone" placeholder="Telefone">
+
+    <select id="tipo">
+      <option value="retirada">Retirada</option>
+      <option value="entrega">Entrega</option>
     </select>
+
+    <div id="endereco-box" style="display:none;">
+      <input id="cep" placeholder="CEP">
+      <input id="rua" placeholder="Rua">
+      <input id="numero" placeholder="Número">
+      <input id="cidade" placeholder="Cidade">
+    </div>
+
     <select id="pagamento">
-      <option value="Pix">Pix</option>
-      <option value="Dinheiro">Dinheiro</option>
-      <option value="Cartão">Cartão</option>
+      <option>Pix</option>
+      <option>Dinheiro</option>
+      <option>Cartão</option>
     </select>
-    <button id="btn-finalizar">Finalizar Pedido</button>
+
+    <button class="btn-finalizar" onclick="Checkout.finalizar()">Finalizar Pedido</button>
   </div>
+
 </div>
 
+<!-- RODAPÉ -->
+<footer class="footer">
+R. Sete de Agosto, 28 - Centro, Passo Fundo - RS, 99025-030
+</footer>
+
 <script src="js/api.js"></script>
+<script src="js/estoque.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/checkout.js"></script>
 <script src="js/app.js"></script>
 
 </body>
