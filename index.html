@@ -1,45 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Odòmáiyà Artigos Religiosos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Odòmáiyà Artigos Religiosos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div id="produtos" class="grid"></div>
-
-<div class="carrinho">
-  <h2>Seu Carrinho</h2>
-  <div id="carrinho-itens"></div>
-  <div class="total">Total: <span id="carrinho-total">R$ 0,00</span></div>
-
-  <input id="cliente" placeholder="Seu nome">
-  <select id="entrega">
-    <option>Entrega</option>
-    <option>Retirada</option>
-  </select>
-  <select id="pagamento">
-    <option>Pix</option>
-    <option>Dinheiro</option>
-  </select>
-
-  <button id="btn-finalizar">Finalizar Pedido</button>
-</div>
-  
-<!-- LOADER GLOBAL -->
-<div id="loaderGlobal" class="loader-global">
-  <div class="loader"></div>
-</div>
-
-<!-- TOAST -->
-<div id="toast" class="toast"></div>
-
-<!-- HEADER PREMIUM CLEAN -->
 <header class="header">
   <div class="logo-area">
     <img src="logo.png" class="logo">
@@ -48,65 +19,46 @@
       <span>Artigos Religiosos</span>
     </div>
   </div>
-
-  <div class="header-actions">
-    <a href="https://wa.me/555496048808" target="_blank">WhatsApp</a>
-    <a href="#">Instagram</a>
-  </div>
 </header>
 
-<!-- BUSCA -->
 <section class="busca-area">
   <input type="text" id="busca" placeholder="Buscar produto...">
 </section>
 
-<!-- PRODUTOS -->
 <main>
-  <div id="produtos" class="grid-produtos"></div>
+  <div id="produtos" class="grid"></div>
 </main>
 
-<!-- CARRINHO FIXO MOBILE -->
-<button class="btn-carrinho" onclick="document.body.classList.toggle('carrinho-aberto')">
-  🛒 <span id="contadorCarrinho">0</span>
+<button class="btn-carrinho" id="abrirCarrinho">
+ 🛒 <span id="contadorCarrinho">0</span>
 </button>
 
-<!-- DRAWER CARRINHO -->
-<div class="drawer-carrinho">
-
-  <h2>Seu Carrinho</h2>
-
-  <div id="itensCarrinho"></div>
+<div class="drawer-carrinho" id="drawer">
+  <h2>Seu Pedido</h2>
+  <div id="carrinho-itens"></div>
 
   <div class="total-area">
     <strong>Total:</strong>
-    <span id="valorTotal">R$ 0,00</span>
+    <span id="carrinho-total">R$ 0,00</span>
   </div>
 
   <div class="checkout-area">
-    <input type="text" id="cliente" placeholder="Seu nome">
-    
-    <select id="tipo">
-      <option value="retirada">Retirada</option>
-      <option value="entrega">Entrega</option>
+    <input id="cliente" placeholder="Seu nome">
+    <select id="entrega">
+      <option value="Retirada">Retirada</option>
+      <option value="Entrega">Entrega</option>
     </select>
-
     <select id="pagamento">
       <option value="Pix">Pix</option>
       <option value="Dinheiro">Dinheiro</option>
       <option value="Cartão">Cartão</option>
     </select>
-
-    <button class="btn-finalizar" onclick="App.finalizar()">Finalizar Pedido</button>
+    <button id="btn-finalizar">Finalizar Pedido</button>
   </div>
-
 </div>
 
-<!-- SCRIPTS NA ORDEM CORRETA -->
 <script src="js/api.js"></script>
-<script src="js/analytics.js"></script>
 <script src="js/ui.js"></script>
-<script src="js/estoque.js"></script>
-<script src="js/checkout.js"></script>
 <script src="js/app.js"></script>
 
 </body>
