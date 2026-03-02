@@ -1,112 +1,98 @@
-window.UI = {
+const UI = {
 
-  carrinho: [],
+produtos:[],
+carrinho:[],
 
-  renderProdutos(lista) {
-    const grid = document.querySelector("#produtos");
-    if (!grid) return;
+init(){
+this.carregar();
+document.getElementById("busca").addEventListener("input",(e)=>{
+this.render(this.produtos.filter(p=>
+p.nome.toLowerCase().includes(e.target.value.toLowerCase())
+));
+});
+document.getElementById("abrirCarrinho").onclick=()=>{
+document.getElementById("drawer").classList.toggle("ativo");
+};
+document.getElementById("btn-finalizar").onclick=()=>this.finalizar();
+},
 
-    if (!lista.length) {
-      grid.innerHTML = `<div class="empty">Nenhum produto encontrado</div>`;
-      return;
-    }
+async carregar(){
+this.produtos=await API.getProdutos();
+this.render(this.produtos);
+},
 
-    grid.innerHTML = lista.map(p => `
-      <div class="card">
-        <img src="${p.imagem}" alt="${p.nome}">
-        <h3>${p.nome}</h3>
-        <p class="preco">R$ ${p.preco.toFixed(2)}</p>
-        <p class="estoque">${p.estoque > 0 ? "Disponível" : "Sem estoque"}</p>
-        <button onclick="UI.addCarrinho('${p.nome}')"
-          ${p.estoque <= 0 ? "disabled" : ""}>
-          Adicionar
-        </button>
-      </div>
-    `).join("");
-  },
+render(lista){
+const grid=document.getElementById("produtos");
+grid.innerHTML=lista.map(p=>{
 
-  addCarrinho(nome) {
-    const produto = ESTOQUE.lista.find(p => p.nome === nome);
-    if (!produto || produto.estoque <= 0) return;
+let classes="card";
+if(p.promocao) classes+=" promocao";
+if(p.estoque<=3) classes+=" baixo-estoque";
 
-    const item = this.carrinho.find(i => i.nome === nome);
-    if (item) {
-      item.quantidade++;
-    } else {
-      this.carrinho.push({
-        nome: produto.nome,
-        preco: produto.preco,
-        quantidade: 1
-      });
-    }
+return `
+<div class="${classes}">
+${p.promocao?'<div class="ribbon">PROMOÇÃO</div>':''}
+<img src="${p.imagem}">
+<h3>${p.nome}</h3>
+<div class="preco">R$ ${p.promocao || p.preco}</div>
+${p.estoque<=3?'<div class="estoque-alerta">⚠ Poucas unidades</div>':''}
+<button onclick="UI.add('${p.nome}')">Adicionar</button>
+</div>
+`;
+}).join("");
+},
 
-    this.renderCarrinho();
-  },
+add(nome){
+const item=this.carrinho.find(i=>i.nome===nome);
+if(item) item.qtd++;
+else this.carrinho.push({nome,qtd:1});
+this.renderCarrinho();
+},
 
-  renderCarrinho() {
-    const box = document.querySelector("#carrinho-itens");
-    const totalBox = document.querySelector("#carrinho-total");
+renderCarrinho(){
+const box=document.getElementById("carrinho-itens");
+const totalBox=document.getElementById("carrinho-total");
+const contador=document.getElementById("contadorCarrinho");
 
-    if (!box) return;
+if(!this.carrinho.length){
+box.innerHTML="Carrinho vazio";
+totalBox.innerText="R$ 0,00";
+contador.innerText="0";
+return;
+}
 
-    if (!this.carrinho.length) {
-      box.innerHTML = `<p class="empty">Carrinho vazio</p>`;
-      totalBox.innerText = "R$ 0,00";
-      return;
-    }
+let total=0;
 
-    let total = 0;
+box.innerHTML=this.carrinho.map(i=>{
+const p=this.produtos.find(x=>x.nome===i.nome);
+const preco=p.promocao || p.preco;
+total+=preco*i.qtd;
+return `<div>${i.nome} - ${i.qtd}x</div>`;
+}).join("");
 
-    box.innerHTML = this.carrinho.map(i => {
-      total += i.preco * i.quantidade;
-      return `
-        <div class="item">
-          <span>${i.nome}</span>
-          <span>${i.quantidade}x</span>
-        </div>
-      `;
-    }).join("");
+totalBox.innerText="R$ "+total.toFixed(2);
+contador.innerText=this.carrinho.length;
+},
 
-    totalBox.innerText = `R$ ${total.toFixed(2)}`;
-  },
+async finalizar(){
+if(!this.carrinho.length) return alert("Carrinho vazio");
 
-  async finalizar() {
+const payload={
+action:"registrarVenda",
+cliente:document.getElementById("cliente").value,
+entrega:document.getElementById("entrega").value,
+pagamento:document.getElementById("pagamento").value,
+itens:JSON.stringify(this.carrinho),
+total:document.getElementById("carrinho-total").innerText
+};
 
-    if (!this.carrinho.length) {
-      alert("Carrinho vazio.");
-      return;
-    }
-
-    const payload = {
-      action: "registrarVenda",
-      cliente: document.querySelector("#cliente").value || "Cliente",
-      entrega: document.querySelector("#entrega").value,
-      pagamento: document.querySelector("#pagamento").value,
-      itens: JSON.stringify(this.carrinho),
-      total: this.carrinho.reduce((t,i)=>t+i.preco*i.quantidade,0)
-    };
-
-    try {
-      await API.registrarVenda(payload);
-      alert("Pedido enviado com sucesso!");
-      this.carrinho = [];
-      this.renderCarrinho();
-      ESTOQUE.carregar();
-    } catch {
-      alert("Erro ao finalizar pedido.");
-    }
-  },
-
-  iniciarEventos() {
-    const btn = document.querySelector("#btn-finalizar");
-    if (btn) {
-      btn.addEventListener("click", () => this.finalizar());
-    }
-  },
-
-  erro(msg){
-    const grid = document.querySelector("#produtos");
-    grid.innerHTML = `<div class="empty">${msg}</div>`;
-  }
+await API.registrarVenda(payload);
+alert("Pedido enviado!");
+this.carrinho=[];
+this.renderCarrinho();
+this.carregar();
+}
 
 };
+
+window.UI=UI;
