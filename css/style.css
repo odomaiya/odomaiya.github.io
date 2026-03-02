@@ -222,3 +222,18 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
 }
+
+.produto button {
+  background: #0d2b45;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: .2s;
+}
+
+.produto button:hover {
+  opacity: .9;
+}
