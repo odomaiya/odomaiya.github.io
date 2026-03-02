@@ -1,34 +1,44 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzPHF-hrcCEbr20fbk8LaBxbPMHEXra9sw0l7xU8tCOzDZu2PUW899fLqnwap1aGJx0/exec";
+// ===============================
+// API ODÒMÁIYÀ V3
+// ===============================
 
-function loginAdmin(){
-  const senha = document.getElementById("senhaAdmin").value;
+const API_URL = "https://script.google.com/macros/s/AKfycbwL2MmMpDHm-XhkWgFMpkp8am5z8mJukavqilN37ar3T-JGmMq7HlH1T-mE1AI9JqqO/exec";
 
-  if(senha === "odomaia2026"){  // ALTERE DEPOIS
-    document.getElementById("loginArea").style.display="none";
-    document.getElementById("painelAdmin").style.display="block";
-    carregarDashboard();
-  }else{
-    alert("Senha incorreta");
+async function apiFetch(action, payload = {}) {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({ action, ...payload }),
+      headers: { "Content-Type": "application/json" }
+    });
+
+    if (!response.ok) throw new Error("Erro de conexão");
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.error("API ERROR:", error);
+    UI.showToast("Erro de conexão com servidor");
+    return null;
   }
 }
 
-async function carregarDashboard(){
-  const r = await fetch(API_URL + "?acao=dashboard");
-  const dados = await r.json();
+const API = {
 
-  document.getElementById("metricas").innerHTML = `
-    <div>Receita Total<br><strong>R$ ${dados.receita}</strong></div>
-    <div>Total Pedidos<br><strong>${dados.pedidos}</strong></div>
-    <div>Produto Mais Vendido<br><strong>${dados.topProduto}</strong></div>
-  `;
+  async getProdutos() {
+    return await apiFetch("getProdutos");
+  },
 
-  let html="<h3>Pedidos</h3>";
+  async registrarVenda(venda) {
+    return await apiFetch("registrarVenda", venda);
+  },
 
-  dados.lista.forEach(p=>{
-    html+=`<div style="padding:10px;border-bottom:1px solid #ddd">
-      ${p.cliente} — R$ ${p.total} — ${p.data}
-    </div>`;
-  });
+  async registrarAnalytics(evento, dados) {
+    return await apiFetch("analytics", {
+      evento,
+      dados
+    });
+  }
 
-  document.getElementById("listaPedidos").innerHTML=html;
-}
+};
