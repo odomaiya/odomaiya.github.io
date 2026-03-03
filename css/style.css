@@ -1,8 +1,17 @@
+:root{
+  --azul:#0c2d48;
+  --azul-hover:#123f66;
+  --bg:#f3f5f7;
+  --card:#ffffff;
+  --texto:#1c1c1c;
+  --cinza:#7a7a7a;
+}
+
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont;
-  background:#f4f6f8;
-  color:#1c1c1c;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto;
+  background:var(--bg);
+  color:var(--texto);
 }
 
 /* HEADER */
@@ -11,12 +20,9 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:15px 30px;
-  background:#0c2d48;
+  padding:18px 40px;
+  background:var(--azul);
   color:white;
-  position:sticky;
-  top:0;
-  z-index:10;
 }
 
 .logo{
@@ -26,107 +32,121 @@ body{
 }
 
 .logo img{
-  width:40px;
+  width:38px;
 }
 
 .logo h1{
-  margin:0;
   font-size:18px;
+  margin:0;
+  font-weight:600;
 }
 
 .logo span{
   font-size:12px;
-  opacity:.7;
+  opacity:.75;
 }
 
 .actions{
   display:flex;
-  gap:15px;
   align-items:center;
+  gap:20px;
 }
 
 .actions input{
-  padding:8px 15px;
-  border-radius:20px;
+  padding:10px 18px;
+  border-radius:30px;
   border:none;
-  width:200px;
+  width:260px;
+  outline:none;
 }
 
 .actions button{
   background:white;
   border:none;
-  padding:8px 15px;
-  border-radius:20px;
+  padding:8px 16px;
+  border-radius:30px;
   cursor:pointer;
+  font-weight:600;
 }
 
 /* GRID */
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:25px;
-  padding:30px;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:28px;
+  padding:40px;
 }
 
+/* CARD PREMIUM CLEAN */
+
 .card{
-  background:white;
-  padding:20px;
-  border-radius:16px;
-  box-shadow:0 8px 25px rgba(0,0,0,.05);
-  transition:.3s;
+  background:var(--card);
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 10px 30px rgba(0,0,0,.05);
+  transition:.35s cubic-bezier(.25,.8,.25,1);
   text-align:center;
 }
 
 .card:hover{
-  transform:translateY(-5px);
-  box-shadow:0 12px 35px rgba(0,0,0,.12);
+  transform:translateY(-6px);
+  box-shadow:0 20px 50px rgba(0,0,0,.12);
 }
 
 .card img{
   width:100%;
-  height:160px;
-  object-fit:cover;
-  border-radius:12px;
-  margin-bottom:10px;
+  height:170px;
+  object-fit:contain;
+  margin-bottom:15px;
 }
 
 .card h3{
   font-size:15px;
   margin:5px 0;
+  font-weight:600;
 }
 
 .preco{
+  font-size:16px;
   font-weight:700;
-  color:#0c2d48;
   margin:10px 0;
+  color:var(--azul);
+}
+
+.status{
+  font-size:12px;
+  color:var(--cinza);
+  margin-bottom:10px;
 }
 
 .card button{
-  background:#0c2d48;
+  background:var(--azul);
   color:white;
   border:none;
-  padding:8px 15px;
+  padding:8px 18px;
   border-radius:8px;
   cursor:pointer;
+  font-size:13px;
+  transition:.2s;
 }
 
 .card button:hover{
-  background:#134b78;
+  background:var(--azul-hover);
 }
 
-/* CARRINHO */
+/* CARRINHO LATERAL */
 
 .carrinho{
   position:fixed;
-  right:-400px;
+  right:-380px;
   top:0;
-  width:350px;
+  width:360px;
   height:100%;
   background:white;
-  box-shadow:-10px 0 30px rgba(0,0,0,.1);
-  padding:20px;
-  transition:.4s;
+  box-shadow:-15px 0 40px rgba(0,0,0,.08);
+  padding:25px;
+  transition:.4s ease;
   display:flex;
   flex-direction:column;
 }
@@ -139,7 +159,12 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:15px;
+  margin-bottom:20px;
+}
+
+.carrinho-header h2{
+  margin:0;
+  font-size:18px;
 }
 
 .carrinho-itens{
@@ -151,8 +176,19 @@ body{
 .item{
   display:flex;
   justify-content:space-between;
-  margin-bottom:8px;
   font-size:14px;
+  margin-bottom:10px;
+}
+
+.checkout{
+  border-top:1px solid #eee;
+  padding-top:15px;
+}
+
+.total{
+  font-weight:700;
+  margin-bottom:12px;
+  font-size:15px;
 }
 
 .checkout input,
@@ -160,28 +196,35 @@ body{
   width:100%;
   padding:10px;
   margin-bottom:10px;
-  border-radius:8px;
+  border-radius:10px;
   border:1px solid #ddd;
 }
 
 .btn-finalizar{
   width:100%;
   padding:12px;
-  background:#0c2d48;
+  background:var(--azul);
   color:white;
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   font-weight:600;
   cursor:pointer;
+  transition:.2s;
 }
 
 .btn-finalizar:hover{
-  background:#134b78;
+  background:var(--azul-hover);
 }
+
+/* RESPONSIVO */
 
 @media(max-width:768px){
   .actions input{
-    width:120px;
+    width:150px;
+  }
+  .grid{
+    padding:20px;
+    gap:18px;
   }
   .carrinho{
     width:100%;
