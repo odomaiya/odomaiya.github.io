@@ -7,29 +7,26 @@ document.getElementById("drawer").classList.toggle("ativo")
 },
 
 renderProdutos(lista){
-const grid=document.getElementById("produtos")
+  const grid = document.querySelector("#produtos");
 
-grid.innerHTML=lista.map(p=>{
+  if(!lista.length){
+    grid.innerHTML = `<div style="padding:40px;text-align:center;font-weight:600;">Nenhum produto encontrado</div>`;
+    return;
+  }
 
-let classe="card"
-if(p.promocao>0) classe+=" promocao"
-if(p.estoque<=5) classe+=" baixo"
-
-return `
-<div class="${classe}">
-${p.promocao>0?'<div class="ribbon">PROMOÇÃO</div>':''}
-<h3>${p.nome}</h3>
-<div class="preco">R$ ${(p.promocao>0?p.promocao:p.preco).toFixed(2)}</div>
-<div>Estoque: ${p.estoque}</div>
-<div class="qtd-box">
-<button onclick="UI.diminuir('${p.nome}')">-</button>
-<span>${this.carrinho[p.nome]||0}</span>
-<button onclick="UI.aumentar('${p.nome}')">+</button>
-</div>
-</div>`
-}).join("")
-},
-
+  grid.innerHTML = lista.map(p=>`
+    <div class="card">
+      <img src="${p.imagem}" alt="${p.nome}">
+      <h3>${p.nome}</h3>
+      <div class="preco">R$ ${p.preco.toFixed(2)}</div>
+      <div class="status">${p.estoque>0?'Disponível':'Sem estoque'}</div>
+      <button ${p.estoque<=0?'disabled':''}
+        onclick="UI.addCarrinho('${p.nome}')">
+        Adicionar
+      </button>
+    </div>
+  `).join('');
+}
 aumentar(nome){
 this.carrinho[nome]=(this.carrinho[nome]||0)+1
 this.atualizar()
