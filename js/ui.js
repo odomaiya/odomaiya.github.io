@@ -64,3 +64,12 @@ document.getElementById("carrinho-total").innerText="R$ "+total.toFixed(2)
 }
 
 }
+document.getElementById("abrir-carrinho")
+  .addEventListener("click",()=> {
+    document.getElementById("carrinho").classList.add("ativo");
+  });
+
+document.getElementById("fechar-carrinho")
+  .addEventListener("click",()=> {
+    document.getElementById("carrinho").classList.remove("ativo");
+  });
