@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmáiyà Artigos Religiosos</title>
+<title>Odòmáiyà | Artigos Religiosos</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -11,16 +11,16 @@
 
 <header class="header">
   <div class="logo">
-    <img src="logo.png">
-    <div>
-      <h1>Odòmáiyà</h1>
-      <span>Artigos Religiosos</span>
-    </div>
+    <h1>Odòmáiyà</h1>
+    <span>Artigos Religiosos</span>
   </div>
 
   <div class="actions">
     <input type="text" id="buscar" placeholder="Buscar produto...">
-    <button id="abrir-carrinho">🛒 <span id="contador">0</span></button>
+    <select id="filtroCategoria">
+      <option value="">Todas Categorias</option>
+    </select>
+    <button id="btnCarrinho">Carrinho (<span id="contador">0</span>)</button>
   </div>
 </header>
 
@@ -32,38 +32,29 @@
 <aside id="carrinho" class="carrinho">
   <div class="carrinho-header">
     <h2>Seu Carrinho</h2>
-    <button id="fechar-carrinho">✕</button>
+    <button id="fecharCarrinho">X</button>
   </div>
 
-  <div id="carrinho-itens" class="carrinho-itens"></div>
+  <div id="carrinhoItens" class="carrinho-itens"></div>
 
-  <div class="checkout">
-    <div class="total">
-      Total: <span id="carrinho-total">R$ 0,00</span>
-    </div>
-
-    <input id="cliente" placeholder="Seu nome">
-
-    <select id="entrega">
-      <option value="Entrega">Entrega</option>
-      <option value="Retirada">Retirada</option>
-    </select>
-
-    <select id="pagamento">
-      <option value="Pix">Pix</option>
-      <option value="Dinheiro">Dinheiro</option>
-      <option value="Cartão">Cartão</option>
-    </select>
-
-    <button id="btn-finalizar" class="btn-finalizar">
-      Finalizar Pedido
-    </button>
+  <div class="resumo">
+    <div>Total: <strong id="total">R$ 0,00</strong></div>
+    <button id="irCheckout" class="btn-primary">Finalizar</button>
   </div>
 </aside>
 
+<!-- CHECKOUT 3 ETAPAS -->
+<div id="checkoutModal" class="checkout-modal">
+  <div class="checkout-box">
+    <div id="etapas"></div>
+    <div id="checkoutConteudo"></div>
+  </div>
+</div>
+
 <script src="js/api.js"></script>
-<script src="js/estoque.js"></script>
+<script src="js/state.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/checkout.js"></script>
 <script src="js/app.js"></script>
 
 </body>
