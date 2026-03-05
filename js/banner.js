@@ -1,4 +1,17 @@
-const banners=[
+/* =========================================
+BANNER DINÂMICO
+Odòmáiyà Artigos Religiosos
+========================================= */
+
+let bannerIndex = 0
+let bannerTimer = null
+
+
+/* =========================================
+BANNERS PADRÃO (fallback)
+========================================= */
+
+const bannersPadrao = [
 
 {
 img:"banner1.jpg",
@@ -14,25 +27,105 @@ texto:"Conexão com sua espiritualidade"
 
 ]
 
-function carregarBanner(){
 
-let i=Math.floor(Math.random()*banners.length)
+/* =========================================
+GERAR BANNERS A PARTIR DOS PRODUTOS
+========================================= */
 
-let b=banners[i]
+function gerarBanners(produtos){
 
-document.getElementById("banner").innerHTML=`
+ const lista = produtos.filter(p=>p.promocao === "BANNER")
 
-<img src="${b.img}" class="banner-img">
+ if(lista.length === 0){
 
-<div class="banner-text">
+  return bannersPadrao
 
-<h1>${b.titulo}</h1>
-<p>${b.texto}</p>
+ }
 
-</div>
+ return lista.map(p=>({
 
-`
+  img: p.imagem,
 
-gsap.from(".banner-text",{y:60,opacity:0,duration:1})
+  titulo: p.nome,
+
+  texto: "Produto em destaque"
+
+ }))
+
+}
+
+
+/* =========================================
+RENDER BANNER
+========================================= */
+
+function renderBanner(produtos){
+
+ const container = document.getElementById("banner")
+
+ if(!container) return
+
+ const banners = gerarBanners(produtos)
+
+ if(banners.length === 0) return
+
+
+ function mostrarBanner(){
+
+  const b = banners[bannerIndex]
+
+  container.innerHTML = `
+
+  <div class="banner-slide">
+
+   <img src="${b.img}" class="banner-img" loading="lazy">
+
+   <div class="banner-overlay"></div>
+
+   <div class="banner-text">
+
+    <h1>${b.titulo}</h1>
+
+    <p>${b.texto}</p>
+
+   </div>
+
+  </div>
+
+  `
+
+
+  /* animação */
+
+  if(typeof gsap !== "undefined"){
+
+   gsap.from(".banner-text",{
+
+    y:80,
+    opacity:0,
+    duration:1
+
+   })
+
+  }
+
+
+  bannerIndex++
+
+  if(bannerIndex >= banners.length){
+
+   bannerIndex = 0
+
+  }
+
+ }
+
+
+ mostrarBanner()
+
+
+ if(bannerTimer) clearInterval(bannerTimer)
+
+ bannerTimer = setInterval(mostrarBanner, 5000)
 
 }
