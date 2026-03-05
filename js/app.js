@@ -27,5 +27,7 @@ async function iniciar(){
  renderCatalogo(listaProdutos);
 
 }
+iniciarVitrine3D(listaProdutos);
 
+gerarSugestoes(listaProdutos);
 document.addEventListener("DOMContentLoaded",iniciar);
