@@ -1,28 +1,29 @@
-<h1>Painel Administrativo</h1>
+<!DOCTYPE html>
+<html>
 
-<section class="dashboard">
+<head>
 
-<div class="card-dash">
+<meta charset="UTF-8">
 
-<h3>Total Produtos</h3>
+<title>Painel Admin</title>
 
-<span id="dash-produtos"></span>
+<link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+
+<div id="login">
+
+<h2>Admin</h2>
+
+<input id="adminUser" placeholder="usuario">
+
+<input id="adminPass" type="password" placeholder="senha">
+
+<button onclick="loginAdmin()">entrar</button>
 
 </div>
-
-<div class="card-dash">
-
-<h3>Estoque Total</h3>
-
-<span id="dash-estoque"></span>
-
-</div>
-
-</section>
-
-<section>
-
-<h2>Pedidos</h2>
 
 <table>
 
@@ -30,27 +31,23 @@
 
 <tr>
 
-<th>Data</th>
-<th>Total</th>
-<th>Endereço</th>
+<th>Nome</th>
+<th>Preço</th>
+<th>Estoque</th>
+<th>Categoria</th>
+<th>Promo</th>
 
 </tr>
 
 </thead>
 
-<tbody id="lista-pedidos"></tbody>
+<tbody id="adminTabela"></tbody>
 
 </table>
 
-</section>
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
 
-<script src="js/dashboard.js"></script>
-<script src="js/pedidos.js"></script>
+</body>
 
-<script>
-
-carregarDashboard()
-
-carregarPedidos()
-
-</script>
+</html>
