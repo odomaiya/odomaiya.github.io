@@ -1,28 +1,73 @@
-async function carregarAdmin(){
+let adminClicks=0;
 
-let produtos=await fetchProdutos()
+function ativarAdmin(){
 
-const tabela=document.getElementById("tabela")
+ const rodape=document.querySelector("footer");
 
-tabela.innerHTML=""
+ rodape.addEventListener("click",()=>{
 
-produtos.forEach(p=>{
+  adminClicks++;
 
-tabela.innerHTML+=`
+  if(adminClicks>=10){
 
-<tr>
+   window.location="admin.html";
 
-<td>${p.id}</td>
-<td>${p.nome}</td>
-<td>${p.preco}</td>
-<td>${p.estoque}</td>
+  }
 
-</tr>
-
-`
-
-})
+ });
 
 }
 
-carregarAdmin()
+
+
+function loginAdmin(){
+
+ const user=document.querySelector("#adminUser").value;
+
+ const pass=document.querySelector("#adminPass").value;
+
+ if(user==="ADM" && pass==="99861309"){
+
+  localStorage.setItem("admin","true");
+
+  carregarPainel();
+
+ }else{
+
+  alert("login inválido");
+
+ }
+
+}
+
+
+
+async function carregarPainel(){
+
+ if(localStorage.getItem("admin")!=="true") return;
+
+ const produtos=await buscarProdutos();
+
+ const tabela=document.querySelector("#adminTabela");
+
+ tabela.innerHTML="";
+
+ produtos.forEach(p=>{
+
+  tabela.innerHTML+=`
+
+  <tr>
+
+   <td>${p.nome}</td>
+   <td>${p.preco}</td>
+   <td>${p.estoque}</td>
+   <td>${p.categoria}</td>
+   <td>${p.promocao}</td>
+
+  </tr>
+
+  `;
+
+ });
+
+}
