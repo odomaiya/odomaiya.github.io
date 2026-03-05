@@ -1,44 +1,110 @@
-let historico=JSON.parse(localStorage.getItem("historico"))||[];
+/* =========================================
+SISTEMA DE RECOMENDAÇÕES INTELIGENTES
+Odòmáiyà Artigos Religiosos
+========================================= */
+
+let historico = JSON.parse(localStorage.getItem("historico")) || []
+
+
+/* =========================================
+REGISTRAR INTERESSE
+========================================= */
 
 function registrarInteresse(nome){
 
- historico.push(nome);
+ if(!nome) return
 
- if(historico.length>50){
-  historico.shift();
+ historico.push(nome)
+
+ if(historico.length > 50){
+  historico.shift()
  }
 
- localStorage.setItem("historico",JSON.stringify(historico));
+ localStorage.setItem("historico", JSON.stringify(historico))
 
 }
 
-function recomendar(produtos){
 
- if(historico.length===0){
+/* =========================================
+VERIFICAR SE PRODUTO ESTÁ DISPONÍVEL
+========================================= */
+
+function produtoDisponivel(p){
+
+ if(!p) return false
+
+ const estoque = Number(p.estoque) || 0
+
+ return estoque > 0
+
+}
+
+
+/* =========================================
+GERAR RECOMENDAÇÕES
+========================================= */
+
+function gerarRecomendacoes(produtos){
+
+ if(!produtos || produtos.length === 0) return []
+
+ /* SEM HISTÓRICO -> MOSTRA POPULARES */
+
+ if(historico.length === 0){
 
   return produtos
-  .filter(p=>produtoDisponivel(p))
-  .slice(0,4);
+   .filter(produtoDisponivel)
+   .slice(0,4)
 
  }
 
- let categorias={};
+ /* ANALISAR CATEGORIAS VISITADAS */
+
+ let categorias = {}
 
  historico.forEach(nome=>{
 
-  let prod=window.listaProdutos.find(p=>p.nome===nome);
+  const prod = window.listaProdutos.find(p => p.nome === nome)
 
-  if(!prod) return;
+  if(!prod) return
 
-  categorias[prod.categoria]=(categorias[prod.categoria]||0)+1;
+  const cat = prod.categoria || "outros"
 
- });
+  categorias[cat] = (categorias[cat] || 0) + 1
 
- let categoriaFavorita=Object.keys(categorias).sort((a,b)=>categorias[b]-categorias[a])[0];
+ })
 
- return produtos
- .filter(p=>p.categoria===categoriaFavorita)
- .filter(p=>produtoDisponivel(p))
- .slice(0,4);
+ const categoriaFavorita =
+ Object.keys(categorias)
+ .sort((a,b)=>categorias[b]-categorias[a])[0]
+
+ if(!categoriaFavorita){
+
+  return produtos
+  .filter(produtoDisponivel)
+  .slice(0,4)
+
+ }
+
+ /* RECOMENDAR PRODUTOS DA CATEGORIA FAVORITA */
+
+ let recomendados = produtos
+  .filter(p => p.categoria === categoriaFavorita)
+  .filter(produtoDisponivel)
+  .slice(0,4)
+
+ /* SE NÃO TIVER SUFICIENTE */
+
+ if(recomendados.length < 4){
+
+  const extras = produtos
+   .filter(produtoDisponivel)
+   .slice(0, 4 - recomendados.length)
+
+  recomendados = recomendados.concat(extras)
+
+ }
+
+ return recomendados
 
 }
