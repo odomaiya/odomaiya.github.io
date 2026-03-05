@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+
+<title>Produto | Odòmáiyà</title>
+
+<link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+
+<header>
+
+<a href="/">
+<img src="logo.png" class="logo">
+</a>
+
+</header>
+
+<main>
+
+<div id="produto-view"></div>
+
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+
+<script>
+
+async function carregarProduto(){
+
+const params=new URLSearchParams(window.location.search)
+
+const id=params.get("id")
+
+const produtos=await fetchProdutos()
+
+const p=produtos.find(x=>x.id==id)
+
+document.getElementById("produto-view").innerHTML=`
+
+<img src="${p.imagem}" style="max-width:400px">
+
+<h1>${p.nome}</h1>
+
+<h2>R$ ${p.preco}</h2>
+
+<button onclick='addCart(${JSON.stringify(p)})'>
+Adicionar ao carrinho
+</button>
+
+`
+
+}
+
+carregarProduto()
+
+</script>
+
+</body>
+</html>
