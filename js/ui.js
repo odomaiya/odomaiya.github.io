@@ -1,35 +1,32 @@
-function renderProdutos(lista){
+function cardProduto(p){
 
- const grid=document.querySelector("#produtosGrid");
+ return `
 
- grid.innerHTML="";
+ <div class="produto-card">
 
- lista.forEach(p=>{
-
-  if(p.estoque<=0) return;
-
-  grid.innerHTML+=`
-
-  <div class="produto">
-
+  <div class="produto-img">
    <img src="${p.imagem}">
+  </div>
+
+  <div class="produto-info">
 
    <h3>${p.nome}</h3>
 
-   <p class="preco">R$ ${p.preco.toFixed(2)}</p>
+   <p class="preco">
+   R$ ${p.preco.toFixed(2)}
+   </p>
 
    <button onclick="addCarrinho('${p.nome}')">
-   Adicionar
+   adicionar
    </button>
 
   </div>
 
-  `;
+ </div>
 
- });
+ `;
 
 }
-
 function abrirProduto(id){
 
 window.location="produto.html?id="+id
