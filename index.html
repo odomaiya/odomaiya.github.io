@@ -1,194 +1,42 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 
 <head>
 
-  <section id="banner"></section>
-  
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Odòmáiyà Artigos Religiosos | Umbanda e Candomblé</title>
-
-<meta name="description" content="Loja Odòmáiyà - artigos religiosos de Umbanda e Candomblé. Guias, ervas, velas, incensos e itens espirituais.">
-
-<meta name="keywords" content="umbanda,candomble,artigos religiosos,guias,ervas espirituais">
-
-<meta property="og:title" content="Odòmáiyà Artigos Religiosos">
-<meta property="og:description" content="Artigos espirituais de Umbanda e Candomblé">
-<meta property="og:image" content="logo.png">
-
-<link rel="icon" href="favicon.png">
-
-<link rel="manifest" href="manifest.json">
+<title>Painel Admin</title>
 
 <link rel="stylesheet" href="css/styles.css">
-<link rel="stylesheet" href="css/animations.css">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 </head>
+
 <body>
-<header>
 
-<input id="buscaInput" placeholder="Buscar produtos...">
+<h2>Painel Admin</h2>
 
-</header>
+<div class="admin-form">
 
-<section id="banner"></section>
+<input id="nome" placeholder="nome">
 
-<section id="vitrine"></section>
+<input id="preco" placeholder="preco">
 
-<section id="destaques"></section>
+<input id="promo" placeholder="promocao">
 
-<section id="promocoes"></section>
+<input id="categoria" placeholder="categoria">
 
-<section id="maisVendidos"></section>
+<input id="imagem" placeholder="imagem">
 
-<section id="recomendados"></section>
+<input id="estoque" placeholder="estoque">
 
-<section id="produtosGrid"></section>
-
-<footer>
-
-Odòmáiyà Artigos Religiosos
-
-</footer>
-<div id="overlay" onclick="fecharCarrinho()"></div>
-
-<header class="header">
-
-<div class="logo-area">
-
-<img src="logo.png" class="logo">
-
-<div>
-
-<h1>Odòmáiyà</h1>
-<p>Artigos Religiosos</p>
-
-</div>
-
-</div>
-
-<div class="social">
-
-<a href="https://wa.me/555496048808">WhatsApp</a>
-
-<a href="https://instagram.com/odomaia_artigosreligiosos">Instagram</a>
-
-</div>
-
-</header>
-
-<section class="filtros">
-
-<input
-id="busca"
-placeholder="Buscar produtos..."
-oninput="buscarProdutos(this.value)"
->
-
-</section>
-
-<section id="produtos" class="grid"></section>
-
-<button class="btnCarrinho" onclick="abrirCarrinho()">
-
-🛒 <span id="contador">0</span>
-
+<button onclick="salvarProduto()">
+Salvar produto
 </button>
 
-<div id="carrinho" class="drawer">
-
-<h3>Carrinho</h3>
-
-<div id="itensCarrinho"></div>
-
-<div class="footer">
-
-<div>Total: <span id="total">R$0</span></div>
-
-<button onclick="abrirCheckout()">Finalizar</button>
-
 </div>
 
-</div>
-
-<div id="modal" class="modal">
-
-<div class="modalContent">
-
-<div id="etapa1">
-
-<h3>Seus Dados</h3>
-
-<input id="cliente" placeholder="Nome">
-
-<button onclick="proxima(2)">Continuar</button>
-
-</div>
-
-<div id="etapa2" style="display:none">
-
-<select id="tipoEntrega">
-
-<option value="retirada">Retirada</option>
-<option value="entrega">Entrega</option>
-
-</select>
-
-<input id="cep" placeholder="CEP" oninput="buscarCEP()">
-
-<input id="rua" placeholder="Rua">
-
-<input id="numero" placeholder="Número">
-
-<input id="bairro" placeholder="Bairro">
-
-<input id="cidade" placeholder="Cidade">
-
-<input id="estado" placeholder="Estado">
-
-<button onclick="proxima(3)">Continuar</button>
-
-</div>
-
-<div id="etapa3" style="display:none">
-
-<select id="pagamentoTipo">
-
-<option value="pix">Pix</option>
-<option value="cartao">Cartão</option>
-<option value="dinheiro">Dinheiro</option>
-
-</select>
-
-<button onclick="finalizarPedido()">Enviar Pedido</button>
-
-</div>
-
-</div>
-
-</div>
-
-<footer>
-
-R. Sete de Agosto, 28 - Centro, Passo Fundo - RS
-
-</footer>
-
-<script src="js/config.js"></script>
-<script src="js/store.js"></script>
-<script src="js/cart.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/checkout.js"></script>
-
-<script>
-
-document.addEventListener("DOMContentLoaded",carregarProdutos);
-
-</script>
+<script src="js/admin.js"></script>
 
 </body>
+
 </html>
