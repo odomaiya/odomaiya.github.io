@@ -1,61 +1,158 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Odòmáiyà | Artigos Religiosos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Odòmáiyà Artigos Religiosos</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<link rel="manifest" href="manifest.json">
+
 </head>
 
 <body>
 
+<div id="overlay" onclick="fecharCarrinho()"></div>
+
 <header class="header">
-  <div class="logo">
-    <h1>Odòmáiyà</h1>
-    <span>Artigos Religiosos</span>
-  </div>
 
-  <div class="actions">
-    <input type="text" id="buscar" placeholder="Buscar produto...">
-    <select id="filtroCategoria">
-      <option value="">Todas Categorias</option>
-    </select>
-    <button id="btnCarrinho">Carrinho (<span id="contador">0</span>)</button>
-  </div>
-</header>
+<div class="logo-area">
 
-<main>
-  <div id="produtos" class="grid"></div>
-</main>
+<img src="logo.png" class="logo">
 
-<!-- CARRINHO -->
-<aside id="carrinho" class="carrinho">
-  <div class="carrinho-header">
-    <h2>Seu Carrinho</h2>
-    <button id="fecharCarrinho">X</button>
-  </div>
+<div>
 
-  <div id="carrinhoItens" class="carrinho-itens"></div>
+<h1>Odòmáiyà</h1>
+<p>Artigos Religiosos</p>
 
-  <div class="resumo">
-    <div>Total: <strong id="total">R$ 0,00</strong></div>
-    <button id="irCheckout" class="btn-primary">Finalizar</button>
-  </div>
-</aside>
-
-<!-- CHECKOUT 3 ETAPAS -->
-<div id="checkoutModal" class="checkout-modal">
-  <div class="checkout-box">
-    <div id="etapas"></div>
-    <div id="checkoutConteudo"></div>
-  </div>
 </div>
 
-<script src="js/api.js"></script>
-<script src="js/state.js"></script>
+</div>
+
+<div class="social">
+
+<a href="https://wa.me/555496048808">WhatsApp</a>
+
+<a href="https://instagram.com/odomaia_artigosreligiosos">Instagram</a>
+
+</div>
+
+</header>
+
+<section class="filtros">
+
+<input
+id="busca"
+placeholder="Buscar produtos..."
+oninput="buscarProdutos(this.value)"
+>
+
+</section>
+
+<section id="produtos" class="grid"></section>
+
+<button class="btnCarrinho" onclick="abrirCarrinho()">
+
+🛒 <span id="contador">0</span>
+
+</button>
+
+<div id="carrinho" class="drawer">
+
+<h3>Carrinho</h3>
+
+<div id="itensCarrinho"></div>
+
+<div class="footer">
+
+<div>Total: <span id="total">R$0</span></div>
+
+<button onclick="abrirCheckout()">Finalizar</button>
+
+</div>
+
+</div>
+
+<div id="modal" class="modal">
+
+<div class="modalContent">
+
+<div id="etapa1">
+
+<h3>Seus Dados</h3>
+
+<input id="cliente" placeholder="Nome">
+
+<input id="telefoneCliente" placeholder="Telefone">
+
+<button onclick="proxima(2)">Continuar</button>
+
+</div>
+
+<div id="etapa2" style="display:none">
+
+<select id="tipoEntrega">
+
+<option value="retirada">Retirada</option>
+<option value="entrega">Entrega</option>
+
+</select>
+
+<input id="cep" placeholder="CEP" oninput="buscarCEP()">
+
+<input id="rua" placeholder="Rua">
+
+<input id="numero" placeholder="Número">
+
+<input id="bairro" placeholder="Bairro">
+
+<input id="cidade" placeholder="Cidade">
+
+<input id="estado" placeholder="Estado">
+
+<button onclick="proxima(3)">Continuar</button>
+
+</div>
+
+<div id="etapa3" style="display:none">
+
+<select id="pagamentoTipo">
+
+<option value="pix">Pix</option>
+<option value="cartao">Cartão</option>
+<option value="dinheiro">Dinheiro</option>
+
+</select>
+
+<button onclick="finalizarPedido()">Enviar Pedido</button>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+
+R. Sete de Agosto, 28 - Centro, Passo Fundo - RS
+
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/cart.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/checkout.js"></script>
-<script src="js/app.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded",carregarProdutos);
+
+</script>
 
 </body>
 </html>
