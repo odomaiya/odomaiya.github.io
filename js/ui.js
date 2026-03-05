@@ -2,10 +2,12 @@ function cardProduto(p){
 
  return `
 
- <div class="produto-card">
+ <div class="produto">
 
   <div class="produto-img">
-   <img src="${p.imagem}">
+
+   <img src="${p.imagem}" loading="lazy">
+
   </div>
 
   <div class="produto-info">
