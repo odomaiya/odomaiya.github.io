@@ -12,8 +12,11 @@ grid.innerHTML+=`
 
 <div class="card">
 
-<img src="${p.imagem}">
+function abrirProduto(id){
 
+window.location="produto.html?id="+id
+
+}
 <div class="title">${p.nome}</div>
 
 <div class="price">
