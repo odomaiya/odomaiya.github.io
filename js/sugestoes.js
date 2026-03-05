@@ -1,38 +1,76 @@
+/* =========================================
+SISTEMA DE SUGESTÕES
+Quem comprou também levou
+Odòmáiyà Artigos Religiosos
+========================================= */
+
 function gerarSugestoes(produtos){
 
- const area=document.querySelector("#sugestoes");
+ const area = document.querySelector("#sugestoes")
 
- let carrinho=JSON.parse(localStorage.getItem("carrinho"))||[];
+ if(!area) return
 
- if(carrinho.length===0){
+ let carrinho = JSON.parse(localStorage.getItem("cart")) || []
 
-  area.style.display="none";
-  return;
+ if(carrinho.length === 0){
+
+  area.style.display = "none"
+  return
 
  }
 
- let categorias=[];
+ /* CATEGORIAS DO CARRINHO */
+
+ let categorias = {}
 
  carrinho.forEach(item=>{
 
-  let p=produtos.find(x=>x.nome===item.nome);
+  const p = produtos.find(x => x.nome === item.nome)
 
-  if(p) categorias.push(p.categoria);
+  if(!p) return
 
- });
+  const cat = p.categoria || "outros"
 
- const categoriaPrincipal=categorias[0];
+  categorias[cat] = (categorias[cat] || 0) + 1
 
- const sugestoes=produtos
- .filter(p=>p.categoria===categoriaPrincipal)
- .slice(0,4);
+ })
 
- area.innerHTML="";
+ /* CATEGORIA PRINCIPAL */
+
+ const categoriaPrincipal =
+ Object.keys(categorias)
+ .sort((a,b)=>categorias[b]-categorias[a])[0]
+
+ if(!categoriaPrincipal){
+  area.style.display="none"
+  return
+ }
+
+ /* PRODUTOS DO CARRINHO */
+
+ const idsCarrinho = carrinho.map(i=>i.nome)
+
+ /* GERAR SUGESTÕES */
+
+ const sugestoes = produtos
+  .filter(p => p.categoria === categoriaPrincipal)
+  .filter(p => !idsCarrinho.includes(p.nome))
+  .filter(p => Number(p.estoque) > 0)
+  .slice(0,4)
+
+ if(sugestoes.length === 0){
+  area.style.display="none"
+  return
+ }
+
+ /* RENDER */
+
+ area.style.display = "block"
+
+ area.innerHTML = ""
 
  sugestoes.forEach(p=>{
-
-  area.innerHTML+=cardProduto(p);
-
- });
+  area.innerHTML += cardProduto(p)
+ })
 
 }
