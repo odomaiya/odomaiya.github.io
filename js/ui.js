@@ -1,191 +1,251 @@
+/* =========================================
+UI - RENDERIZAÇÃO DA LOJA
+Odòmáiyà Artigos Religiosos
+========================================= */
+
+
+/* =========================================
+CARD DE PRODUTO
+========================================= */
+
 function cardProduto(p){
+
+ const estoque = Number(p.estoque) || 0
 
  return `
 
- <div class="produto">
+ <div class="card produto-card" onclick="abrirProduto('${p.id}')">
 
-  <div class="produto-img">
+   <div class="produto-img">
 
-   <img src="${p.imagem}" loading="lazy">
+     <img src="${p.imagem}" loading="lazy" alt="${p.nome}">
 
-  </div>
+   </div>
 
-  <div class="produto-info">
+   <div class="produto-info">
 
-   <h3>${p.nome}</h3>
+     <div class="title">${p.nome}</div>
 
-   <p class="preco">
-   R$ ${p.preco.toFixed(2)}
-   </p>
+     <div class="price">
+       R$ ${parseFloat(p.preco).toFixed(2)}
+     </div>
 
-   <button onclick="addCarrinho('${p.nome}')">
-   adicionar
-   </button>
+     <div class="stock">
+       ${estoque > 0 ? estoque + " disponíveis" : "Esgotado"}
+     </div>
 
-  </div>
+     <button 
+     class="btn"
+     ${estoque == 0 ? "disabled" : ""}
+     onclick='event.stopPropagation(); addCart(${JSON.stringify(p)})'>
+
+     Adicionar ao Carrinho
+
+     </button>
+
+   </div>
 
  </div>
 
- `;
-
+ `
 }
+
+
+/* =========================================
+ABRIR PRODUTO
+========================================= */
+
 function abrirProduto(id){
 
-window.location="produto.html?id="+id
-
-}
-<div class="title">${p.nome}</div>
-
-<div class="price">
-R$ ${parseFloat(p.preco).toFixed(2)}
-</div>
-
-<div class="stock">
-${estoque>0?estoque+" disponíveis":"Esgotado"}
-</div>
-
-<button class="btn"
-${estoque==0?"disabled":""}
-onclick='addCart(${JSON.stringify(p)})'>
-
-Adicionar ao Carrinho
-
-</button>
-
-</div>
-
-`
-
-})
-
-gsap.from(".card",{opacity:0,y:30,stagger:.05})
+ window.location = "produto.html?id=" + id
 
 }
 
+
+/* =========================================
+RENDER CATALOGO
+========================================= */
+
+function renderCatalogo(lista){
+
+ const area = document.getElementById("catalogo")
+
+ if(!area) return
+
+ area.innerHTML = ""
+
+ lista.forEach(p=>{
+   area.innerHTML += cardProduto(p)
+ })
+
+}
+
+
+/* =========================================
+RENDER RECOMENDADOS
+========================================= */
 
 function renderRecomendados(lista){
 
-const rec=gerarRecomendacoes(lista)
+ const area = document.getElementById("recomendados")
 
-const area=document.getElementById("recomendados")
+ if(!area) return
 
-area.innerHTML=""
+ area.innerHTML = ""
 
-rec.forEach(p=>{
+ const rec = gerarRecomendacoes(lista)
 
-area.innerHTML+=`
-
-<div class="card">
-
-<img src="${p.imagem}">
-<div class="title">${p.nome}</div>
-<div class="price">R$ ${p.preco}</div>
-
-<button class="btn"
-onclick='addCart(${JSON.stringify(p)})'>
-
-Adicionar
-
-</button>
-
-</div>
-
-`
-
-})
+ rec.forEach(p=>{
+   area.innerHTML += cardProduto(p)
+ })
 
 }
 
+
+/* =========================================
+RENDER VITRINE
+========================================= */
+
 function renderVitrine(produtos){
 
- const vitrine=document.querySelector("#vitrine");
+ const vitrine = document.querySelector("#vitrine")
 
- const lista=produtos.filter(p=>p.promocao==="VITRINE");
+ if(!vitrine) return
 
- if(lista.length===0){
-  vitrine.style.display="none";
-  return;
+ vitrine.innerHTML = ""
+
+ const lista = produtos.filter(p=>p.promocao === "VITRINE")
+
+ if(lista.length === 0){
+
+  vitrine.style.display = "none"
+  return
+
  }
 
  lista.forEach(p=>{
 
-  vitrine.innerHTML+=`
+  vitrine.innerHTML += `
 
-  <div class="vitrine-item">
+  <div class="vitrine-item" onclick="abrirProduto('${p.id}')">
 
-   <img src="${p.imagem}">
-   <h2>${p.nome}</h2>
+    <img src="${p.imagem}" alt="${p.nome}">
+    <h2>${p.nome}</h2>
 
   </div>
 
-  `;
+  `
 
- });
+ })
 
 }
+
+
+/* =========================================
+RENDER BANNER
+========================================= */
+
 function renderBanner(produtos){
 
- const banners=produtos.filter(p=>p.promocao==="BANNER");
+ const banner = document.querySelector("#banner")
 
- if(banners.length===0) return;
+ if(!banner) return
 
- let i=0;
+ const banners = produtos.filter(p=>p.promocao === "BANNER")
 
- setInterval(()=>{
+ if(banners.length === 0){
 
-  const p=banners[i];
+  banner.style.display = "none"
+  return
 
-  document.querySelector("#banner").innerHTML=`
+ }
 
-  <img src="${p.imagem}">
-  <div class="banner-text">
-   <h1>${p.nome}</h1>
+ let i = 0
+
+ function trocarBanner(){
+
+  const p = banners[i]
+
+  banner.innerHTML = `
+
+  <div class="banner-slide">
+
+   <img src="${p.imagem}" alt="${p.nome}">
+
+   <div class="banner-text">
+     <h1>${p.nome}</h1>
+   </div>
+
   </div>
 
-  `;
+  `
 
-  i++;
-  if(i>=banners.length) i=0;
+  i++
+  if(i >= banners.length) i = 0
 
- },4000);
+ }
+
+ trocarBanner()
+
+ setInterval(trocarBanner, 4000)
 
 }
+
+
+/* =========================================
+DESTAQUES
+========================================= */
+
 function renderDestaques(produtos){
 
- const area=document.querySelector("#destaques");
+ const area = document.querySelector("#destaques")
+
+ if(!area) return
+
+ area.innerHTML = ""
 
  produtos
- .filter(p=>p.promocao==="SIM")
+ .filter(p=>p.promocao === "SIM")
  .forEach(p=>{
 
-  area.innerHTML+=`
+  area.innerHTML += `
 
-  <div class="card-destaque">
+  <div class="card-destaque" onclick="abrirProduto('${p.id}')">
 
-   <img src="${p.imagem}">
+   <img src="${p.imagem}" alt="${p.nome}">
    <h3>${p.nome}</h3>
    <p>R$ ${p.preco}</p>
 
   </div>
 
-  `;
+  `
 
- });
+ })
 
 }
+
+
+/* =========================================
+PROMOÇÕES
+========================================= */
+
 function renderPromocoes(produtos){
 
- const area=document.querySelector("#promocoes");
+ const area = document.querySelector("#promocoes")
+
+ if(!area) return
+
+ area.innerHTML = ""
 
  produtos
- .filter(p=>p.promocao==="PROMO")
+ .filter(p=>p.promocao === "PROMO")
  .forEach(p=>{
 
-  area.innerHTML+=`
+  area.innerHTML += `
 
-  <div class="promo-card">
+  <div class="promo-card" onclick="abrirProduto('${p.id}')">
 
-   <img src="${p.imagem}">
+   <img src="${p.imagem}" alt="${p.nome}">
    <h3>${p.nome}</h3>
 
    <p class="promo-preco">
@@ -194,8 +254,49 @@ function renderPromocoes(produtos){
 
   </div>
 
-  `;
+  `
 
- });
+ })
 
 }
+
+
+/* =========================================
+MAIS VENDIDOS (RANKING)
+========================================= */
+
+function renderMaisVendidos(produtos){
+
+ const area = document.getElementById("maisVendidos")
+
+ if(!area) return
+
+ area.innerHTML = ""
+
+ const ranking = iniciarRanking(produtos)
+
+ ranking.slice(0,6).forEach(p=>{
+   area.innerHTML += cardProduto(p)
+ })
+
+}
+
+
+/* =========================================
+ANIMAÇÃO DE CARDS
+========================================= */
+
+function animarCards(){
+
+ if(typeof gsap === "undefined") return
+
+ gsap.from(".card",{
+  opacity:0,
+  y:30,
+  stagger:.05,
+  duration:.6
+ })
+
+}
+
+setTimeout(animarCards,300)
