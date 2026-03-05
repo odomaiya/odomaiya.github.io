@@ -1,73 +1,76 @@
-let carrinho = JSON.parse(localStorage.getItem("carrinho")) || {};
+let cart=JSON.parse(localStorage.getItem("cart"))||[]
 
-function salvarCarrinho(){
+function salvarCart(){
 
-localStorage.setItem("carrinho",JSON.stringify(carrinho));
+localStorage.setItem("cart",JSON.stringify(cart))
 
-}
-
-function adicionarCarrinho(nome){
-
-const produto = produtos.find(p=>p.nome===nome);
-
-if(!carrinho[nome]) carrinho[nome]=0;
-
-if(carrinho[nome] >= produto.estoque){
-alert("Quantidade máxima disponível");
-return;
-}
-
-carrinho[nome]++;
-
-salvarCarrinho();
-
-renderProdutos(produtos);
-atualizarCarrinho();
+renderCart()
 
 }
 
-function removerCarrinho(nome){
+function addCart(prod){
 
-if(!carrinho[nome]) return;
+let item=cart.find(i=>i.id==prod.id)
 
-carrinho[nome]--;
+if(item){
 
-if(carrinho[nome]<=0) delete carrinho[nome];
+if(item.qtd+1>verificarEstoque(prod.id)) return
 
-salvarCarrinho();
+item.qtd++
 
-renderProdutos(produtos);
-atualizarCarrinho();
+}else{
 
-}
-
-function removerItem(nome){
-
-delete carrinho[nome];
-
-salvarCarrinho();
-
-renderProdutos(produtos);
-atualizarCarrinho();
+cart.push({...prod,qtd:1})
 
 }
 
-function totalCarrinho(){
+salvarCart()
 
-let total=0;
+}
 
-Object.keys(carrinho).forEach(nome=>{
+function remover(id){
 
-const p = produtos.find(x=>x.nome===nome);
+cart=cart.filter(i=>i.id!=id)
 
-if(!p) return;
+salvarCart()
 
-const preco = p.promocao>0?p.promocao:p.preco;
+}
 
-total += preco * carrinho[nome];
+function totalCart(){
 
-});
+let t=0
 
-return total;
+cart.forEach(i=>{
+
+t+=i.preco*i.qtd
+
+})
+
+return t
+
+}
+
+function renderCart(){
+
+const list=document.getElementById("cart-items")
+
+if(!list) return
+
+list.innerHTML=""
+
+cart.forEach(i=>{
+
+list.innerHTML+=`
+<div class="cart-item">
+${i.nome} x${i.qtd}
+<span>R$ ${(i.preco*i.qtd).toFixed(2)}</span>
+</div>
+`
+
+})
+
+document.getElementById("cart-total").innerText=totalCart().toFixed(2)
+
+document.getElementById("cart-count").innerText=cart.length
 
 }
