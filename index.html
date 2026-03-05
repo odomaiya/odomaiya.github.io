@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 
 <head>
 
@@ -8,44 +8,41 @@
 
 <title>Odòmáiyà Artigos Religiosos</title>
 
-<meta name="description" content="Loja espiritual de artigos religiosos de matriz africana.">
-
 <link rel="icon" href="favicon.png">
-<link rel="manifest" href="manifest.json">
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/animations.css">
 
-<meta name="theme-color" content="#0a3cff">
+<meta name="theme-color" content="#0a1f44">
 
 </head>
 
+
 <body>
 
-<header class="topo">
+<!-- HEADER -->
+
+<header class="header">
 
 <div class="logo-area">
-
 <img src="logo.png" class="logo">
-
-<h1>Odòmáiyà</h1>
-
 </div>
 
 <div class="busca-area">
 
 <input
-id="buscaInput"
-placeholder="Buscar produtos espirituais..."
-autocomplete="off"
+type="text"
+id="campoBusca"
+placeholder="Buscar produtos..."
 >
 
 </div>
 
-<div class="menu-area">
+<div class="acoes-header">
 
-<button onclick="toggleCarrinho()">
+<button id="btnCarrinho">
 🛒
+<span id="contadorCarrinho">0</span>
 </button>
 
 </div>
@@ -53,139 +50,140 @@ autocomplete="off"
 </header>
 
 
-<section id="banner"></section>
 
+<!-- BANNER -->
 
-<section class="secao">
+<section id="bannerPrincipal">
 
-<h2>Vitrine Espiritual</h2>
+<div class="banner-container" id="bannerContainer">
 
-<div id="vitrine"></div>
-
-</section>
-
-
-<section class="secao">
-
-<h2>Destaques</h2>
-
-<div id="destaques" class="grid"></div>
+</div>
 
 </section>
 
 
-<section class="secao">
 
-<h2>Promoções</h2>
+<!-- CATEGORIAS -->
 
-<div id="promocoes" class="grid"></div>
+<section class="categorias">
 
-</section>
+<h2>Categorias</h2>
 
-
-<section class="secao">
-
-<h2>Mais Vendidos</h2>
-
-<div id="ranking" class="grid"></div>
+<div id="listaCategorias"></div>
 
 </section>
 
 
-<section class="secao">
 
-<h2>Você também pode gostar</h2>
+<!-- VITRINE 3D -->
 
-<div id="sugestoes" class="grid"></div>
+<section class="vitrine3d">
+
+<h2>Destaques Espirituais</h2>
+
+<div id="vitrine3d"></div>
 
 </section>
 
 
-<section class="secao">
+
+<!-- PRODUTOS -->
+
+<section class="produtos">
 
 <h2>Produtos</h2>
 
-<div id="produtosGrid" class="grid"></div>
+<div id="listaProdutos"></div>
 
 </section>
 
 
-<div id="carrinho" class="carrinho">
 
-<h2>Seu Pedido</h2>
+<!-- RECOMENDAÇÕES -->
 
-<div id="carrinhoItens"></div>
+<section class="recomendacoes">
 
-<div class="carrinho-total">
+<h2>Quem comprou também levou</h2>
 
-<span>Total</span>
+<div id="recomendacoes"></div>
 
-<span id="carrinhoTotal">R$ 0</span>
+</section>
+
+
+
+<!-- SUGESTÕES -->
+
+<section class="sugestoes">
+
+<h2>Você também pode gostar</h2>
+
+<div id="sugestoes"></div>
+
+</section>
+
+
+
+<!-- CARRINHO LATERAL -->
+
+<div id="carrinhoLateral">
+
+<div class="carrinhoHeader">
+
+<h3>Seu Carrinho</h3>
+
+<button onclick="fecharCarrinho()">✕</button>
 
 </div>
 
-<button onclick="finalizarPedido()">
-Finalizar no WhatsApp
-</button>
+<div id="itensCarrinho"></div>
+
+<div class="carrinhoFooter">
+
+<p id="totalCarrinho"></p>
+
+<a href="checkout.html" class="btnCheckout">
+Finalizar Pedido
+</a>
+
+</div>
 
 </div>
 
 
-<footer id="rodape">
+
+<!-- FOOTER -->
+
+<footer>
 
 <p>
-
-Odòmáiyà Artigos Religiosos  
-Axé • Proteção • Espiritualidade
-
+© 2026 Odòmáiyà Artigos Religiosos
 </p>
 
 </footer>
 
 
 
-<script src="js/configs.js"></script>
+<!-- SCRIPTS -->
 
+<script src="js/config.js"></script>
 <script src="js/api.js"></script>
-
-<script src="js/auth.js"></script>
-
-<script src="js/estoque.js"></script>
 
 <script src="js/ui.js"></script>
 
+<script src="js/app.js"></script>
+
 <script src="js/banner.js"></script>
-
-<script src="js/vitrine.js"></script>
-
-<script src="js/vitrine3d.js"></script>
 
 <script src="js/busca.js"></script>
 
 <script src="js/cart.js"></script>
 
-<script src="js/checkout.js"></script>
-
-<script src="js/ranking.js"></script>
+<script src="js/vitrine.js"></script>
+<script src="js/vitrine3d.js"></script>
 
 <script src="js/recomendacoes.js"></script>
-
 <script src="js/sugestoes.js"></script>
 
-<script src="js/particles.js"></script>
-
-<script src="js/app.js"></script>
-
-
-<script>
-
-if("serviceWorker" in navigator){
-
-navigator.serviceWorker.register("sw.js");
-
-}
-
-</script>
-
 </body>
+
 </html>
