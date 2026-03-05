@@ -1,17 +1,11 @@
-let estoqueCache={}
+function produtoDisponivel(produto){
 
-function atualizarEstoque(produtos){
+ if(!produto) return false;
 
-produtos.forEach(p=>{
+ if(produto.estoque===undefined) return false;
 
-estoqueCache[p.id]=p.estoque
+ if(Number(produto.estoque)<=0) return false;
 
-})
-
-}
-
-function verificarEstoque(id){
-
-return estoqueCache[id] || 0
+ return true;
 
 }
