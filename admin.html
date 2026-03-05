@@ -13,39 +13,28 @@
 
 <body>
 
-<div id="login">
+<h2>Painel Admin</h2>
 
-<h2>Admin</h2>
+<div class="admin-form">
 
-<input id="adminUser" placeholder="usuario">
+<input id="nome" placeholder="nome">
 
-<input id="adminPass" type="password" placeholder="senha">
+<input id="preco" placeholder="preco">
 
-<button onclick="loginAdmin()">entrar</button>
+<input id="promo" placeholder="promocao">
+
+<input id="categoria" placeholder="categoria">
+
+<input id="imagem" placeholder="imagem">
+
+<input id="estoque" placeholder="estoque">
+
+<button onclick="salvarProduto()">
+Salvar produto
+</button>
 
 </div>
 
-<table>
-
-<thead>
-
-<tr>
-
-<th>Nome</th>
-<th>Preço</th>
-<th>Estoque</th>
-<th>Categoria</th>
-<th>Promo</th>
-
-</tr>
-
-</thead>
-
-<tbody id="adminTabela"></tbody>
-
-</table>
-
-<script src="js/api.js"></script>
 <script src="js/admin.js"></script>
 
 </body>
