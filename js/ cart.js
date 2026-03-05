@@ -1,82 +1,212 @@
-let cart=JSON.parse(localStorage.getItem("cart"))||[]
+/* =========================================
+CARRINHO DA LOJA
+Odòmáiyà Artigos Religiosos
+========================================= */
+
+let cart = JSON.parse(localStorage.getItem("cart")) || []
+
+/* =========================================
+SALVAR CARRINHO
+========================================= */
 
 function salvarCart(){
 
-localStorage.setItem("cart",JSON.stringify(cart))
+ localStorage.setItem("cart", JSON.stringify(cart))
 
-renderCart()
+ atualizarCarrinho()
 
 }
+
+
+/* =========================================
+ADICIONAR PRODUTO
+========================================= */
 
 function addCart(prod){
 
-let item=cart.find(i=>i.id==prod.id)
+ const id = prod.id || prod.nome.replace(/\s+/g,"-").toLowerCase()
 
-if(item){
+ let item = cart.find(i => i.id === id)
 
-if(item.qtd+1>verificarEstoque(prod.id)) return
+ if(item){
 
-item.qtd++
+  item.qtd++
 
-}else{
+ }else{
 
-cart.push({...prod,qtd:1})
+  cart.push({
+   ...prod,
+   id:id,
+   qtd:1
+  })
+
+ }
+
+ atualizarRanking(id)
+
+ salvarCart()
+
+}
+
+
+/* =========================================
+REMOVER ITEM
+========================================= */
+
+function removerCart(id){
+
+ cart = cart.filter(i => i.id !== id)
+
+ salvarCart()
 
 }
 
-salvarCart()
 
-}
-
-function remover(id){
-
-cart=cart.filter(i=>i.id!=id)
-
-salvarCart()
-
-}
+/* =========================================
+TOTAL DO CARRINHO
+========================================= */
 
 function totalCart(){
 
-let t=0
+ let total = 0
 
-cart.forEach(i=>{
+ cart.forEach(i=>{
+  total += (Number(i.preco) || 0) * i.qtd
+ })
 
-t+=i.preco*i.qtd
-
-})
-
-return t
+ return total
 
 }
+
+
+/* =========================================
+RENDER CARRINHO
+========================================= */
 
 function renderCart(){
 
-const list=document.getElementById("cart-items")
+ const area = document.getElementById("itensCarrinho")
 
-if(!list) return
+ if(!area) return
 
-list.innerHTML=""
+ area.innerHTML = ""
 
-cart.forEach(i=>{
+ cart.forEach(i=>{
 
-list.innerHTML+=`
-<div class="cart-item">
-${i.nome} x${i.qtd}
-<span>R$ ${(i.preco*i.qtd).toFixed(2)}</span>
-</div>
-`
+  area.innerHTML += `
 
-})
+  <div class="cart-item">
 
-document.getElementById("cart-total").innerText=totalCart().toFixed(2)
+    <img src="${i.imagem}" class="cart-img">
 
-document.getElementById("cart-count").innerText=cart.length
+    <div class="cart-info">
+
+      <div class="cart-nome">${i.nome}</div>
+
+      <div class="cart-qtd">
+        ${i.qtd}x
+      </div>
+
+      <div class="cart-preco">
+        R$ ${(i.preco * i.qtd).toFixed(2)}
+      </div>
+
+    </div>
+
+    <button onclick="removerCart('${i.id}')">
+    ✕
+    </button>
+
+  </div>
+
+  `
+
+ })
 
 }
 
-let ranking=JSON.parse(localStorage.getItem("ranking"))||{}
 
-ranking[prod.id]=(ranking[prod.id]||0)+1
+/* =========================================
+ATUALIZAR CARRINHO
+========================================= */
 
-localStorage.setItem("ranking",JSON.stringify(ranking))
+function atualizarCarrinho(){
+
+ renderCart()
+
+ const total = document.getElementById("totalCarrinho")
+ if(total){
+  total.innerText = "Total: R$ " + totalCart().toFixed(2)
+ }
+
+ const contador = document.getElementById("contadorCarrinho")
+
+ if(contador){
+  let qtd = 0
+  cart.forEach(i=> qtd += i.qtd)
+  contador.innerText = qtd
+ }
+
+}
+
+
+/* =========================================
+ABRIR CARRINHO
+========================================= */
+
+function abrirCarrinho(){
+
+ const carrinho = document.getElementById("carrinhoLateral")
+
+ if(carrinho){
+  carrinho.style.right = "0"
+ }
+
+}
+
+
+/* =========================================
+FECHAR CARRINHO
+========================================= */
+
+function fecharCarrinho(){
+
+ const carrinho = document.getElementById("carrinhoLateral")
+
+ if(carrinho){
+  carrinho.style.right = "-420px"
+ }
+
+}
+
+
+/* =========================================
+BOTÃO DO CARRINHO
+========================================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+ const btn = document.getElementById("btnCarrinho")
+
+ if(btn){
+  btn.addEventListener("click", abrirCarrinho)
+ }
+
+ atualizarCarrinho()
+
+})
+
+
+/* =========================================
+RANKING DE MAIS VENDIDOS
+========================================= */
+
+function atualizarRanking(id){
+
+ let ranking = JSON.parse(localStorage.getItem("ranking")) || {}
+
+ ranking[id] = (ranking[id] || 0) + 1
+
+ localStorage.setItem("ranking", JSON.stringify(ranking))
+
+}
