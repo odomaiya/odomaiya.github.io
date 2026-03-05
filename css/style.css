@@ -165,3 +165,40 @@ margin-top:50px;
 .recomendados h2{
 margin-bottom:20px;
 }
+
+#login-area{
+
+max-width:400px;
+margin:120px auto;
+text-align:center;
+
+}
+
+#login-area input{
+
+display:block;
+width:100%;
+margin-bottom:10px;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+
+}
+
+#login-area button{
+
+width:100%;
+padding:12px;
+border:none;
+background:#0f2e6d;
+color:white;
+border-radius:8px;
+cursor:pointer;
+
+}
+
+#admin-area{
+
+padding:40px;
+
+}
