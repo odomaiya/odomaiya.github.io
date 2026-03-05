@@ -12,21 +12,13 @@ renderRecomendados(produtos)
 
 renderCart()
 
+carregarBanner()
+
+criarParticulas()
+
+vitrineAnimada()
+
 }
-
-iniciar()
-
-
-document.getElementById("busca").addEventListener("input",e=>{
-
-let termo=e.target.value.toLowerCase()
-
-let filtrado=produtos.filter(p=>p.nome.toLowerCase().includes(termo))
-
-renderProdutos(filtrado)
-
-})
-
 
 function abrirCarrinho(){
 
