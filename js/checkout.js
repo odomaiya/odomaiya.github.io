@@ -32,6 +32,16 @@ msg+=`• ${n} x${UI.carrinho[n]} — R$ ${preco.toFixed(2)}\n`
 }
 })
 
+salvarPedido({
+
+data:new Date().toLocaleString(),
+
+total:total.toFixed(2),
+
+endereco:`${rua.value} ${numero.value} ${bairro.value} ${cidade.value}`
+
+})
+  
 msg+=`\n💰 Total: R$ ${total.toFixed(2)}\n`
 
 window.open("https://wa.me/555496048808?text="+encodeURIComponent(msg))
