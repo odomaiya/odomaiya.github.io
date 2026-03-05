@@ -34,3 +34,16 @@ localStorage.setItem("checkout",JSON.stringify(cart))
 window.location="admin.html"
 
 }
+async function iniciar(){
+
+ const produtos=await carregarProdutos();
+
+ renderBanner(produtos);
+ renderVitrine(produtos);
+ renderDestaques(produtos);
+ renderPromocoes(produtos);
+ renderProdutos(produtos);
+
+}
+
+document.addEventListener("DOMContentLoaded",iniciar);
