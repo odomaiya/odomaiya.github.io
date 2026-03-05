@@ -1,243 +1,140 @@
 /* =========================================
-API DA LOJA - ODOMAIYA
-Conexão com Google Sheets
+API - Odòmáiyà Artigos Religiosos
+Integração Google Sheets / Apps Script
 ========================================= */
 
-async function apiFetch() {
-
-    try {
-
-        const response = await fetch(CONFIG.API_URL, {
-            method: "GET",
-            cache: "no-store"
-        });
-
-        if (!response.ok) {
-            throw new Error("Erro ao acessar API");
-        }
-
-        const data = await response.json();
-
-        return data;
-
-    } catch (error) {
-
-        console.error("Erro API:", error);
-
-        return [];
-
-    }
-
-}
-
+const API_URL = "https://script.google.com/macros/s/AKfycbyNDOjR9YM5JBAU42gUcwGfyZPwSaVdP6T9o73vEf-IuwT3f7qqeOP8CCUZGxv_dANy/exec";
 
 
 /* =========================================
-NORMALIZAR PRODUTO
+CARREGAR PRODUTOS
 ========================================= */
 
-function normalizarProduto(p) {
+async function carregarProdutos(){
 
-    return {
+ try{
 
-        nome: p.nome || "",
+  const res = await fetch(API_URL);
 
-        preco: Number(p.preco) || 0,
+  const dados = await res.json();
 
-        promocao: (p.promocao || "").toUpperCase(),
+  /* garantir array */
+  let produtos = [];
 
-        categoria: (p.categoria || "").toLowerCase(),
+  if(Array.isArray(dados)){
 
-        imagem: p.imagem || "",
+   produtos = dados;
 
-        estoque: Number(p.estoque) || 0,
+  }else if(dados.data){
 
-        id: gerarIdProduto(p)
+   produtos = dados.data;
 
-    };
+  }else if(dados.produtos){
+
+   produtos = dados.produtos;
+
+  }else{
+
+   console.warn("Formato inesperado da API");
+   return [];
+
+  }
+
+  /* normalizar dados */
+  produtos = produtos.map((p,i)=>({
+
+   id: p.id || i+1,
+
+   nome: p.nome || "Produto",
+
+   preco: Number(p.preco) || 0,
+
+   promocao: Number(p.promocao) || 0,
+
+   categoria: p.categoria || "geral",
+
+   imagem: p.imagem || "img/sem-imagem.png",
+
+   estoque: Number(p.estoque) || 0
+
+  }));
+
+  console.log("Produtos carregados:",produtos.length);
+
+  return produtos;
+
+ }catch(erro){
+
+  console.error("Erro ao carregar produtos",erro);
+
+  return [];
+
+ }
 
 }
-
 
 
 /* =========================================
-GERAR ID
+VERIFICAR ESTOQUE
 ========================================= */
 
-function gerarIdProduto(p) {
+function verificarEstoque(id){
 
-    return (p.nome || "")
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]/g, "");
+ if(!window.listaProdutos) return 0;
+
+ const prod = window.listaProdutos.find(p=>p.id==id);
+
+ if(!prod) return 0;
+
+ return prod.estoque;
 
 }
 
+
+/* =========================================
+PRODUTO DISPONÍVEL
+========================================= */
+
+function produtoDisponivel(prod){
+
+ if(!prod) return false;
+
+ if(Number(prod.estoque) <= 0) return false;
+
+ return true;
+
+}
+
+
+/* =========================================
+FILTRAR POR CATEGORIA
+========================================= */
+
+function filtrarCategoria(cat){
+
+ if(!window.listaProdutos) return [];
+
+ return window.listaProdutos.filter(p=>p.categoria===cat);
+
+}
 
 
 /* =========================================
 BUSCAR PRODUTOS
 ========================================= */
 
-async function buscarProdutos() {
+function buscarProdutos(texto){
 
-    const data = await apiFetch();
+ if(!window.listaProdutos) return [];
 
-    if (!Array.isArray(data)) return [];
+ texto = texto.toLowerCase();
 
-    return data.map(normalizarProduto);
+ return window.listaProdutos.filter(p=>
 
-}
+  p.nome.toLowerCase().includes(texto) ||
 
+  p.categoria.toLowerCase().includes(texto)
 
-
-/* =========================================
-BUSCAR PRODUTO POR ID
-========================================= */
-
-async function buscarProdutoPorId(id) {
-
-    const produtos = await buscarProdutos();
-
-    return produtos.find(p => p.id === id);
-
-}
-
-
-
-/* =========================================
-PRODUTOS POR CATEGORIA
-========================================= */
-
-async function buscarPorCategoria(categoria) {
-
-    const produtos = await buscarProdutos();
-
-    return produtos.filter(p => p.categoria === categoria);
-
-}
-
-
-
-/* =========================================
-PRODUTOS EM PROMOÇÃO
-========================================= */
-
-async function buscarPromocoes() {
-
-    const produtos = await buscarProdutos();
-
-    return produtos.filter(p => p.promocao === "SIM");
-
-}
-
-
-
-/* =========================================
-PRODUTOS COM ESTOQUE
-========================================= */
-
-async function buscarDisponiveis() {
-
-    const produtos = await buscarProdutos();
-
-    return produtos.filter(p => p.estoque > 0);
-
-}
-
-
-
-/* =========================================
-RANKING DE PRODUTOS
-========================================= */
-
-function ordenarPorPreco(produtos) {
-
-    return produtos.sort((a, b) => a.preco - b.preco);
-
-}
-
-
-
-/* =========================================
-PRODUTOS RELACIONADOS
-========================================= */
-
-function produtosRelacionados(produto, lista) {
-
-    return lista
-        .filter(p => p.categoria === produto.categoria && p.id !== produto.id)
-        .slice(0, 6);
-
-}
-
-
-
-/* =========================================
-BUSCA INTELIGENTE
-========================================= */
-
-function buscaProdutos(lista, termo) {
-
-    termo = termo.toLowerCase();
-
-    return lista.filter(p =>
-        p.nome.toLowerCase().includes(termo) ||
-        p.categoria.includes(termo)
-    );
-
-}
-
-
-
-/* =========================================
-CACHE LOCAL
-========================================= */
-
-function salvarCache(produtos) {
-
-    if (!CONFIG.CACHE.usarLocalStorage) return;
-
-    localStorage.setItem("produtos_cache", JSON.stringify(produtos));
-
-    localStorage.setItem("produtos_cache_time", Date.now());
-
-}
-
-function carregarCache() {
-
-    if (!CONFIG.CACHE.usarLocalStorage) return null;
-
-    const data = localStorage.getItem("produtos_cache");
-
-    const time = localStorage.getItem("produtos_cache_time");
-
-    if (!data || !time) return null;
-
-    const expirou = Date.now() - time > CONFIG.CACHE.tempoProdutos;
-
-    if (expirou) return null;
-
-    return JSON.parse(data);
-
-}
-
-
-
-/* =========================================
-CARREGAR PRODUTOS OTIMIZADO
-========================================= */
-
-async function carregarProdutos() {
-
-    const cache = carregarCache();
-
-    if (cache) return cache;
-
-    const produtos = await buscarProdutos();
-
-    salvarCache(produtos);
-
-    return produtos;
+ );
 
 }
