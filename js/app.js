@@ -1,33 +1,118 @@
-let listaProdutos=[];
+/* =========================================
+APP PRINCIPAL DA LOJA
+Odòmáiyà Artigos Religiosos
+Inicialização geral do sistema
+========================================= */
 
-async function iniciar(){
+let listaProdutos = [];
 
- listaProdutos=await buscarProdutos();
 
- window.listaProdutos=listaProdutos;
+/* =========================================
+INICIAR LOJA
+========================================= */
 
- criarIndice(listaProdutos);
+async function iniciar() {
 
- ativarBusca();
+    try {
 
- ativarAdmin();
+        /* carregar produtos da API */
+        listaProdutos = await carregarProdutos();
 
- renderBanner(listaProdutos);
+        /* salvar global */
+        window.listaProdutos = listaProdutos;
 
- renderVitrine(listaProdutos);
 
- renderDestaques(listaProdutos);
+        /* =============================
+        SISTEMAS BASE
+        ============================= */
 
- renderPromocoes(listaProdutos);
+        if (typeof criarIndice === "function") {
+            criarIndice(listaProdutos);
+        }
 
- renderMaisVendidos(listaProdutos);
+        if (typeof ativarBusca === "function") {
+            ativarBusca();
+        }
 
- renderRecomendados(listaProdutos);
+        if (typeof ativarAdmin === "function") {
+            ativarAdmin();
+        }
 
- renderCatalogo(listaProdutos);
+
+        /* =============================
+        HOME
+        ============================= */
+
+        if (typeof renderBanner === "function") {
+            renderBanner(listaProdutos);
+        }
+
+        if (typeof renderVitrine === "function") {
+            renderVitrine(listaProdutos);
+        }
+
+        if (typeof renderDestaques === "function") {
+            renderDestaques(listaProdutos);
+        }
+
+        if (typeof renderPromocoes === "function") {
+            renderPromocoes(listaProdutos);
+        }
+
+        if (typeof renderMaisVendidos === "function") {
+            renderMaisVendidos(listaProdutos);
+        }
+
+        if (typeof renderRecomendados === "function") {
+            renderRecomendados(listaProdutos);
+        }
+
+        if (typeof renderCatalogo === "function") {
+            renderCatalogo(listaProdutos);
+        }
+
+
+        /* =============================
+        EXPERIÊNCIA AVANÇADA
+        ============================= */
+
+        if (typeof iniciarVitrine3D === "function") {
+            iniciarVitrine3D(listaProdutos);
+        }
+
+        if (typeof gerarSugestoes === "function") {
+            gerarSugestoes(listaProdutos);
+        }
+
+        if (typeof iniciarRanking === "function") {
+            iniciarRanking(listaProdutos);
+        }
+
+
+        /* =============================
+        ANIMAÇÕES
+        ============================= */
+
+        if (CONFIG.ANIMACOES.ativarParticulas) {
+
+            if (typeof iniciarParticulas === "function") {
+                iniciarParticulas();
+            }
+
+        }
+
+    } catch (erro) {
+
+        console.error("Erro ao iniciar loja:", erro);
+
+    }
 
 }
-iniciarVitrine3D(listaProdutos);
 
-gerarSugestoes(listaProdutos);
-document.addEventListener("DOMContentLoaded",iniciar);
+
+
+/* =========================================
+DOM PRONTO
+========================================= */
+
+document.addEventListener("DOMContentLoaded", iniciar);
