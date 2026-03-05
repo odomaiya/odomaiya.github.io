@@ -74,3 +74,9 @@ document.getElementById("cart-total").innerText=totalCart().toFixed(2)
 document.getElementById("cart-count").innerText=cart.length
 
 }
+
+let ranking=JSON.parse(localStorage.getItem("ranking"))||{}
+
+ranking[prod.id]=(ranking[prod.id]||0)+1
+
+localStorage.setItem("ranking",JSON.stringify(ranking))
