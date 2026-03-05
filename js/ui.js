@@ -11,15 +11,15 @@ CARD DE PRODUTO
 function cardProduto(p){
 
  const estoque = Number(p.estoque) || 0
+ const preco = Number(p.preco) || 0
+ const id = p.id || p.nome.replace(/\s+/g,"-").toLowerCase()
 
  return `
 
- <div class="card produto-card" onclick="abrirProduto('${p.id}')">
+ <div class="card produto-card" onclick="abrirProduto('${id}')">
 
    <div class="produto-img">
-
      <img src="${p.imagem}" loading="lazy" alt="${p.nome}">
-
    </div>
 
    <div class="produto-info">
@@ -27,7 +27,7 @@ function cardProduto(p){
      <div class="title">${p.nome}</div>
 
      <div class="price">
-       R$ ${parseFloat(p.preco).toFixed(2)}
+       R$ ${preco.toFixed(2)}
      </div>
 
      <div class="stock">
@@ -68,7 +68,7 @@ RENDER CATALOGO
 
 function renderCatalogo(lista){
 
- const area = document.getElementById("catalogo")
+ const area = document.getElementById("listaProdutos")
 
  if(!area) return
 
@@ -77,6 +77,8 @@ function renderCatalogo(lista){
  lista.forEach(p=>{
    area.innerHTML += cardProduto(p)
  })
+
+ animarCards()
 
 }
 
@@ -87,7 +89,7 @@ RENDER RECOMENDADOS
 
 function renderRecomendados(lista){
 
- const area = document.getElementById("recomendados")
+ const area = document.getElementById("recomendacoes")
 
  if(!area) return
 
@@ -98,6 +100,8 @@ function renderRecomendados(lista){
  rec.forEach(p=>{
    area.innerHTML += cardProduto(p)
  })
+
+ animarCards()
 
 }
 
@@ -125,9 +129,11 @@ function renderVitrine(produtos){
 
  lista.forEach(p=>{
 
+  const id = p.id || p.nome.replace(/\s+/g,"-").toLowerCase()
+
   vitrine.innerHTML += `
 
-  <div class="vitrine-item" onclick="abrirProduto('${p.id}')">
+  <div class="vitrine-item" onclick="abrirProduto('${id}')">
 
     <img src="${p.imagem}" alt="${p.nome}">
     <h2>${p.nome}</h2>
@@ -180,6 +186,10 @@ function renderBanner(produtos){
 
   `
 
+  if(typeof gsap !== "undefined"){
+   gsap.from(".banner-text",{y:40,opacity:0,duration:0.8})
+  }
+
   i++
   if(i >= banners.length) i = 0
 
@@ -187,7 +197,7 @@ function renderBanner(produtos){
 
  trocarBanner()
 
- setInterval(trocarBanner, 4000)
+ setInterval(trocarBanner,4000)
 
 }
 
@@ -208,9 +218,11 @@ function renderDestaques(produtos){
  .filter(p=>p.promocao === "SIM")
  .forEach(p=>{
 
+  const id = p.id || p.nome.replace(/\s+/g,"-").toLowerCase()
+
   area.innerHTML += `
 
-  <div class="card-destaque" onclick="abrirProduto('${p.id}')">
+  <div class="card-destaque" onclick="abrirProduto('${id}')">
 
    <img src="${p.imagem}" alt="${p.nome}">
    <h3>${p.nome}</h3>
@@ -241,9 +253,11 @@ function renderPromocoes(produtos){
  .filter(p=>p.promocao === "PROMO")
  .forEach(p=>{
 
+  const id = p.id || p.nome.replace(/\s+/g,"-").toLowerCase()
+
   area.innerHTML += `
 
-  <div class="promo-card" onclick="abrirProduto('${p.id}')">
+  <div class="promo-card" onclick="abrirProduto('${id}')">
 
    <img src="${p.imagem}" alt="${p.nome}">
    <h3>${p.nome}</h3>
@@ -279,6 +293,8 @@ function renderMaisVendidos(produtos){
    area.innerHTML += cardProduto(p)
  })
 
+ animarCards()
+
 }
 
 
@@ -298,5 +314,3 @@ function animarCards(){
  })
 
 }
-
-setTimeout(animarCards,300)
