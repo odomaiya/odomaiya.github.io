@@ -8,12 +8,13 @@
 
 <title>Odòmáiyà Artigos Religiosos</title>
 
-<meta name="description" content="Loja espiritual especializada em artigos religiosos de matriz africana.">
+<meta name="description" content="Loja espiritual de artigos religiosos de matriz africana.">
 
 <link rel="icon" href="favicon.png">
 <link rel="manifest" href="manifest.json">
 
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/animations.css">
 
 <meta name="theme-color" content="#0a3cff">
 
@@ -33,7 +34,7 @@
 
 <div class="busca-area">
 
-<input 
+<input
 id="buscaInput"
 placeholder="Buscar produtos espirituais..."
 autocomplete="off"
@@ -43,7 +44,7 @@ autocomplete="off"
 
 <div class="menu-area">
 
-<button onclick="abrirCarrinho()">
+<button onclick="toggleCarrinho()">
 🛒
 </button>
 
@@ -86,7 +87,7 @@ autocomplete="off"
 
 <h2>Mais Vendidos</h2>
 
-<div id="maisVendidos" class="grid"></div>
+<div id="ranking" class="grid"></div>
 
 </section>
 
@@ -117,22 +118,20 @@ autocomplete="off"
 
 <div class="carrinho-total">
 
-<span>Total:</span>
+<span>Total</span>
 
-<span id="carrinhoTotal">R$0</span>
+<span id="carrinhoTotal">R$ 0</span>
 
 </div>
 
-<button onclick="enviarPedido()">
+<button onclick="finalizarPedido()">
 Finalizar no WhatsApp
 </button>
 
 </div>
 
 
-<footer>
-
-<div class="rodape-conteudo">
+<footer id="rodape">
 
 <p>
 
@@ -141,28 +140,39 @@ Axé • Proteção • Espiritualidade
 
 </p>
 
-</div>
-
 </footer>
 
 
+
+<script src="js/config.js"></script>
+
 <script src="js/api.js"></script>
+
+<script src="js/auth.js"></script>
 
 <script src="js/estoque.js"></script>
 
 <script src="js/ui.js"></script>
 
-<script src="js/recomendacoes.js"></script>
+<script src="js/banner.js"></script>
 
-<script src="js/busca.js"></script>
+<script src="js/vitrine.js"></script>
 
 <script src="js/vitrine3d.js"></script>
 
-<script src="js/sugestoes.js"></script>
+<script src="js/busca.js"></script>
+
+<script src="js/cart.js"></script>
 
 <script src="js/checkout.js"></script>
 
-<script src="js/admin.js"></script>
+<script src="js/ranking.js"></script>
+
+<script src="js/recomendacoes.js"></script>
+
+<script src="js/sugestoes.js"></script>
+
+<script src="js/particles.js"></script>
 
 <script src="js/app.js"></script>
 
@@ -178,5 +188,4 @@ navigator.serviceWorker.register("sw.js");
 </script>
 
 </body>
-
 </html>
