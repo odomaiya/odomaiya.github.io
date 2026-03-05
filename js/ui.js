@@ -1,16 +1,34 @@
 function renderProdutos(lista){
 
-const grid=document.getElementById("produtos")
+ const grid=document.querySelector("#produtosGrid");
 
-grid.innerHTML=""
+ grid.innerHTML="";
 
-lista.forEach(p=>{
+ lista.forEach(p=>{
 
-let estoque=verificarEstoque(p.id)
+  if(p.estoque<=0) return;
 
-grid.innerHTML+=`
+  grid.innerHTML+=`
 
-<div class="card">
+  <div class="produto">
+
+   <img src="${p.imagem}">
+
+   <h3>${p.nome}</h3>
+
+   <p class="preco">R$ ${p.preco.toFixed(2)}</p>
+
+   <button onclick="addCarrinho('${p.nome}')">
+   Adicionar
+   </button>
+
+  </div>
+
+  `;
+
+ });
+
+}
 
 function abrirProduto(id){
 
