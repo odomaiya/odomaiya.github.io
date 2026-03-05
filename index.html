@@ -1,41 +1,181 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Painel Admin</title>
+<title>Odòmáiyà Artigos Religiosos</title>
+
+<meta name="description" content="Loja espiritual especializada em artigos religiosos de matriz africana.">
+
+<link rel="icon" href="favicon.png">
+<link rel="manifest" href="manifest.json">
 
 <link rel="stylesheet" href="css/styles.css">
+
+<meta name="theme-color" content="#0a3cff">
 
 </head>
 
 <body>
 
-<h2>Painel Admin</h2>
+<header class="topo">
 
-<div class="admin-form">
+<div class="logo-area">
 
-<input id="nome" placeholder="nome">
+<img src="logo.png" class="logo">
 
-<input id="preco" placeholder="preco">
+<h1>Odòmáiyà</h1>
 
-<input id="promo" placeholder="promocao">
+</div>
 
-<input id="categoria" placeholder="categoria">
+<div class="busca-area">
 
-<input id="imagem" placeholder="imagem">
+<input 
+id="buscaInput"
+placeholder="Buscar produtos espirituais..."
+autocomplete="off"
+>
 
-<input id="estoque" placeholder="estoque">
+</div>
 
-<button onclick="salvarProduto()">
-Salvar produto
+<div class="menu-area">
+
+<button onclick="abrirCarrinho()">
+🛒
 </button>
 
 </div>
 
+</header>
+
+
+<section id="banner"></section>
+
+
+<section class="secao">
+
+<h2>Vitrine Espiritual</h2>
+
+<div id="vitrine"></div>
+
+</section>
+
+
+<section class="secao">
+
+<h2>Destaques</h2>
+
+<div id="destaques" class="grid"></div>
+
+</section>
+
+
+<section class="secao">
+
+<h2>Promoções</h2>
+
+<div id="promocoes" class="grid"></div>
+
+</section>
+
+
+<section class="secao">
+
+<h2>Mais Vendidos</h2>
+
+<div id="maisVendidos" class="grid"></div>
+
+</section>
+
+
+<section class="secao">
+
+<h2>Você também pode gostar</h2>
+
+<div id="sugestoes" class="grid"></div>
+
+</section>
+
+
+<section class="secao">
+
+<h2>Produtos</h2>
+
+<div id="produtosGrid" class="grid"></div>
+
+</section>
+
+
+<div id="carrinho" class="carrinho">
+
+<h2>Seu Pedido</h2>
+
+<div id="carrinhoItens"></div>
+
+<div class="carrinho-total">
+
+<span>Total:</span>
+
+<span id="carrinhoTotal">R$0</span>
+
+</div>
+
+<button onclick="enviarPedido()">
+Finalizar no WhatsApp
+</button>
+
+</div>
+
+
+<footer>
+
+<div class="rodape-conteudo">
+
+<p>
+
+Odòmáiyà Artigos Religiosos  
+Axé • Proteção • Espiritualidade
+
+</p>
+
+</div>
+
+</footer>
+
+
+<script src="js/api.js"></script>
+
+<script src="js/estoque.js"></script>
+
+<script src="js/ui.js"></script>
+
+<script src="js/recomendacoes.js"></script>
+
+<script src="js/busca.js"></script>
+
+<script src="js/vitrine3d.js"></script>
+
+<script src="js/sugestoes.js"></script>
+
+<script src="js/checkout.js"></script>
+
 <script src="js/admin.js"></script>
+
+<script src="js/app.js"></script>
+
+
+<script>
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register("sw.js");
+
+}
+
+</script>
 
 </body>
 
