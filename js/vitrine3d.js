@@ -1,61 +1,185 @@
-let vitrineIndex=0;
+/* =========================================
+VITRINE 3D PREMIUM
+Odòmáiyà Artigos Religiosos
+========================================= */
+
+let vitrine3DIndex = 0
+let vitrine3DTimer = null
+
+
+/* =========================================
+INICIAR VITRINE 3D
+========================================= */
 
 function iniciarVitrine3D(produtos){
 
- const vitrine=produtos.filter(p=>p.promocao==="VITRINE");
+ const container = document.querySelector("#vitrine3d")
 
- if(vitrine.length===0) return;
+ if(!container) return
 
- const container=document.querySelector("#vitrine");
+ container.innerHTML = ""
 
- container.innerHTML="";
+ const lista = produtos.filter(p => p.promocao === "VITRINE")
 
- vitrine.forEach((p,i)=>{
+ if(lista.length === 0){
+  container.style.display = "none"
+  return
+ }
 
-  container.innerHTML+=`
+ lista.forEach((p,i)=>{
 
-  <div class="vitrine3d-card" data-index="${i}">
+  container.innerHTML += `
 
-   <img src="${p.imagem}">
+  <div class="vitrine3d-card" data-index="${i}" onclick="abrirProduto('${p.id}')">
 
-   <h3>${p.nome}</h3>
+    <div class="vitrine3d-inner">
+
+      <img src="${p.imagem}" loading="lazy" alt="${p.nome}">
+
+      <div class="vitrine3d-info">
+        <h3>${p.nome}</h3>
+        <p>R$ ${parseFloat(p.preco).toFixed(2)}</p>
+      </div>
+
+    </div>
 
   </div>
 
-  `;
+  `
 
- });
+ })
 
- animarVitrine3D();
+ aplicarPosicoes3D()
+
+ iniciarAutoVitrine3D()
+
+ ativarInteracao3D()
 
 }
 
 
 
-function animarVitrine3D(){
+/* =========================================
+APLICAR POSIÇÕES 3D
+========================================= */
 
- const cards=document.querySelectorAll(".vitrine3d-card");
+function aplicarPosicoes3D(){
 
- setInterval(()=>{
+ const cards = document.querySelectorAll(".vitrine3d-card")
 
-  vitrineIndex++;
+ cards.forEach((card,i)=>{
 
-  if(vitrineIndex>=cards.length) vitrineIndex=0;
+  let pos = i - vitrine3DIndex
 
-  cards.forEach((card,i)=>{
+  if(pos < -3) pos += cards.length
+  if(pos > 3) pos -= cards.length
 
-   let pos=i-vitrineIndex;
+  let translateX = pos * 260
+  let scale = 1 - Math.abs(pos) * 0.15
+  let rotateY = pos * 35
+  let z = -Math.abs(pos) * 200
 
-   if(pos<0) pos+=cards.length;
+  card.style.transform = `
+  translateX(${translateX}px)
+  translateZ(${z}px)
+  rotateY(${rotateY}deg)
+  scale(${scale})
+  `
 
-   card.style.transform=`
-   translateX(${pos*260}px)
-   scale(${1-pos*0.1})
-   rotateY(${pos*15}deg)
-   `;
+  card.style.zIndex = 100 - Math.abs(pos)
 
-  });
+ })
 
- },4000);
+}
+
+
+
+/* =========================================
+AUTO MOVIMENTO
+========================================= */
+
+function iniciarAutoVitrine3D(){
+
+ if(vitrine3DTimer) clearInterval(vitrine3DTimer)
+
+ vitrine3DTimer = setInterval(()=>{
+
+  vitrine3DIndex++
+
+  const cards = document.querySelectorAll(".vitrine3d-card")
+
+  if(vitrine3DIndex >= cards.length){
+   vitrine3DIndex = 0
+  }
+
+  aplicarPosicoes3D()
+
+ }, 4000)
+
+}
+
+
+
+/* =========================================
+INTERAÇÃO COM MOUSE
+========================================= */
+
+function ativarInteracao3D(){
+
+ const container = document.querySelector("#vitrine3d")
+
+ if(!container) return
+
+ container.addEventListener("mousemove", e=>{
+
+  const rect = container.getBoundingClientRect()
+
+  const x = (e.clientX - rect.left) / rect.width
+
+  const rot = (x - 0.5) * 10
+
+  container.style.transform = `rotateY(${rot}deg)`
+
+ })
+
+ container.addEventListener("mouseleave", ()=>{
+
+  container.style.transform = "rotateY(0deg)"
+
+ })
+
+}
+
+
+
+/* =========================================
+NAVEGAÇÃO MANUAL
+========================================= */
+
+function vitrine3DProximo(){
+
+ const cards = document.querySelectorAll(".vitrine3d-card")
+
+ vitrine3DIndex++
+
+ if(vitrine3DIndex >= cards.length){
+  vitrine3DIndex = 0
+ }
+
+ aplicarPosicoes3D()
+
+}
+
+function vitrine3DAnterior(){
+
+ const cards = document.querySelectorAll(".vitrine3d-card")
+
+ vitrine3DIndex--
+
+ if(vitrine3DIndex < 0){
+  vitrine3DIndex = cards.length - 1
+ }
+
+ aplicarPosicoes3D()
 
 }
