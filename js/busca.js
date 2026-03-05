@@ -1,56 +1,147 @@
-let indiceBusca=[];
+/* =========================================
+SISTEMA DE BUSCA INTELIGENTE
+Odòmáiyà Artigos Religiosos
+========================================= */
+
+let indiceBusca = [];
+
+
+/* =========================================
+CRIAR ÍNDICE DE BUSCA
+========================================= */
 
 function criarIndice(produtos){
 
-indiceBusca=produtos
-.filter(p=>p && p.nome)
-.map(p=>({
+ if(!Array.isArray(produtos)) return
 
-nome:p.nome.toLowerCase(),
-ref:p
+ indiceBusca = produtos
+  .filter(p => p && p.nome)
+  .map(p => ({
 
-}));
+   nome: String(p.nome).toLowerCase(),
+
+   categoria: String(p.categoria || "").toLowerCase(),
+
+   ref: p
+
+  }))
 
 }
 
 
+/* =========================================
+BUSCAR PRODUTOS
+========================================= */
 
 function buscarProdutos(texto){
 
-if(!texto) return window.listaProdutos;
+ if(!texto) return window.listaProdutos || []
 
-texto=texto.toLowerCase();
+ texto = texto.toLowerCase()
 
-return indiceBusca
-.filter(p=>p.nome.includes(texto))
-.map(p=>p.ref);
+ return indiceBusca
+  .filter(p =>
+
+   p.nome.includes(texto) ||
+
+   p.categoria.includes(texto)
+
+  )
+  .map(p => p.ref)
 
 }
 
 
+/* =========================================
+GERAR SUGESTÕES TIPO AMAZON
+========================================= */
+
+function gerarSugestoes(produtos){
+
+ const sugestaoBox = document.getElementById("sugestoes")
+
+ if(!sugestaoBox) return
+
+ sugestaoBox.innerHTML = ""
+
+ produtos.slice(0,5).forEach(p=>{
+
+  sugestaoBox.innerHTML += `
+
+  <div class="sugestao-item" onclick="abrirProduto('${p.id}')">
+
+   <img src="${p.imagem}" loading="lazy">
+
+   <div class="sugestao-info">
+
+    <div class="sugestao-nome">${p.nome}</div>
+
+    <div class="sugestao-preco">
+    R$ ${parseFloat(p.preco).toFixed(2)}
+    </div>
+
+   </div>
+
+  </div>
+
+  `
+
+ })
+
+}
+
+
+/* =========================================
+ATIVAR BUSCA
+========================================= */
 
 function ativarBusca(){
 
-const campo=document.querySelector("#buscaInput");
+ const campo = document.querySelector("#buscaInput")
 
-if(!campo) return;
+ const sugestoes = document.querySelector("#sugestoes")
 
-campo.addEventListener("input",()=>{
+ if(!campo) return
 
-const valor=campo.value.trim();
 
-if(valor.length<2){
+ campo.addEventListener("input", ()=>{
 
-renderCatalogo(window.listaProdutos);
+  const valor = campo.value.trim()
 
-return;
+  if(valor.length < 2){
 
-}
+   renderCatalogo(window.listaProdutos)
 
-const resultados=buscarProdutos(valor);
+   if(sugestoes) sugestoes.innerHTML = ""
 
-renderCatalogo(resultados);
+   return
 
-});
+  }
+
+  const resultados = buscarProdutos(valor)
+
+  renderCatalogo(resultados)
+
+  gerarSugestoes(resultados)
+
+ })
+
+
+ /* ENTER NA BUSCA */
+
+ campo.addEventListener("keypress", e=>{
+
+  if(e.key === "Enter"){
+
+   const valor = campo.value.trim()
+
+   const resultados = buscarProdutos(valor)
+
+   renderCatalogo(resultados)
+
+  }
+
+ })
+
 
 }
