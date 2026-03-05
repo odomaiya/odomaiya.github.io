@@ -1,3 +1,5 @@
+const API="https://script.google.com/macros/s/AKfycbyNDOjR9YM5JBAU42gUcwGfyZPwSaVdP6T9o73vEf-IuwT3f7qqeOP8CCUZGxv_dANy/exec";
+
 let adminClicks=0;
 
 function ativarAdmin(){
@@ -20,54 +22,27 @@ function ativarAdmin(){
 
 
 
-function loginAdmin(){
+async function salvarProduto(){
 
- const user=document.querySelector("#adminUser").value;
+ const produto={
 
- const pass=document.querySelector("#adminPass").value;
+  nome:document.querySelector("#nome").value,
+  preco:document.querySelector("#preco").value,
+  promocao:document.querySelector("#promo").value,
+  categoria:document.querySelector("#categoria").value,
+  imagem:document.querySelector("#imagem").value,
+  estoque:document.querySelector("#estoque").value
 
- if(user==="ADM" && pass==="99861309"){
+ };
 
-  localStorage.setItem("admin","true");
+ await fetch(API,{
 
-  carregarPainel();
+  method:"POST",
 
- }else{
-
-  alert("login inválido");
-
- }
-
-}
-
-
-
-async function carregarPainel(){
-
- if(localStorage.getItem("admin")!=="true") return;
-
- const produtos=await buscarProdutos();
-
- const tabela=document.querySelector("#adminTabela");
-
- tabela.innerHTML="";
-
- produtos.forEach(p=>{
-
-  tabela.innerHTML+=`
-
-  <tr>
-
-   <td>${p.nome}</td>
-   <td>${p.preco}</td>
-   <td>${p.estoque}</td>
-   <td>${p.categoria}</td>
-   <td>${p.promocao}</td>
-
-  </tr>
-
-  `;
+  body:JSON.stringify(produto)
 
  });
+
+ alert("produto salvo");
 
 }
