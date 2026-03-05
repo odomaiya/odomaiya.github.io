@@ -2,15 +2,14 @@ let indiceBusca=[];
 
 function criarIndice(produtos){
 
- indiceBusca=produtos.map(p=>({
+indiceBusca=produtos
+.filter(p=>p && p.nome)
+.map(p=>({
 
-  nome:p.nome.toLowerCase(),
+nome:p.nome.toLowerCase(),
+ref:p
 
-  categoria:p.categoria,
-
-  ref:p
-
- }));
+}));
 
 }
 
@@ -18,11 +17,13 @@ function criarIndice(produtos){
 
 function buscarProdutos(texto){
 
- texto=texto.toLowerCase();
+if(!texto) return window.listaProdutos;
 
- return indiceBusca
- .filter(p=>p.nome.includes(texto))
- .map(p=>p.ref);
+texto=texto.toLowerCase();
+
+return indiceBusca
+.filter(p=>p.nome.includes(texto))
+.map(p=>p.ref);
 
 }
 
@@ -30,23 +31,26 @@ function buscarProdutos(texto){
 
 function ativarBusca(){
 
- const campo=document.querySelector("#buscaInput");
+const campo=document.querySelector("#buscaInput");
 
- campo.addEventListener("input",()=>{
+if(!campo) return;
 
-  const valor=campo.value.trim();
+campo.addEventListener("input",()=>{
 
-  if(valor.length<2){
+const valor=campo.value.trim();
 
-   renderCatalogo(window.listaProdutos);
-   return;
+if(valor.length<2){
 
-  }
+renderCatalogo(window.listaProdutos);
 
-  const resultados=buscarProdutos(valor);
+return;
 
-  renderCatalogo(resultados);
+}
 
- });
+const resultados=buscarProdutos(valor);
+
+renderCatalogo(resultados);
+
+});
 
 }
