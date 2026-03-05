@@ -11,108 +11,106 @@ let listaProdutos = [];
 INICIAR LOJA
 ========================================= */
 
-async function iniciar() {
+async function iniciar(){
 
-    try {
+ try{
 
-        /* carregar produtos da API */
-        listaProdutos = await carregarProdutos();
+  /* =============================
+  CARREGAR PRODUTOS DA API
+  ============================= */
 
-        /* salvar global */
-        window.listaProdutos = listaProdutos;
+  if(typeof buscarProdutos !== "function"){
+   console.error("API não carregada")
+   return
+  }
 
+  listaProdutos = await buscarProdutos()
 
-        /* =============================
-        SISTEMAS BASE
-        ============================= */
-
-        if (typeof criarIndice === "function") {
-            criarIndice(listaProdutos);
-        }
-
-        if (typeof ativarBusca === "function") {
-            ativarBusca();
-        }
-
-        if (typeof ativarAdmin === "function") {
-            ativarAdmin();
-        }
+  window.listaProdutos = listaProdutos
 
 
-        /* =============================
-        HOME
-        ============================= */
+  /* =============================
+  SISTEMAS BASE
+  ============================= */
 
-        if (typeof renderBanner === "function") {
-            renderBanner(listaProdutos);
-        }
+  if(typeof criarIndice === "function"){
+   criarIndice(listaProdutos)
+  }
 
-        if (typeof renderVitrine === "function") {
-            renderVitrine(listaProdutos);
-        }
+  if(typeof ativarBusca === "function"){
+   ativarBusca()
+  }
 
-        if (typeof renderDestaques === "function") {
-            renderDestaques(listaProdutos);
-        }
-
-        if (typeof renderPromocoes === "function") {
-            renderPromocoes(listaProdutos);
-        }
-
-        if (typeof renderMaisVendidos === "function") {
-            renderMaisVendidos(listaProdutos);
-        }
-
-        if (typeof renderRecomendados === "function") {
-            renderRecomendados(listaProdutos);
-        }
-
-        if (typeof renderCatalogo === "function") {
-            renderCatalogo(listaProdutos);
-        }
+  if(typeof ativarAdmin === "function"){
+   ativarAdmin()
+  }
 
 
-        /* =============================
-        EXPERIÊNCIA AVANÇADA
-        ============================= */
+  /* =============================
+  HOME
+  ============================= */
 
-        if (typeof iniciarVitrine3D === "function") {
-            iniciarVitrine3D(listaProdutos);
-        }
+  if(typeof renderBanner === "function"){
+   renderBanner(listaProdutos)
+  }
 
-        if (typeof gerarSugestoes === "function") {
-            gerarSugestoes(listaProdutos);
-        }
+  if(typeof renderVitrine === "function"){
+   renderVitrine(listaProdutos)
+  }
 
-        if (typeof iniciarRanking === "function") {
-            iniciarRanking(listaProdutos);
-        }
+  if(typeof renderDestaques === "function"){
+   renderDestaques(listaProdutos)
+  }
+
+  if(typeof renderPromocoes === "function"){
+   renderPromocoes(listaProdutos)
+  }
+
+  if(typeof renderMaisVendidos === "function"){
+   renderMaisVendidos(listaProdutos)
+  }
+
+  if(typeof renderRecomendados === "function"){
+   renderRecomendados(listaProdutos)
+  }
+
+  if(typeof renderCatalogo === "function"){
+   renderCatalogo(listaProdutos)
+  }
 
 
-        /* =============================
-        ANIMAÇÕES
-        ============================= */
+  /* =============================
+  EXPERIÊNCIA AVANÇADA
+  ============================= */
 
-        if (CONFIG.ANIMACOES.ativarParticulas) {
+  if(typeof iniciarVitrine3D === "function"){
+   iniciarVitrine3D(listaProdutos)
+  }
 
-            if (typeof iniciarParticulas === "function") {
-                iniciarParticulas();
-            }
+  if(typeof gerarSugestoes === "function"){
+   gerarSugestoes(listaProdutos)
+  }
 
-        }
 
-    } catch (erro) {
+  /* =============================
+  ANIMAÇÕES
+  ============================= */
 
-        console.error("Erro ao iniciar loja:", erro);
+  if(typeof animarCards === "function"){
+   animarCards()
+  }
 
-    }
+ }catch(e){
+
+  console.error("Erro ao iniciar loja:", e)
+
+ }
 
 }
-
 
 
 /* =========================================
 DOM PRONTO
 ========================================= */
 
-document.addEventListener("DOMContentLoaded", iniciar);
+document.addEventListener("DOMContentLoaded", iniciar)
