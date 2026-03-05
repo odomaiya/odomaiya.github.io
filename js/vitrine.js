@@ -46,21 +46,18 @@ ANIMAÇÃO DA VITRINE
 
 function animarVitrine(){
 
- if(typeof gsap === "undefined") return
+const cards=document.querySelectorAll("#vitrine .card")
 
- gsap.from("#vitrine .card",{
+if(cards.length===0) return
 
-  scale:.92,
-  opacity:0,
-  y:40,
-  stagger:.07,
-  duration:.7,
-  ease:"power2.out"
-
- })
+gsap.from(cards,{
+ opacity:0,
+ y:30,
+ stagger:.08,
+ duration:.6
+})
 
 }
-
 
 /* =========================================
 SCROLL SUAVE ESTILO APPLE STORE
