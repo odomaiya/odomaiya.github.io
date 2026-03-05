@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+
 <head>
 
 <meta charset="UTF-8">
@@ -12,30 +13,105 @@
 
 <body>
 
-<h1>Painel Admin</h1>
+<div id="login-area">
+
+<h1>Login Administrativo</h1>
+
+<input id="user" placeholder="Usuário">
+
+<input id="pass" type="password" placeholder="Senha">
+
+<button onclick="login()">
+Entrar
+</button>
+
+</div>
+
+
+<div id="admin-area" style="display:none">
+
+<h1>Painel Administrativo</h1>
+
+<button onclick="logout()">Sair</button>
+
+<section>
+
+<h2>Cadastrar Produto</h2>
+
+<input id="nome" placeholder="Nome">
+
+<input id="preco" placeholder="Preço">
+
+<input id="imagem" placeholder="Imagem URL">
+
+<input id="estoque" placeholder="Estoque">
+
+<button onclick="criarProduto()">
+Salvar Produto
+</button>
+
+</section>
+
+
+<section>
+
+<h2>Produtos</h2>
 
 <table>
 
 <thead>
 
 <tr>
-
 <th>ID</th>
 <th>Nome</th>
 <th>Preço</th>
 <th>Estoque</th>
-
+<th>Ações</th>
 </tr>
 
 </thead>
 
-<tbody id="tabela"></tbody>
+<tbody id="lista"></tbody>
 
 </table>
 
+</section>
+
+</div>
+
+
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/admin.js"></script>
+
+<script>
+
+const urlParams=new URLSearchParams(window.location.search)
+
+if(urlParams.get("login")){
+
+document.getElementById("login-area").style.display="block"
+
+}else{
+
+if(localStorage.getItem("adminAuth")==="true"){
+
+document.getElementById("login-area").style.display="none"
+
+document.getElementById("admin-area").style.display="block"
+
+carregar()
+
+}else{
+
+document.getElementById("login-area").style.display="block"
+
+}
+
+}
+
+</script>
 
 </body>
 </html>
