@@ -1,18 +1,18 @@
+"use strict";
+
 async function carregarDashboard(){
 
-const produtos = await fetchProdutos()
+ const produtos=await carregarProdutos()
 
-let totalProdutos = produtos.length
+ const totalProdutos=produtos.length
 
-let estoqueTotal = 0
+ let estoqueTotal=0
 
-produtos.forEach(p=>{
+ produtos.forEach(p=>{
+ estoqueTotal+=Number(p.estoque)
+ })
 
-estoqueTotal += Number(p.estoque)
-
-})
-
-document.getElementById("dash-produtos").innerText = totalProdutos
-document.getElementById("dash-estoque").innerText = estoqueTotal
+ document.getElementById("dash-produtos").innerText=totalProdutos
+ document.getElementById("dash-estoque").innerText=estoqueTotal
 
 }
