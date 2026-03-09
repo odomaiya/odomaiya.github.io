@@ -11,9 +11,18 @@ let listaProdutos = [];
 INICIAR LOJA
 ========================================= */
 
-async function iniciar(){
+async function iniciar() {
 
- try{
+  const produtos = await carregarProdutos();
+
+  window.PRODUTOS = produtos;
+
+  renderBanner(produtos);
+  renderVitrine(produtos);
+
+}
+
+document.addEventListener("DOMContentLoaded", iniciar);
 
   /* =============================
   CARREGAR PRODUTOS DA API
