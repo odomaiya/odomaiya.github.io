@@ -1,39 +1,37 @@
-#particles{
-
-position:fixed;
-top:0;
-left:0;
-z-index:-1;
-
-}
-
-.banner-img{
-
-width:100%;
-height:420px;
-object-fit:cover;
-
-}
-
-.banner-text{
-
-position:absolute;
-top:160px;
-left:80px;
-color:white;
-
-}
-
 .card{
+animation:fadeUp .6s ease both;
+}
 
-transition:.35s;
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:none;
+}
+}
 
+.btn:hover{
+transform:scale(1.05);
+box-shadow:0 0 10px rgba(140,170,255,.5);
 }
 
 .card:hover{
+animation:glow .8s ease forwards;
+}
 
-transform:translateY(-8px) scale(1.02);
+@keyframes glow{
+0%{box-shadow:0 0 0 rgba(0,0,0,0);}
+100%{box-shadow:0 0 20px rgba(120,150,255,.35);}
+}
 
-box-shadow:0 20px 40px rgba(0,0,0,.2);
+.banner-slide{
+animation:fadeBanner 1s ease;
+}
 
+@keyframes fadeBanner{
+from{opacity:0}
+to{opacity:1}
 }
