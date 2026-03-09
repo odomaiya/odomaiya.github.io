@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
 
 <meta charset="UTF-8">
@@ -8,7 +9,6 @@
 <title>Odòmáiyà Artigos Religiosos</title>
 
 <link rel="manifest" href="manifest.json">
-
 <link rel="icon" href="favicon.png">
 
 <link rel="stylesheet" href="css/style.css">
@@ -73,35 +73,68 @@ Carrinho
 © Odòmáiyà Artigos Religiosos
 </footer>
 
-<!-- JS -->
+<!-- CORE -->
 
-<script src="js/config.js"></script>
-<script src="js/state.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/api.js"></script>
-<script src="js/cart.js"></script>
-<script src="js/checkout.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/vitrine.js"></script>
-<script src="js/vitrine3d.js"></script>
-<script src="js/banner.js"></script>
-<script src="js/busca.js"></script>
-<script src="js/recomendacoes.js"></script>
-<script src="js/sugestoes.js"></script>
-<script src="js/ranking.js"></script>
-<script src="js/estoque.js"></script>
-<script src="js/pedidos.js"></script>
-<script src="js/particles.js"></script>
-<script src="js/dashboard.js"></script>
-<script src="js/admin.js"></script>
-<script src="js/adminPanel.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/app.js"></script>
+<script defer src="config.js"></script>
+<script defer src="state.js"></script>
+<script defer src="utils.js"></script>
+
+<!-- API -->
+
+<script defer src="api.js"></script>
+
+<!-- SISTEMA -->
+
+<script defer src="cart.js"></script>
+<script defer src="checkout.js"></script>
+<script defer src="ui.js"></script>
+<script defer src="busca.js"></script>
+<script defer src="recomendacoes.js"></script>
+<script defer src="sugestoes.js"></script>
+<script defer src="ranking.js"></script>
+<script defer src="estoque.js"></script>
+<script defer src="pedidos.js"></script>
+
+<!-- UI -->
+
+<script defer src="banner.js"></script>
+<script defer src="vitrine.js"></script>
+<script defer src="vitrine3d.js"></script>
+<script defer src="particles.js"></script>
+
+<!-- ADMIN -->
+
+<script defer src="admin.js"></script>
+<script defer src="adminPanel.js"></script>
+<script defer src="dashboard.js"></script>
+<script defer src="auth.js"></script>
+
+<!-- APP -->
+
+<script defer src="app.js"></script>
 
 <script>
-if ("serviceWorker" in navigator) {
- navigator.serviceWorker.register("sw.js");
+
+document.addEventListener("DOMContentLoaded", () => {
+
+if (typeof iniciarApp === "function") {
+iniciarApp()
 }
+
+})
+
+if ("serviceWorker" in navigator) {
+
+window.addEventListener("load", () => {
+
+navigator.serviceWorker
+.register("sw.js")
+.catch(()=>{})
+
+})
+
+}
+
 </script>
 
 </body>
