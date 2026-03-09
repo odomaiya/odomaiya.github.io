@@ -253,3 +253,13 @@ margin:10px 0 0;
 }
 
 }
+
+.loading{
+opacity:.6;
+pointer-events:none;
+}
+
+button:disabled{
+opacity:.5;
+cursor:not-allowed;
+}
