@@ -1,3 +1,5 @@
+"use strict";
+
 const ADMIN_USER="adm"
 const ADMIN_PASS="99861309"
 
