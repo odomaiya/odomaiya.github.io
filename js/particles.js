@@ -1,52 +1,54 @@
+"use strict";
+
 function criarParticulas(){
 
-const canvas=document.createElement("canvas")
+ const canvas=document.createElement("canvas")
 
-canvas.id="particles"
+ canvas.id="particles"
 
-document.body.appendChild(canvas)
+ document.body.appendChild(canvas)
 
-const ctx=canvas.getContext("2d")
+ const ctx=canvas.getContext("2d")
 
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
+ canvas.width=window.innerWidth
+ canvas.height=window.innerHeight
 
-let p=[]
+ let p=[]
 
-for(let i=0;i<60;i++){
+ for(let i=0;i<60;i++){
 
-p.push({
+ p.push({
 
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:Math.random()*2
+ x:Math.random()*canvas.width,
+ y:Math.random()*canvas.height,
+ r:Math.random()*2
 
-})
+ })
 
-}
+ }
 
-function animar(){
+ function animar(){
 
-ctx.clearRect(0,0,canvas.width,canvas.height)
+ ctx.clearRect(0,0,canvas.width,canvas.height)
 
-ctx.fillStyle="rgba(200,220,255,.6)"
+ ctx.fillStyle="rgba(200,220,255,.6)"
 
-p.forEach(pt=>{
+ p.forEach(pt=>{
 
-ctx.beginPath()
-ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2)
-ctx.fill()
+ ctx.beginPath()
+ ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2)
+ ctx.fill()
 
-pt.y-=0.2
+ pt.y-=0.2
 
-if(pt.y<0) pt.y=canvas.height
+ if(pt.y<0) pt.y=canvas.height
 
-})
+ })
 
-requestAnimationFrame(animar)
+ requestAnimationFrame(animar)
 
-}
+ }
 
-animar()
+ animar()
 
 }
