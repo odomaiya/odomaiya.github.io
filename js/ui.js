@@ -157,8 +157,9 @@ function renderBanner(produtos){
 
  if(!banner) return
 
- const banners = produtos.filter(p=>p.promocao === "BANNER")
-
+const banners = Array.isArray(produtos)
+  ? produtos.filter(p => p.banner === "sim")
+  : [];
  if(banners.length === 0){
 
   banner.style.display = "none"
