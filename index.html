@@ -3,16 +3,16 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Odòmáiyà Artigos Religiosos</title>
 
 <link rel="manifest" href="manifest.json">
 
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="animations.css">
-
 <link rel="icon" href="favicon.png">
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/animations.css">
 
 </head>
 
@@ -24,7 +24,7 @@
 
 <div class="logo">
 <img src="logo.png">
-Odòmáiyà
+<span>Odòmáiyà</span>
 </div>
 
 <div class="search">
@@ -41,81 +41,67 @@ Carrinho
 <div id="cartDrawer"></div>
 
 <section>
-
 <div id="banner"></div>
-
 </section>
 
 <section>
-
 <h2 class="section-title">Vitrine</h2>
 <div id="vitrine" class="grid"></div>
-
 </section>
 
 <section>
-
 <h2 class="section-title">Destaques</h2>
 <div id="vitrine3d"></div>
-
 </section>
 
 <section>
-
 <h2 class="section-title">Produtos</h2>
 <div id="listaProdutos" class="grid"></div>
-
 </section>
 
 <section>
-
 <h2 class="section-title">Recomendados</h2>
 <div id="recomendacoes" class="grid"></div>
-
 </section>
 
 <section>
-
 <h2 class="section-title">Sugestões</h2>
 <div id="sugestoes" class="grid"></div>
-
 </section>
 
 <footer id="rodape">
-
 © Odòmáiyà Artigos Religiosos
-
 </footer>
 
-<script src="config.js"></script>
-<script src="state.js"></script>
-<script src="utils.js"></script>
-<script src="api.js"></script>
-<script src="cart.js"></script>
-<script src="checkout.js"></script>
-<script src="ui.js"></script>
-<script src="vitrine.js"></script>
-<script src="vitrine3d.js"></script>
-<script src="banner.js"></script>
-<script src="busca.js"></script>
-<script src="recomendacoes.js"></script>
-<script src="sugestoes.js"></script>
-<script src="ranking.js"></script>
-<script src="estoque.js"></script>
-<script src="pedidos.js"></script>
-<script src="particles.js"></script>
-<script src="dashboard.js"></script>
-<script src="admin.js"></script>
-<script src="adminPanel.js"></script>
-<script src="auth.js"></script>
-<script src="app.js"></script>
+<!-- JS -->
+
+<script src="js/config.js"></script>
+<script src="js/state.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/checkout.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/vitrine.js"></script>
+<script src="js/vitrine3d.js"></script>
+<script src="js/banner.js"></script>
+<script src="js/busca.js"></script>
+<script src="js/recomendacoes.js"></script>
+<script src="js/sugestoes.js"></script>
+<script src="js/ranking.js"></script>
+<script src="js/estoque.js"></script>
+<script src="js/pedidos.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/adminPanel.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
 
 <script>
-
-if("serviceWorker" in navigator){
-navigator.serviceWorker.register("sw.js")
+if ("serviceWorker" in navigator) {
+ navigator.serviceWorker.register("sw.js");
 }
-
 </script>
 
 </body>
