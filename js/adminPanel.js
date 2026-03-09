@@ -1,6 +1,10 @@
+"use strict";
+
 let clicks=0
 
 const rodape=document.getElementById("rodape")
+
+if(rodape){
 
 rodape.addEventListener("click",()=>{
 
@@ -13,3 +17,5 @@ window.location="admin.html?login"
 }
 
 })
+
+}
