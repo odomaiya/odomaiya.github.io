@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Produto | Odòmáiyà</title>
+<title>Produto</title>
 
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -16,52 +15,48 @@
 
 <header>
 
-<a href="/">
-<img src="logo.png" class="logo">
+<a href="index.html" class="logo">
+<img src="logo.png">
+Odòmáiyà
 </a>
 
 </header>
 
-<main>
+<section>
 
-<div id="produto-view"></div>
+<div id="produtoDetalhe">
 
-</main>
+<img id="produtoImagem">
 
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
+<h1 id="produtoNome"></h1>
 
-<script>
+<div id="produtoPreco"></div>
 
-async function carregarProduto(){
+<div id="produtoEstoque"></div>
 
-const params=new URLSearchParams(window.location.search)
+<p id="produtoDescricao"></p>
 
-const id=params.get("id")
+<button class="btn" id="btnAdd">Adicionar ao Carrinho</button>
 
-const produtos=await fetchProdutos()
+</div>
 
-const p=produtos.find(x=>x.id==id)
+</section>
 
-document.getElementById("produto-view").innerHTML=`
+<section>
 
-<img src="${p.imagem}" style="max-width:400px">
+<h2 class="section-title">Relacionados</h2>
+<div id="recomendacoes" class="grid"></div>
 
-<h1>${p.nome}</h1>
+</section>
 
-<h2>R$ ${p.preco}</h2>
-
-<button onclick='addCart(${JSON.stringify(p)})'>
-Adicionar ao carrinho
-</button>
-
-`
-
-}
-
-carregarProduto()
-
-</script>
+<script src="config.js"></script>
+<script src="state.js"></script>
+<script src="utils.js"></script>
+<script src="api.js"></script>
+<script src="cart.js"></script>
+<script src="ui.js"></script>
+<script src="recomendacoes.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
