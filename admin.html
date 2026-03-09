@@ -1,42 +1,72 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pt-br">
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Painel Admin</title>
 
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="admin.css">
 
 </head>
 
 <body>
 
-<h2>Painel Admin</h2>
+<div class="login">
 
-<div class="admin-form">
+<h2>Admin</h2>
 
-<input id="nome" placeholder="nome">
+<input id="user" placeholder="Usuário">
+<input id="pass" type="password" placeholder="Senha">
 
-<input id="preco" placeholder="preco">
-
-<input id="promo" placeholder="promocao">
-
-<input id="categoria" placeholder="categoria">
-
-<input id="imagem" placeholder="imagem">
-
-<input id="estoque" placeholder="estoque">
-
-<button onclick="salvarProduto()">
-Salvar produto
-</button>
+<button onclick="login()">Entrar</button>
 
 </div>
 
-<script src="js/admin.js"></script>
+<div class="container">
+
+<div class="dashboard">
+
+<div class="cardDash">
+<h3>Produtos</h3>
+<span id="dash-produtos">0</span>
+</div>
+
+<div class="cardDash">
+<h3>Estoque</h3>
+<span id="dash-estoque">0</span>
+</div>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>Data</th>
+<th>Total</th>
+<th>Endereço</th>
+</tr>
+</thead>
+
+<tbody id="lista-pedidos"></tbody>
+
+</table>
+
+</div>
+
+<script src="auth.js"></script>
+<script src="dashboard.js"></script>
+<script src="pedidos.js"></script>
+
+<script>
+
+verificarAuth()
+carregarDashboard()
+carregarPedidos()
+
+</script>
 
 </body>
-
 </html>
