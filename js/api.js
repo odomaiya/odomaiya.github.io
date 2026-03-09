@@ -1,4 +1,4 @@
-const API_URL="https://script.google.com/macros/s/AKfycbyNDOjR9YM5JBAU42gUcwGfyZPwSaVdP6T9o73vEf-IuwT3f7qqeOP8CCUZGxv_dANy/exec"
+"use strict";
 
 async function carregarProdutos(){
 
@@ -7,18 +7,20 @@ async function carregarProdutos(){
   const res = await fetch(CONFIG.API_URL)
 
   if(!res.ok){
-   throw new Error("Erro na API")
+   throw new Error("Erro API")
   }
 
   const data = await res.json()
 
-  if(!Array.isArray(data)) return []
+  if(!Array.isArray(data)){
+   return []
+  }
 
   return data
 
  }catch(e){
 
-  console.error("Erro ao carregar produtos:",e)
+  console.error("Erro carregar produtos:",e)
   return []
 
  }
