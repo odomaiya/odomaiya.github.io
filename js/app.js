@@ -1,3 +1,5 @@
+"use strict";
+
 let listaProdutos = []
 
 async function iniciar(){
@@ -5,6 +7,10 @@ async function iniciar(){
  try{
 
   listaProdutos = await carregarProdutos()
+
+  if(!Array.isArray(listaProdutos)){
+   listaProdutos = []
+  }
 
   window.listaProdutos = listaProdutos
 
@@ -48,16 +54,12 @@ async function iniciar(){
    gerarSugestoes(listaProdutos)
   }
 
-  if(typeof animarCards === "function"){
-   animarCards()
-  }
-
  }catch(e){
 
-  console.error("Erro ao iniciar loja:",e)
+  console.error("Erro iniciar loja:",e)
 
  }
 
 }
 
-document.addEventListener("DOMContentLoaded", iniciar)
+document.addEventListener("DOMContentLoaded",iniciar)
