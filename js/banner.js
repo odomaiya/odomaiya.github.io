@@ -1,131 +1,61 @@
-/* =========================================
-BANNER DINÂMICO
-Odòmáiyà Artigos Religiosos
-========================================= */
+"use strict";
 
-let bannerIndex = 0
-let bannerTimer = null
-
-
-/* =========================================
-BANNERS PADRÃO (fallback)
-========================================= */
-
-const bannersPadrao = [
-
-{
-img:"banner1.jpg",
-titulo:"Energia Espiritual",
-texto:"Guias e proteção espiritual"
-},
-
-{
-img:"banner2.jpg",
-titulo:"Força dos Orixás",
-texto:"Conexão com sua espiritualidade"
-}
-
-]
-
-
-/* =========================================
-GERAR BANNERS A PARTIR DOS PRODUTOS
-========================================= */
+let bannerIndex=0
+let bannerTimer=null
 
 function gerarBanners(produtos){
 
- const lista = produtos.filter(p=>p.promocao === "BANNER")
+ const lista=produtos.filter(p=>p.promocao==="BANNER")
 
- if(lista.length === 0){
-
-  return bannersPadrao
-
- }
+ if(lista.length===0) return []
 
  return lista.map(p=>({
-
-  img: p.imagem,
-
-  titulo: p.nome,
-
-  texto: "Produto em destaque"
-
+ img:p.imagem,
+ titulo:p.nome,
+ texto:"Produto em destaque"
  }))
-
 }
-
-
-/* =========================================
-RENDER BANNER
-========================================= */
 
 function renderBanner(produtos){
 
- const container = document.getElementById("banner")
-
+ const container=document.getElementById("banner")
  if(!container) return
 
- const banners = gerarBanners(produtos)
+ const banners=gerarBanners(produtos)
 
- if(banners.length === 0) return
+ if(banners.length===0) return
 
+ function mostrar(){
 
- function mostrarBanner(){
+ const b=banners[bannerIndex]
 
-  const b = banners[bannerIndex]
+ container.innerHTML=`
 
-  container.innerHTML = `
+ <div class="banner-slide">
 
-  <div class="banner-slide">
+ <img src="${b.img}" loading="lazy">
 
-   <img src="${b.img}" class="banner-img" loading="lazy">
+ <div class="banner-text">
 
-   <div class="banner-overlay"></div>
+ <h1>${b.titulo}</h1>
+ <p>${b.texto}</p>
 
-   <div class="banner-text">
+ </div>
 
-    <h1>${b.titulo}</h1>
+ </div>
+ `
 
-    <p>${b.texto}</p>
+ bannerIndex++
 
-   </div>
-
-  </div>
-
-  `
-
-
-  /* animação */
-
-  if(typeof gsap !== "undefined"){
-
-   gsap.from(".banner-text",{
-
-    y:80,
-    opacity:0,
-    duration:1
-
-   })
-
-  }
-
-
-  bannerIndex++
-
-  if(bannerIndex >= banners.length){
-
-   bannerIndex = 0
-
-  }
+ if(bannerIndex>=banners.length){
+ bannerIndex=0
+ }
 
  }
 
-
- mostrarBanner()
-
+ mostrar()
 
  if(bannerTimer) clearInterval(bannerTimer)
 
- bannerTimer = setInterval(mostrarBanner, 5000)
-
+ bannerTimer=setInterval(mostrar,5000)
 }
