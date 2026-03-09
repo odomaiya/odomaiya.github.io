@@ -1,35 +1,39 @@
+"use strict";
+
 function salvarPedido(pedido){
 
-let pedidos = JSON.parse(localStorage.getItem("pedidos")) || []
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[]
 
-pedidos.push(pedido)
+ pedidos.push(pedido)
 
-localStorage.setItem("pedidos",JSON.stringify(pedidos))
+ localStorage.setItem("pedidos",JSON.stringify(pedidos))
 
 }
 
 function carregarPedidos(){
 
-let pedidos = JSON.parse(localStorage.getItem("pedidos")) || []
+ const lista=document.getElementById("lista-pedidos")
 
-const lista = document.getElementById("lista-pedidos")
+ if(!lista) return
 
-if(!lista) return
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[]
 
-lista.innerHTML=""
+ lista.innerHTML=""
 
-pedidos.reverse().forEach(p=>{
+ pedidos.reverse().forEach(p=>{
 
-lista.innerHTML += `
+ lista.innerHTML+=`
 
-<tr>
-<td>${p.data}</td>
-<td>${p.total}</td>
-<td>${p.endereco}</td>
-</tr>
+ <tr>
 
-`
+ <td>${p.data}</td>
+ <td>${p.total}</td>
+ <td>${p.endereco}</td>
 
-})
+ </tr>
+
+ `
+
+ })
 
 }
