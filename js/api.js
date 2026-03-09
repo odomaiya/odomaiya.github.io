@@ -1,15 +1,28 @@
 const API_URL="https://script.google.com/macros/s/AKfycbyNDOjR9YM5JBAU42gUcwGfyZPwSaVdP6T9o73vEf-IuwT3f7qqeOP8CCUZGxv_dANy/exec"
 
- export async function carregarProdutos() {
+async function carregarProdutos(){
 
-  const url = CONFIG.PRODUTOS_URL;
+ try{
 
-  const res = await fetch(url);
-  const data = await res.json();
+  const res = await fetch(CONFIG.API_URL)
 
-  if (!Array.isArray(data)) {
-    return [];
+  if(!res.ok){
+   throw new Error("Erro na API")
   }
 
-  return data;
+  const data = await res.json()
+
+  if(!Array.isArray(data)) return []
+
+  return data
+
+ }catch(e){
+
+  console.error("Erro ao carregar produtos:",e)
+  return []
+
+ }
+
 }
+
+window.carregarProdutos = carregarProdutos
