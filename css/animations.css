@@ -1,13 +1,15 @@
 .card{
-animation:fade .4s ease;
+transition:all .25s ease;
 }
 
-@keyframes fade{
-from{
-opacity:0;
-transform:translateY(10px);
+.card:hover{
+transform:translateY(-6px);
 }
-to{
-opacity:1;
+
+.cart-icon{
+transition:.3s;
 }
+
+.cart-icon:hover{
+transform:scale(1.1);
 }
