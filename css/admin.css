@@ -1,73 +1,44 @@
 body{
 font-family:system-ui;
-background:#f4f6fb;
-margin:0;
+background:#f5f7fb;
 padding:40px;
 }
 
-.login{
-max-width:300px;
-margin:auto;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.panel{
+#panel{
 display:none;
 }
 
 #dropArea{
-
 border:2px dashed #aaa;
-border-radius:10px;
 padding:40px;
 text-align:center;
+border-radius:12px;
 cursor:pointer;
 background:white;
-
 }
 
-#dropArea:hover{
-border-color:#0b5ed7;
-}
-
-#preview img{
-
-width:200px;
-margin:10px;
-border-radius:10px;
-}
-
-.formProduto{
-
+.produtoBox{
 background:white;
 padding:20px;
 margin-top:20px;
 border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
-
+box-shadow:0 4px 10px rgba(0,0,0,.1);
 display:flex;
 flex-direction:column;
 gap:10px;
-
 }
 
 input,textarea,select{
-
 padding:10px;
 border:1px solid #ddd;
 border-radius:6px;
-
 }
 
 button{
-
 padding:10px;
-border:none;
 background:#0b5ed7;
 color:white;
+border:none;
 border-radius:6px;
 cursor:pointer;
-
 }
