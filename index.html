@@ -4,17 +4,14 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Odòmáiyà Artigos Religiosos</title>
-
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/animations.css">
 
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon.png">
 
-<meta name="theme-color" content="#111">
+<link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -23,34 +20,19 @@
 <header class="header">
 
 <div class="logo-area">
-
-<img src="logo.png" class="logo">
-
-<h1 id="logo">Odòmáiyà</h1>
-
+<img src="logo.png" id="logoAdmin" class="logo">
+<h1>Odòmáiyà</h1>
 </div>
 
 <div class="search-area">
-<input id="busca" placeholder="Buscar produtos...">
+<input id="busca" placeholder="Buscar produtos">
 </div>
 
-<div class="cart-icon" onclick="UI.toggleCart()">
+<div class="cart-icon" onclick="abrirCarrinho()">
 🛒 <span id="cartCount">0</span>
 </div>
 
 </header>
-
-
-<section class="filters">
-
-<select id="filtroCategoria">
-<option value="">Todas categorias</option>
-</select>
-
-<button onclick="FILTROS.promocao()">Promoção</button>
-<button onclick="FILTROS.estoque()">Estoque baixo</button>
-
-</section>
 
 
 <main>
@@ -60,151 +42,190 @@
 </main>
 
 
-
-<!-- CARRINHO -->
-
-<div id="cartDrawer" class="cart-drawer">
-
-<h2>Carrinho</h2>
-
-<div id="cartItems"></div>
-
-<div class="cart-total">
-Total: <span id="cartTotal">R$ 0</span>
-</div>
-
-<button class="checkout-btn" onclick="CHECKOUT.abrir()">
-Finalizar Pedido
-</button>
-
-</div>
-
-
-
-<!-- CHECKOUT -->
-
-<div id="checkoutModal" class="modal">
-
-<div class="modal-content">
-
-<h2>Finalizar Pedido</h2>
-
-<input id="cliente" placeholder="Seu nome">
-
-<select id="tipoPedido">
-<option value="entrega">Entrega</option>
-<option value="retirada">Retirada</option>
-</select>
-
-<select id="pagamento">
-<option>PIX</option>
-<option>Dinheiro</option>
-<option>Cartão</option>
-</select>
-
-<div id="enderecoArea">
-
-<input id="rua" placeholder="Rua">
-<input id="numero" placeholder="Número">
-<input id="cidade" placeholder="Cidade">
-
-</div>
-
-<button onclick="CHECKOUT.finalizar()">
-Enviar Pedido
-</button>
-
-</div>
-
-</div>
-
-
-
-<script src="js/app.js"></script>
-
 <script>
 
-/***********************
- ADMIN SECRETO
-***********************/
+const API="SEU_APPS_SCRIPT_URL"
 
-let clicksLogo = 0
-let timerLogo
+let carrinho=[]
 
-const logo = document.getElementById("logo")
 
-logo.addEventListener("click", () => {
+/************************
+CARREGAR PRODUTOS
+************************/
 
-clicksLogo++
+async function carregarProdutos(){
 
-clearTimeout(timerLogo)
+const res=await fetch(API,{
+method:"POST",
+body:JSON.stringify({action:"listarProdutos"})
+})
 
-timerLogo = setTimeout(() => {
-clicksLogo = 0
-}, 4000)
+const lista=await res.json()
 
-if (clicksLogo === 12) {
-
-abrirAdmin()
+render(lista)
 
 }
 
+
+function render(lista){
+
+const area=document.getElementById("produtos")
+
+area.innerHTML=""
+
+lista.forEach(p=>{
+
+const card=document.createElement("div")
+
+card.className="produto"
+
+card.innerHTML=`
+
+<img src="${p.imagem}">
+
+<h3>${p.nome}</h3>
+
+<p>R$ ${p.preco}</p>
+
+<button onclick='addCarrinho(${JSON.stringify(p)})'>
+Comprar
+</button>
+
+`
+
+area.appendChild(card)
+
 })
-
-
-
-/***********************
- ATALHO TECLADO
- CTRL + SHIFT + A
-***********************/
-
-document.addEventListener("keydown", function(e){
-
-if(e.ctrlKey && e.shiftKey && e.key === "A"){
-
-abrirAdmin()
 
 }
 
+
+/************************
+CARRINHO
+************************/
+
+function addCarrinho(p){
+
+carrinho.push(p)
+
+document.getElementById("cartCount").innerText=carrinho.length
+
+}
+
+
+function abrirCarrinho(){
+
+let msg="Pedido Odòmáiyà:%0A%0A"
+
+let total=0
+
+carrinho.forEach(p=>{
+
+msg+=`${p.nome} - R$${p.preco}%0A`
+
+total+=Number(p.preco)
+
 })
 
+msg+=`%0A Total: R$${total}`
+
+window.open(
+"https://wa.me/554996048808?text="+msg
+)
+
+}
 
 
-/***********************
- LOGIN ADMIN
-***********************/
+/************************
+ADMIN SECRETO
+************************/
+
+const logo=document.getElementById("logoAdmin")
+
+let clicks=0
+let timer
+
 
 function abrirAdmin(){
 
-const user = prompt("Usuário")
-const pass = prompt("Senha")
+const u=prompt("Usuário")
+const s=prompt("Senha")
 
-if(user === "adm" && pass === "99861309"){
+if(u==="adm" && s==="99861309"){
 
-window.location = "admin.html"
-
-}else{
-
-alert("Acesso negado")
+window.location="admin.html"
 
 }
 
 }
 
 
+/* 7 cliques rápidos */
 
-/***********************
- PWA SERVICE WORKER
-***********************/
+logo.addEventListener("click",()=>{
+
+clicks++
+
+clearTimeout(timer)
+
+timer=setTimeout(()=>clicks=0,800)
+
+if(clicks>=7){
+
+abrirAdmin()
+
+}
+
+})
+
+
+/* segurar 3 segundos */
+
+let pressTimer
+
+logo.addEventListener("touchstart",()=>{
+
+pressTimer=setTimeout(()=>{
+
+abrirAdmin()
+
+},3000)
+
+})
+
+logo.addEventListener("touchend",()=>{
+
+clearTimeout(pressTimer)
+
+})
+
+
+/* CTRL SHIFT 1 */
+
+document.addEventListener("keydown",function(e){
+
+if(e.ctrlKey && e.shiftKey && e.key==="!"){
+
+abrirAdmin()
+
+}
+
+})
+
+
+/************************
+PWA
+************************/
 
 if("serviceWorker" in navigator){
 
-navigator.serviceWorker.register("service-worker.js")
+navigator.serviceWorker.register("sw.js")
 
 }
+
+carregarProdutos()
 
 </script>
 
 </body>
-
 </html>
