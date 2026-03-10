@@ -4,389 +4,228 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Painel Admin - Odòmáiyà</title>
+<title>Odòmáiyà Artigos Religiosos</title>
 
-<style>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.png">
 
-body{
-font-family:Arial;
-background:#f5f5f5;
-margin:0;
-}
-
-header{
-background:#111;
-color:white;
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.container{
-padding:20px;
-}
-
-button{
-background:#0a66ff;
-border:none;
-color:white;
-padding:10px 15px;
-border-radius:6px;
-cursor:pointer;
-}
-
-button:hover{
-opacity:0.9;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-gap:20px;
-}
-
-.card{
-background:white;
-border-radius:10px;
-padding:15px;
-box-shadow:0 4px 12px rgba(0,0,0,0.1);
-}
-
-.card img{
-width:100%;
-height:200px;
-object-fit:cover;
-border-radius:8px;
-}
-
-input,select,textarea{
-width:100%;
-padding:8px;
-margin:6px 0;
-}
-
-.modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
-display:none;
-justify-content:center;
-align-items:center;
-}
-
-.modal-content{
-background:white;
-padding:20px;
-width:400px;
-border-radius:10px;
-}
-
-</style>
+<link rel="stylesheet" href="css/style.css">
 
 </head>
 
 <body>
 
-<header>
+<header class="header">
 
-<h2>Painel Odòmáiyà</h2>
+<div class="logo-area">
+<img src="logo.png" id="logoAdmin" class="logo">
+<h1>Odòmáiyà</h1>
+</div>
 
-<div>
+<div class="search-area">
+<input id="busca" placeholder="Buscar produtos">
+</div>
 
-<button onclick="novoProduto()">+ Novo Produto</button>
-
-<button onclick="importarDrive()">Importar Drive</button>
-
+<div class="cart-icon" onclick="abrirCarrinho()">
+🛒 <span id="cartCount">0</span>
 </div>
 
 </header>
 
-<div class="container">
 
-<h3>Produtos</h3>
+<main>
 
-<div id="produtos" class="grid"></div>
+<div id="produtos" class="produtos-grid"></div>
 
-</div>
-
-
-
-<!-- MODAL PRODUTO -->
-
-<div class="modal" id="modalProduto">
-
-<div class="modal-content">
-
-<h3>Produto</h3>
-
-<input id="nome" placeholder="Nome">
-
-<input id="preco" placeholder="Preço">
-
-<input id="estoque" placeholder="Estoque">
-
-<select id="categoria">
-<option>Velas</option>
-<option>Guias</option>
-<option>Pembas</option>
-<option>Incensos</option>
-<option>Decoração</option>
-<option>Outros</option>
-</select>
-
-<textarea id="descricao" placeholder="Descrição"></textarea>
-
-<input id="imagem" placeholder="URL imagem">
-
-<button onclick="gerarImagemIA()">Gerar imagem IA</button>
-
-<br><br>
-
-<button onclick="salvarProduto()">Salvar</button>
-
-<button onclick="fecharModal()">Cancelar</button>
-
-</div>
-
-</div>
-
+</main>
 
 
 <script>
 
-const API = "COLOQUE_SEU_URL_APPS_SCRIPT"
+const API="SEU_APPS_SCRIPT_URL"
+
+let carrinho=[]
 
 
-
-/****************************
+/************************
 CARREGAR PRODUTOS
-****************************/
+************************/
 
 async function carregarProdutos(){
 
-const res = await fetch(API,{
+const res=await fetch(API,{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"listarProdutos"
-})
+body:JSON.stringify({action:"listarProdutos"})
 })
 
-const data = await res.json()
+const lista=await res.json()
 
-renderProdutos(data)
+render(lista)
 
 }
 
 
+function render(lista){
 
-function renderProdutos(lista){
+const area=document.getElementById("produtos")
 
-const container = document.getElementById("produtos")
-
-container.innerHTML=""
+area.innerHTML=""
 
 lista.forEach(p=>{
 
 const card=document.createElement("div")
-card.className="card"
+
+card.className="produto"
 
 card.innerHTML=`
 
 <img src="${p.imagem}">
 
-<h4>${p.nome}</h4>
+<h3>${p.nome}</h3>
 
 <p>R$ ${p.preco}</p>
 
-<p>Estoque: ${p.estoque}</p>
-
-<button onclick='editarProduto(${JSON.stringify(p)})'>Editar</button>
-
-<button onclick='excluirProduto("${p.nome}")'>Excluir</button>
+<button onclick='addCarrinho(${JSON.stringify(p)})'>
+Comprar
+</button>
 
 `
 
-container.appendChild(card)
+area.appendChild(card)
 
 })
 
 }
 
 
+/************************
+CARRINHO
+************************/
 
-/****************************
-NOVO PRODUTO
-****************************/
+function addCarrinho(p){
 
-function novoProduto(){
+carrinho.push(p)
 
-document.getElementById("modalProduto").style.display="flex"
-
-}
-
-
-
-/****************************
-SALVAR PRODUTO
-****************************/
-
-async function salvarProduto(){
-
-const produto={
-
-nome:document.getElementById("nome").value,
-
-preco:document.getElementById("preco").value,
-
-estoque:document.getElementById("estoque").value,
-
-categoria:document.getElementById("categoria").value,
-
-descricao:document.getElementById("descricao").value,
-
-imagem:document.getElementById("imagem").value
-
-}
-
-await fetch(API,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"salvarProduto",
-produto:produto
-})
-})
-
-fecharModal()
-
-carregarProdutos()
+document.getElementById("cartCount").innerText=carrinho.length
 
 }
 
 
+function abrirCarrinho(){
 
-/****************************
-EDITAR PRODUTO
-****************************/
+let msg="Pedido Odòmáiyà:%0A%0A"
 
-function editarProduto(p){
+let total=0
 
-novoProduto()
+carrinho.forEach(p=>{
 
-document.getElementById("nome").value=p.nome
-document.getElementById("preco").value=p.preco
-document.getElementById("estoque").value=p.estoque
-document.getElementById("categoria").value=p.categoria
-document.getElementById("descricao").value=p.descricao
-document.getElementById("imagem").value=p.imagem
+msg+=`${p.nome} - R$${p.preco}%0A`
+
+total+=Number(p.preco)
+
+})
+
+msg+=`%0A Total: R$${total}`
+
+window.open(
+"https://wa.me/554996048808?text="+msg
+)
 
 }
 
 
+/************************
+ADMIN SECRETO
+************************/
 
-/****************************
-EXCLUIR
-****************************/
+const logo=document.getElementById("logoAdmin")
 
-async function excluirProduto(nome){
+let clicks=0
+let timer
 
-if(!confirm("Excluir produto?"))return
 
-await fetch(API,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"excluirProduto",
-nome:nome
-})
-})
+function abrirAdmin(){
 
-carregarProdutos()
+const u=prompt("Usuário")
+const s=prompt("Senha")
+
+if(u==="adm" && s==="99861309"){
+
+window.location="admin.html"
+
+}
 
 }
 
 
+/* 7 cliques rápidos */
 
-/****************************
-GERAR IMAGEM IA
-****************************/
+logo.addEventListener("click",()=>{
 
-async function gerarImagemIA(){
+clicks++
 
-const nome=document.getElementById("nome").value
+clearTimeout(timer)
 
-const res = await fetch(API,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"gerarImagemProduto",
-nome:nome
-})
-})
+timer=setTimeout(()=>clicks=0,800)
 
-const data = await res.json()
+if(clicks>=7){
 
-document.getElementById("imagem").value=data.url
+abrirAdmin()
 
 }
 
-
-
-/****************************
-IMPORTAR DRIVE
-****************************/
-
-async function importarDrive(){
-
-await fetch(API,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"importarProdutosDrive"
-})
 })
 
-alert("Importação concluída")
 
-carregarProdutos()
+/* segurar 3 segundos */
+
+let pressTimer
+
+logo.addEventListener("touchstart",()=>{
+
+pressTimer=setTimeout(()=>{
+
+abrirAdmin()
+
+},3000)
+
+})
+
+logo.addEventListener("touchend",()=>{
+
+clearTimeout(pressTimer)
+
+})
+
+
+/* CTRL SHIFT 1 */
+
+document.addEventListener("keydown",function(e){
+
+if(e.ctrlKey && e.shiftKey && e.key==="!"){
+
+abrirAdmin()
 
 }
 
+})
 
 
-/****************************
-MODAL
-****************************/
+/************************
+PWA
+************************/
 
-function fecharModal(){
+if("serviceWorker" in navigator){
 
-document.getElementById("modalProduto").style.display="none"
+navigator.serviceWorker.register("sw.js")
 
 }
-
-
 
 carregarProdutos()
 
 </script>
 
 </body>
-
 </html>
