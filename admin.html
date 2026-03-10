@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 
 <head>
 
 <meta charset="UTF-8">
-
-<title>Admin Odòmáiyà</title>
+<title>Painel Odòmáiyà</title>
 
 <link rel="stylesheet" href="admin.css">
 
@@ -15,42 +14,89 @@
 
 <body>
 
-<h1>Painel Administrativo</h1>
+<header>
 
-<div class="dashboard">
+<h1>🧿 Painel Odòmáiyà</h1>
+
+</header>
+
+<section class="dashboard">
 
 <div class="card">
 <h3>Total Produtos</h3>
-<span id="totalProdutos"></span>
+<span id="totalProdutos">0</span>
 </div>
 
 <div class="card">
 <h3>Estoque Baixo</h3>
-<span id="estoqueBaixo"></span>
+<span id="estoqueBaixo">0</span>
 </div>
 
 <div class="card">
 <h3>Promoções</h3>
-<span id="promo"></span>
+<span id="promocoes">0</span>
 </div>
 
-</div>
+</section>
 
-<canvas id="grafico"></canvas>
+<section class="upload">
 
-<h2>Upload de Produto</h2>
+<h2>📦 Novo Produto</h2>
 
-<div id="drop">
-
+<div id="dropzone">
 Arraste imagens aqui
-
-<input type="file" id="file" multiple>
-
 </div>
 
-<div id="form"></div>
+<div id="preview"></div>
+
+<button onclick="importarDrive()">
+Importar Produtos da Pasta
+</button>
+
+</section>
+
+<section>
+
+<h2>📋 Produtos</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Imagem</th>
+<th>Nome</th>
+<th>Categoria</th>
+<th>Preço</th>
+<th>Estoque</th>
+
+</tr>
+
+</thead>
+
+<tbody id="listaProdutos"></tbody>
+
+</table>
+
+</section>
+
+<section>
+
+<h2>🎨 Criar Banner IA</h2>
+
+<input id="promptBanner" placeholder="ex: Promoção Velas Espirituais">
+
+<button onclick="gerarBanner()">
+Gerar Banner
+</button>
+
+<div id="banner"></div>
+
+</section>
 
 <script src="admin.js"></script>
 
 </body>
+
 </html>
