@@ -1,17 +1,17 @@
-const API="SEU_URL_APPS_SCRIPT"
+const API="https://script.google.com/macros/s/AKfycby-ZwdotFx3i40iMY_K3bWDYIPOLWtSS-t8rHUsELZ4AS9uoI8Pzey__In3PCspdFFD/exec"
 
 function login(){
 
-const u=document.getElementById("user").value
-const p=document.getElementById("pass").value
+if(
+document.getElementById("user").value=="adm" &&
+document.getElementById("pass").value=="99861309"
+){
 
-if(u==="adm" && p==="99861309"){
-
-document.getElementById("login").style.display="none"
-document.getElementById("panel").style.display="block"
+login.style.display="none"
+panel.style.display="block"
 
 }else{
-alert("login inválido")
+alert("Login inválido")
 }
 
 }
@@ -21,32 +21,31 @@ const fileInput=document.getElementById("fileInput")
 
 drop.onclick=()=>fileInput.click()
 
-fileInput.onchange=(e)=>handleFiles(e.target.files)
+fileInput.onchange=e=>handleFiles(e.target.files)
 
-drop.ondrop=(e)=>{
+drop.ondragover=e=>e.preventDefault()
 
+drop.ondrop=e=>{
 e.preventDefault()
 handleFiles(e.dataTransfer.files)
-
 }
-
-drop.ondragover=(e)=>e.preventDefault()
-
 
 async function handleFiles(files){
 
 for(const file of files){
 
 if(file.size>10*1024*1024){
-
-alert("imagem muito grande")
+alert("Imagem maior que 10MB")
 continue
-
 }
 
-const compressed=await compressImage(file)
+progress.innerHTML="Comprimindo imagem..."
 
-uploadImage(compressed)
+const blob=await compressImage(file)
+
+const base64=await toBase64(blob)
+
+upload(base64)
 
 }
 
@@ -60,18 +59,14 @@ const img=new Image()
 const canvas=document.createElement("canvas")
 const ctx=canvas.getContext("2d")
 
-img.onload=function(){
-
-const max=800
+img.onload=()=>{
 
 let w=img.width
 let h=img.height
 
-if(w>max){
-
-h=h*(max/w)
-w=max
-
+if(w>800){
+h=h*(800/w)
+w=800
 }
 
 canvas.width=w
@@ -79,7 +74,7 @@ canvas.height=h
 
 ctx.drawImage(img,0,0,w,h)
 
-canvas.toBlob(blob=>resolve(blob),"image/jpeg",0.8)
+canvas.toBlob(b=>resolve(b),"image/jpeg",0.8)
 
 }
 
@@ -89,69 +84,95 @@ img.src=URL.createObjectURL(file)
 
 }
 
-async function uploadImage(blob){
+function toBase64(blob){
 
-const form=new FormData()
-form.append("action","uploadImagem")
-form.append("file",blob)
+return new Promise(resolve=>{
+
+const reader=new FileReader()
+
+reader.onloadend=()=>resolve(reader.result.split(",")[1])
+
+reader.readAsDataURL(blob)
+
+})
+
+}
+
+async function upload(base64){
+
+progress.innerHTML="Enviando imagem..."
 
 const res=await fetch(API,{
 method:"POST",
-body:form
+body:JSON.stringify({
+action:"uploadImagem",
+image:base64
+})
 })
 
 const data=await res.json()
 
-gerarFormulario(data)
+progress.innerHTML="IA analisou o produto ✔"
+
+criarFormulario(data)
 
 }
 
-function gerarFormulario(data){
+function criarFormulario(data){
 
-const area=document.getElementById("formArea")
+formArea.innerHTML+=`
 
-area.innerHTML+=`
+<div class="produtoBox">
 
-<div class="formProduto">
+<img src="${data.imagem}" width="200">
 
-<img src="${data.imagem}" width="150">
+<label>Nome</label>
+<input class="nome" value="${data.nome}">
 
-<input id="nome" value="${data.nome}">
-<input id="categoria" value="${data.categoria}">
+<label>Categoria</label>
+<input class="categoria" value="${data.categoria}">
 
-<textarea id="descricao">${data.descricao}</textarea>
+<label>Descrição</label>
+<textarea class="descricao">${data.descricao}</textarea>
 
-<input id="tags" value="${data.tags}">
+<label>Tags SEO</label>
+<input class="tags" value="${data.tags}">
 
-<input id="preco" placeholder="Preço">
+<label>Preço</label>
+<input class="preco">
 
-<input id="estoque" value="0">
+<label>Estoque</label>
+<input class="estoque" value="0">
 
-<select id="promocao">
+<select class="promocao">
 <option value="false">Sem promoção</option>
 <option value="true">Promoção</option>
 </select>
 
-<button onclick="salvarProduto()">Salvar Produto</button>
+<button onclick="salvarProduto(this)">
+Salvar Produto
+</button>
 
 </div>
-
 `
 
 }
 
-async function salvarProduto(){
+async function salvarProduto(btn){
+
+const box=btn.closest(".produtoBox")
 
 const produto={
 
-nome:document.getElementById("nome").value,
-preco:document.getElementById("preco").value,
-promocao:document.getElementById("promocao").value,
-categoria:document.getElementById("categoria").value,
-imagem:document.querySelector(".formProduto img").src,
-estoque:document.getElementById("estoque").value,
-descricao:document.getElementById("descricao").value,
-tags:document.getElementById("tags").value
+nome:box.querySelector(".nome").value,
+categoria:box.querySelector(".categoria").value,
+descricao:box.querySelector(".descricao").value,
+tags:box.querySelector(".tags").value,
+preco:box.querySelector(".preco").value,
+estoque:box.querySelector(".estoque").value,
+promocao:box.querySelector(".promocao").value,
+imagem:box.querySelector("img").src,
+destaque:false
 
 }
 
@@ -163,6 +184,6 @@ produto:produto
 })
 })
 
-alert("Produto criado!")
+alert("Produto cadastrado!")
 
 }
