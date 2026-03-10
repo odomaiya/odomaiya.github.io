@@ -1,30 +1,25 @@
-/* ======================================================
-ADMIN SISTEMA
-====================================================== */
+const Admin={
 
-const Admin = {
+ pedidos:[],
 
- carregarDashboard(){
+ dashboard(){
 
-  console.log("Dashboard carregado")
+  console.log("Admin iniciado")
 
  },
 
- listarPedidos(){
+ vendasTotais(){
 
- },
-
- atualizarEstoque(){
+  return Admin.pedidos.reduce((t,p)=>t+p.total,0)
 
  }
 
 }
 
-
 document.addEventListener("DOMContentLoaded",()=>{
 
- if(!document.body.classList.contains("admin")) return
+ if(!document.body.classList.contains("admin"))return
 
- Admin.carregarDashboard()
+ Admin.dashboard()
 
 })
