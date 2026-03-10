@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -12,6 +14,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon.png">
 
+<meta name="theme-color" content="#111">
+
 </head>
 
 <body>
@@ -19,8 +23,11 @@
 <header class="header">
 
 <div class="logo-area">
+
 <img src="logo.png" class="logo">
-<h1>Odòmáiyà</h1>
+
+<h1 id="logo">Odòmáiyà</h1>
+
 </div>
 
 <div class="search-area">
@@ -53,6 +60,7 @@
 </main>
 
 
+
 <!-- CARRINHO -->
 
 <div id="cartDrawer" class="cart-drawer">
@@ -70,6 +78,7 @@ Finalizar Pedido
 </button>
 
 </div>
+
 
 
 <!-- CHECKOUT -->
@@ -110,27 +119,92 @@ Enviar Pedido
 </div>
 
 
+
 <script src="js/app.js"></script>
 
+<script>
+
+/***********************
+ ADMIN SECRETO
+***********************/
+
+let clicksLogo = 0
+let timerLogo
+
+const logo = document.getElementById("logo")
+
+logo.addEventListener("click", () => {
+
+clicksLogo++
+
+clearTimeout(timerLogo)
+
+timerLogo = setTimeout(() => {
+clicksLogo = 0
+}, 4000)
+
+if (clicksLogo === 12) {
+
+abrirAdmin()
+
+}
+
+})
+
+
+
+/***********************
+ ATALHO TECLADO
+ CTRL + SHIFT + A
+***********************/
+
+document.addEventListener("keydown", function(e){
+
+if(e.ctrlKey && e.shiftKey && e.key === "A"){
+
+abrirAdmin()
+
+}
+
+})
+
+
+
+/***********************
+ LOGIN ADMIN
+***********************/
+
+function abrirAdmin(){
+
+const user = prompt("Usuário")
+const pass = prompt("Senha")
+
+if(user === "adm" && pass === "99861309"){
+
+window.location = "admin.html"
+
+}else{
+
+alert("Acesso negado")
+
+}
+
+}
+
+
+
+/***********************
+ PWA SERVICE WORKER
+***********************/
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register("service-worker.js")
+
+}
+
+</script>
+
 </body>
+
 </html>
-
-let clicks=0
-
-document.querySelector("header").onclick=()=>{
-
-clicks++
-
-if(clicks>=15){
-
-const u=prompt("Usuário")
-const s=prompt("Senha")
-
-if(u=="adm" && s=="99861309"){
-
-window.location="admin.html"
-
-}
-<h1 id="logo">Odòmáiyà</h1>
-
-}
