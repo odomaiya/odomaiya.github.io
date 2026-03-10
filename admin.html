@@ -7,45 +7,50 @@
 
 <title>Admin Odòmáiyà</title>
 
-<link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="admin.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
 <body>
 
-<div id="login">
+<h1>Painel Administrativo</h1>
 
-<h2>Painel Administrativo</h2>
+<div class="dashboard">
 
-<input id="user" placeholder="Usuário">
-<input id="pass" type="password" placeholder="Senha">
+<div class="card">
+<h3>Total Produtos</h3>
+<span id="totalProdutos"></span>
+</div>
 
-<button onclick="login()">Entrar</button>
+<div class="card">
+<h3>Estoque Baixo</h3>
+<span id="estoqueBaixo"></span>
+</div>
+
+<div class="card">
+<h3>Promoções</h3>
+<span id="promo"></span>
+</div>
 
 </div>
 
+<canvas id="grafico"></canvas>
 
-<div id="panel">
+<h2>Upload de Produto</h2>
 
-<h1>Cadastro Inteligente</h1>
+<div id="drop">
 
-<div id="dropArea">
+Arraste imagens aqui
 
-📦 Arraste imagens aqui  
-ou clique para enviar
-
-<input type="file" id="fileInput" multiple accept="image/png,image/jpeg,image/webp">
+<input type="file" id="file" multiple>
 
 </div>
 
-<div id="progress"></div>
+<div id="form"></div>
 
-<div id="formArea"></div>
-
-</div>
-
-<script src="js/admin.js"></script>
+<script src="admin.js"></script>
 
 </body>
-
 </html>
