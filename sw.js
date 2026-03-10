@@ -1,31 +1,23 @@
-const CACHE_NAME = "odomaia-v1"
+self.addEventListener("install",e=>{
 
-const ASSETS = [
+e.waitUntil(
+caches.open("v1").then(cache=>{
+return cache.addAll([
 "/",
 "/index.html",
 "/css/style.css",
-"/css/animations.css",
-"/js/app.js",
-"/logo.png",
-"/favicon.png"
-]
-
-self.addEventListener("install", event => {
-
-event.waitUntil(
-caches.open(CACHE_NAME).then(cache => {
-return cache.addAll(ASSETS)
+"/js/app.js"
+])
 })
 )
 
 })
 
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch",e=>{
 
-event.respondWith(
-caches.match(event.request).then(response => {
-return response || fetch(event.request)
-})
+e.respondWith(
+caches.match(e.request)
+.then(res=>res||fetch(e.request))
 )
 
 })
