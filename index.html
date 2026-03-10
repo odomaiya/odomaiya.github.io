@@ -117,13 +117,20 @@ Enviar Pedido
 
 let clicks=0
 
-document.querySelector("header").onclick=function(){
+document.querySelector("header").onclick=()=>{
 
 clicks++
 
 if(clicks>=15){
 
+const u=prompt("Usuário")
+const s=prompt("Senha")
+
+if(u=="adm" && s=="99861309"){
+
 window.location="admin.html"
+
+}
 
 }
 
