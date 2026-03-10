@@ -1,1 +1,29 @@
 
+body{
+font-family:Arial;
+background:#f4f4f4;
+}
+
+.adminTop{
+background:#111;
+color:white;
+padding:20px;
+}
+
+.dashboard{
+display:flex;
+gap:20px;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+flex:1;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.produtosAdmin{
+padding:30px;
+}
