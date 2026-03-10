@@ -118,3 +118,38 @@ window.open(`https://wa.me/${numero}?text=${msg}`)
 }
 
 carregarProdutos()
+
+document.addEventListener("keydown",function(e){
+
+if(e.ctrlKey && e.shiftKey && e.key==="1"){
+
+window.location.href="odomaia/admin.html"
+
+}
+
+})
+
+let clickLogo=0
+let timer
+
+const logo=document.getElementById("logo")
+
+logo.addEventListener("touchstart",()=>{
+
+timer=setTimeout(()=>{
+clickLogo=0
+},3000)
+
+})
+
+logo.addEventListener("click",()=>{
+
+clickLogo++
+
+if(clickLogo>=7){
+
+window.location.href="odomaia/admin.html"
+
+}
+
+})
