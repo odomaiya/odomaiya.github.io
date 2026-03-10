@@ -1,139 +1,136 @@
-/* CONFIG */
-
-const CONFIG = {
-
+const CONFIG={
 API:"https://script.google.com/macros/s/AKfycby6ebTA-y3EvSlwgpeHqiYEL6ilzbVK0nhQUycNXc5QbRoXXhQmPbvg3tEh_5JQIdI0/exec",
-
 WHATSAPP:"5554996048808"
-
 }
 
-/* STATE */
-
-const STATE = {
-
+const STATE={
 produtos:[],
-cart:{}
-
+carrinho:{}
 }
-
-/* UTILS */
-
-function money(v){
-
-return "R$ " + Number(v).toFixed(2)
-
-}
-
-/* API */
 
 async function carregarProdutos(){
 
-const r = await fetch(CONFIG.API)
+const res=await fetch(CONFIG.API+"?action=produtos")
+const data=await res.json()
 
-const data = await r.json()
+STATE.produtos=data
 
-STATE.produtos = data
-
-renderProdutos()
+renderProdutos(data)
 
 }
 
-/* PRODUTOS */
+function renderProdutos(lista){
 
-function renderProdutos(){
-
-const grid = document.getElementById("produtos")
-
-if(!grid) return
-
+const grid=document.getElementById("produtos")
 grid.innerHTML=""
 
-STATE.produtos.forEach((p,i)=>{
+lista.forEach(p=>{
 
-let cls="card"
+let classe="card"
 
-if(p.promocao==="true") cls+=" promo"
+if(p.promocao)classe+=" promo"
+if(p.estoque<10)classe+=" estoque"
 
-if(p.estoque<10) cls+=" lowstock"
-
-const el=document.createElement("div")
-
-el.className=cls
-
-el.innerHTML=`
+grid.innerHTML+=`
+<div class="${classe}">
 
 <img src="${p.imagem}" loading="lazy">
 
 <h3>${p.nome}</h3>
 
-<p>${money(p.preco)}</p>
+<div class="preco">R$ ${p.preco}</div>
 
-<button onclick="addCart(${i})">Adicionar</button>
+<button class="btn"
+onclick="CART.add('${p.nome}')">
+Adicionar
+</button>
 
+</div>
 `
-
-grid.appendChild(el)
 
 })
 
 }
 
-/* CARRINHO */
+const CART={
 
-function addCart(i){
+add(nome){
 
-const p = STATE.produtos[i]
+if(!STATE.carrinho[nome])
+STATE.carrinho[nome]=0
 
-if(!STATE.cart[p.nome]){
+STATE.carrinho[nome]++
 
-STATE.cart[p.nome]={...p,qty:1}
+UI.updateCart()
 
-}else{
+},
 
-STATE.cart[p.nome].qty++
+remove(nome){
+
+delete STATE.carrinho[nome]
+
+UI.updateCart()
+
+},
+
+change(nome,q){
+
+STATE.carrinho[nome]+=q
+
+if(STATE.carrinho[nome]<=0)
+delete STATE.carrinho[nome]
+
+UI.updateCart()
 
 }
 
-renderCart()
-
 }
 
-function renderCart(){
+const UI={
 
-const box=document.getElementById("cartItems")
+toggleCart(){
 
-const totalEl=document.getElementById("cartTotal")
+document
+.getElementById("cartDrawer")
+.classList
+.toggle("cart-open")
 
-const count=document.getElementById("cartCount")
+},
 
-if(!box) return
+updateCart(){
 
-box.innerHTML=""
+const el=document.getElementById("cartItems")
+el.innerHTML=""
 
 let total=0
+let count=0
 
-let qtd=0
+Object.keys(STATE.carrinho).forEach(n=>{
 
-Object.values(STATE.cart).forEach(p=>{
+const p=STATE.produtos.find(x=>x.nome==n)
 
-const subtotal=p.preco*p.qty
+const qtd=STATE.carrinho[n]
 
-total+=subtotal
+const preco=p.promocao>0?p.promocao:p.preco
 
-qtd+=p.qty
+total+=preco*qtd
+count+=qtd
 
-box.innerHTML+=`
+el.innerHTML+=`
 
-<div>
+<div class="cart-item">
 
-${p.nome}
+<div>${n}</div>
 
-<button onclick="changeQty('${p.nome}',-1)">-</button>
+<div class="qty">
 
-${p.qty}
+<button onclick="CART.change('${n}',-1)">-</button>
 
-<button onclick="changeQty('${p.nome}',1)">+</button>
+${qtd}
+
+<button onclick="CART.change('${n}',1)">+</button>
+
+</div>
 
 </div>
 
@@ -141,96 +138,70 @@ ${p.qty}
 
 })
 
-totalEl.textContent=money(total)
-
-count.textContent=qtd
-
-}
-
-function changeQty(nome,n){
-
-STATE.cart[nome].qty+=n
-
-if(STATE.cart[nome].qty<=0) delete STATE.cart[nome]
-
-renderCart()
+document.getElementById("cartTotal").innerText="R$ "+total
+document.getElementById("cartCount").innerText=count
 
 }
 
-/* CHECKOUT */
-
-function abrirCheckout(){
-
-document.getElementById("checkout").classList.remove("hidden")
-
 }
 
-/* WHATSAPP */
+const CHECKOUT={
 
-function finalizarPedido(){
+abrir(){
 
-let nome=document.getElementById("clienteNome").value
+document.getElementById("checkoutModal").style.display="flex"
 
-let tipo=document.getElementById("tipoEntrega").value
+},
 
-let pagamento=document.getElementById("formaPagamento").value
+async finalizar(){
 
-let rua=document.getElementById("rua").value
-
-let numero=document.getElementById("numero").value
-
-let cidade=document.getElementById("cidade").value
+const nome=document.getElementById("cliente").value
+const tipo=document.getElementById("tipoPedido").value
+const pagamento=document.getElementById("pagamento").value
 
 let total=0
 
-let msg=""
+Object.keys(STATE.carrinho).forEach(n=>{
 
-msg+="🛒 NOVO PEDIDO - ODÒMÁIYÀ\n\n"
-
-msg+="👤 Cliente: "+nome+"\n"
-
-msg+="📅 Data: "+new Date().toLocaleString()+"\n"
-
-msg+="📦 Tipo: "+tipo+"\n"
-
-msg+="💳 Pagamento: "+pagamento+"\n\n"
-
-if(tipo==="entrega"){
-
-msg+="📍 Endereço de entrega\n"
-
-msg+=rua+", "+numero+"\n"+cidade+"\n\n"
-
-}else{
-
-msg+="📍 Retirada na loja\n\n"
-
-}
-
-msg+="🛍️ Itens\n"
-
-Object.values(STATE.cart).forEach(p=>{
-
-const subtotal=p.preco*p.qty
-
-total+=subtotal
-
-msg+=`• ${p.nome} ${p.qty}x ${money(p.preco)}\n`
+const p=STATE.produtos.find(x=>x.nome==n)
+total+=p.preco*STATE.carrinho[n]
 
 })
 
-msg+=`\n💰 Total: ${money(total)}\n`
+await fetch(CONFIG.API,{
+method:"POST",
+body:JSON.stringify({
 
-const url="https://wa.me/"+CONFIG.WHATSAPP+"?text="+encodeURIComponent(msg)
+action:"registrarVenda",
+cliente:nome,
+tipo:tipo,
+pagamento:pagamento,
+itens:JSON.stringify(STATE.carrinho),
+total:total
 
-window.open(url)
+})
+})
+
+let msg="🛒 NOVO PEDIDO - ODÒMÁIYÀ\n\n"
+
+msg+="Cliente: "+nome+"\n"
+msg+="Tipo: "+tipo+"\n"
+msg+="Pagamento: "+pagamento+"\n\n"
+
+msg+="Itens:\n"
+
+Object.keys(STATE.carrinho).forEach(n=>{
+msg+=n+" x"+STATE.carrinho[n]+"\n"
+})
+
+msg+="\nTotal: R$ "+total
+
+window.open(
+"https://wa.me/"+CONFIG.WHATSAPP+"?text="+encodeURIComponent(msg)
+)
 
 }
 
-/* INIT */
-
-document.addEventListener("DOMContentLoaded",()=>{
+}
 
 carregarProdutos()
-
-})
