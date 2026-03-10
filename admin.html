@@ -4,11 +4,90 @@
 <head>
 
 <meta charset="UTF-8">
-<title>Painel Odòmáiyà</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<link rel="stylesheet" href="admin.css">
+<title>Painel Admin - Odòmáiyà</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+margin:0;
+}
+
+header{
+background:#111;
+color:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.container{
+padding:20px;
+}
+
+button{
+background:#0a66ff;
+border:none;
+color:white;
+padding:10px 15px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+border-radius:10px;
+padding:15px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card img{
+width:100%;
+height:200px;
+object-fit:cover;
+border-radius:8px;
+}
+
+input,select,textarea{
+width:100%;
+padding:8px;
+margin:6px 0;
+}
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:white;
+padding:20px;
+width:400px;
+border-radius:10px;
+}
+
+</style>
 
 </head>
 
@@ -16,86 +95,297 @@
 
 <header>
 
-<h1>🧿 Painel Odòmáiyà</h1>
+<h2>Painel Odòmáiyà</h2>
+
+<div>
+
+<button onclick="novoProduto()">+ Novo Produto</button>
+
+<button onclick="importarDrive()">Importar Drive</button>
+
+</div>
 
 </header>
 
-<section class="dashboard">
+<div class="container">
 
-<div class="card">
-<h3>Total Produtos</h3>
-<span id="totalProdutos">0</span>
+<h3>Produtos</h3>
+
+<div id="produtos" class="grid"></div>
+
 </div>
 
-<div class="card">
-<h3>Estoque Baixo</h3>
-<span id="estoqueBaixo">0</span>
+
+
+<!-- MODAL PRODUTO -->
+
+<div class="modal" id="modalProduto">
+
+<div class="modal-content">
+
+<h3>Produto</h3>
+
+<input id="nome" placeholder="Nome">
+
+<input id="preco" placeholder="Preço">
+
+<input id="estoque" placeholder="Estoque">
+
+<select id="categoria">
+<option>Velas</option>
+<option>Guias</option>
+<option>Pembas</option>
+<option>Incensos</option>
+<option>Decoração</option>
+<option>Outros</option>
+</select>
+
+<textarea id="descricao" placeholder="Descrição"></textarea>
+
+<input id="imagem" placeholder="URL imagem">
+
+<button onclick="gerarImagemIA()">Gerar imagem IA</button>
+
+<br><br>
+
+<button onclick="salvarProduto()">Salvar</button>
+
+<button onclick="fecharModal()">Cancelar</button>
+
 </div>
 
-<div class="card">
-<h3>Promoções</h3>
-<span id="promocoes">0</span>
 </div>
 
-</section>
 
-<section class="upload">
 
-<h2>📦 Novo Produto</h2>
+<script>
 
-<div id="dropzone">
-Arraste imagens aqui
-</div>
+const API = "COLOQUE_SEU_URL_APPS_SCRIPT"
 
-<div id="preview"></div>
 
-<button onclick="importarDrive()">
-Importar Produtos da Pasta
-</button>
 
-</section>
+/****************************
+CARREGAR PRODUTOS
+****************************/
 
-<section>
+async function carregarProdutos(){
 
-<h2>📋 Produtos</h2>
+const res = await fetch(API,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"listarProdutos"
+})
+})
 
-<table>
+const data = await res.json()
 
-<thead>
+renderProdutos(data)
 
-<tr>
+}
 
-<th>Imagem</th>
-<th>Nome</th>
-<th>Categoria</th>
-<th>Preço</th>
-<th>Estoque</th>
 
-</tr>
 
-</thead>
+function renderProdutos(lista){
 
-<tbody id="listaProdutos"></tbody>
+const container = document.getElementById("produtos")
 
-</table>
+container.innerHTML=""
 
-</section>
+lista.forEach(p=>{
 
-<section>
+const card=document.createElement("div")
+card.className="card"
 
-<h2>🎨 Criar Banner IA</h2>
+card.innerHTML=`
 
-<input id="promptBanner" placeholder="ex: Promoção Velas Espirituais">
+<img src="${p.imagem}">
 
-<button onclick="gerarBanner()">
-Gerar Banner
-</button>
+<h4>${p.nome}</h4>
 
-<div id="banner"></div>
+<p>R$ ${p.preco}</p>
 
-</section>
+<p>Estoque: ${p.estoque}</p>
 
-<script src="admin.js"></script>
+<button onclick='editarProduto(${JSON.stringify(p)})'>Editar</button>
+
+<button onclick='excluirProduto("${p.nome}")'>Excluir</button>
+
+`
+
+container.appendChild(card)
+
+})
+
+}
+
+
+
+/****************************
+NOVO PRODUTO
+****************************/
+
+function novoProduto(){
+
+document.getElementById("modalProduto").style.display="flex"
+
+}
+
+
+
+/****************************
+SALVAR PRODUTO
+****************************/
+
+async function salvarProduto(){
+
+const produto={
+
+nome:document.getElementById("nome").value,
+
+preco:document.getElementById("preco").value,
+
+estoque:document.getElementById("estoque").value,
+
+categoria:document.getElementById("categoria").value,
+
+descricao:document.getElementById("descricao").value,
+
+imagem:document.getElementById("imagem").value
+
+}
+
+await fetch(API,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"salvarProduto",
+produto:produto
+})
+})
+
+fecharModal()
+
+carregarProdutos()
+
+}
+
+
+
+/****************************
+EDITAR PRODUTO
+****************************/
+
+function editarProduto(p){
+
+novoProduto()
+
+document.getElementById("nome").value=p.nome
+document.getElementById("preco").value=p.preco
+document.getElementById("estoque").value=p.estoque
+document.getElementById("categoria").value=p.categoria
+document.getElementById("descricao").value=p.descricao
+document.getElementById("imagem").value=p.imagem
+
+}
+
+
+
+/****************************
+EXCLUIR
+****************************/
+
+async function excluirProduto(nome){
+
+if(!confirm("Excluir produto?"))return
+
+await fetch(API,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"excluirProduto",
+nome:nome
+})
+})
+
+carregarProdutos()
+
+}
+
+
+
+/****************************
+GERAR IMAGEM IA
+****************************/
+
+async function gerarImagemIA(){
+
+const nome=document.getElementById("nome").value
+
+const res = await fetch(API,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"gerarImagemProduto",
+nome:nome
+})
+})
+
+const data = await res.json()
+
+document.getElementById("imagem").value=data.url
+
+}
+
+
+
+/****************************
+IMPORTAR DRIVE
+****************************/
+
+async function importarDrive(){
+
+await fetch(API,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"importarProdutosDrive"
+})
+})
+
+alert("Importação concluída")
+
+carregarProdutos()
+
+}
+
+
+
+/****************************
+MODAL
+****************************/
+
+function fecharModal(){
+
+document.getElementById("modalProduto").style.display="none"
+
+}
+
+
+
+carregarProdutos()
+
+</script>
 
 </body>
 
