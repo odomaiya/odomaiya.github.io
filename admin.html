@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
-<title>Admin - Odòmáiyà</title>
+
+<title>Admin Odòmáiyà</title>
 
 <link rel="stylesheet" href="css/admin.css">
 
@@ -11,31 +13,32 @@
 
 <body>
 
-<div class="login" id="login">
+<div id="login">
 
 <h2>Painel Administrativo</h2>
 
 <input id="user" placeholder="Usuário">
-<input id="pass" placeholder="Senha" type="password">
+<input id="pass" type="password" placeholder="Senha">
 
 <button onclick="login()">Entrar</button>
 
 </div>
 
-<div class="panel" id="panel">
 
-<h1>Cadastro Inteligente de Produtos</h1>
+<div id="panel">
+
+<h1>Cadastro Inteligente</h1>
 
 <div id="dropArea">
 
-<p>📦 Arraste imagens aqui</p>
-<p>ou clique para enviar</p>
+📦 Arraste imagens aqui  
+ou clique para enviar
 
-<input type="file" id="fileInput" multiple accept="image/*">
+<input type="file" id="fileInput" multiple accept="image/png,image/jpeg,image/webp">
 
 </div>
 
-<div id="preview"></div>
+<div id="progress"></div>
 
 <div id="formArea"></div>
 
@@ -44,4 +47,5 @@
 <script src="js/admin.js"></script>
 
 </body>
+
 </html>
