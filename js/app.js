@@ -1,400 +1,247 @@
-/* =====================================================
-CONFIGURAÇÃO DO SISTEMA
-===================================================== */
+/* CONFIG */
 
 const CONFIG = {
 
- API_URL:"https://script.google.com/macros/s/AKfycbyNDOjR9YM5JBAU42gUcwGfyZPwSaVdP6T9o73vEf-IuwT3f7qqeOP8CCUZGxv_dANy/exec",
+API:"https://script.google.com/macros/s/AKfycbyNDOjR9YM5JBAU42gUcwGfyZPwSaVdP6T9o73vEf-IuwT3f7qqeOP8CCUZGxv_dANy/exec",
 
- WHATSAPP:"5599999999999",
-
- CACHE_KEY:"odomaia_produtos",
-
- DEBUG:true
+WHATSAPP:"559999999999"
 
 }
 
+/* STATE GLOBAL */
 
-/* =====================================================
-LOGGER
-===================================================== */
+const STATE = {
 
-const Logger={
- log(...m){CONFIG.DEBUG&&console.log("[APP]",...m)},
- error(...m){console.error("[APP ERROR]",...m)}
-}
-
-
-/* =====================================================
-ESTADO GLOBAL
-===================================================== */
-
-const STATE={
-
- produtos:[],
- carrinho:[],
- buscaIndex:[]
+produtos:[],
+filtrados:[],
+cart:{}
 
 }
 
+/* UTILS */
 
-/* =====================================================
-UTILITÁRIOS
-===================================================== */
+const Utils = {
 
-const Utils={
-
- moeda(v){
-  return "R$ "+Number(v).toFixed(2)
- },
-
- el(q){
-  return document.querySelector(q)
- },
-
- els(q){
-  return document.querySelectorAll(q)
- },
-
- debounce(fn,delay=250){
-  let t
-  return(...a)=>{
-   clearTimeout(t)
-   t=setTimeout(()=>fn(...a),delay)
-  }
- }
+money(v){
+return "R$ "+Number(v).toFixed(2)
+}
 
 }
 
+/* API */
 
-/* =====================================================
-CACHE
-===================================================== */
+async function carregarProdutos(){
 
-const Cache={
+const r = await fetch(CONFIG.API)
 
- salvar(key,data){
+const data = await r.json()
 
-  try{
-   localStorage.setItem(key,JSON.stringify(data))
-  }catch(e){}
+STATE.produtos = data
 
- },
+STATE.filtrados = data
 
- carregar(key){
-
-  try{
-   return JSON.parse(localStorage.getItem(key))
-  }catch(e){
-   return null
-  }
-
- }
+renderProdutos()
 
 }
 
+/* RENDER */
 
-/* =====================================================
-API
-===================================================== */
+function renderProdutos(){
 
-const API={
+const grid = document.getElementById("products")
 
- async produtos(){
+if(!grid)return
 
-  try{
+grid.innerHTML=""
 
-   const cached=Cache.carregar(CONFIG.CACHE_KEY)
+STATE.filtrados.forEach((p,i)=>{
 
-   if(cached){
+let cls="card"
 
-    STATE.produtos=cached
-    Logger.log("Produtos carregados do cache")
+if(p.promocao=="true") cls+=" promo"
 
-    return cached
-   }
+if(p.estoque<10) cls+=" lowstock"
 
-   const r=await fetch(CONFIG.API_URL)
+const card=document.createElement("div")
 
-   if(!r.ok) throw "API erro"
+card.className=cls
 
-   const data=await r.json()
+let badge=""
 
-   STATE.produtos=data
+if(p.promocao=="true")
+badge+=`<span class="badge promo">🔥 PROMO</span>`
 
-   Cache.salvar(CONFIG.CACHE_KEY,data)
+if(p.estoque<10)
+badge+=`<span class="badge stock">⚠ Estoque baixo</span>`
 
-   return data
+card.innerHTML=`
 
-  }catch(e){
+${badge}
 
-   Logger.error("API",e)
+<img src="${p.imagem}" loading="lazy">
 
-   return[]
+<h3>${p.nome}</h3>
 
-  }
+<p>${Utils.money(p.preco)}</p>
 
- }
+<button onclick="addCart(${i})">Adicionar</button>
 
-}
+`
 
+grid.appendChild(card)
 
-/* =====================================================
-INDEXAÇÃO DE BUSCA (ULTRA RÁPIDA)
-===================================================== */
-
-const Busca={
-
- indexar(){
-
-  STATE.buscaIndex=STATE.produtos.map(p=>({
-
-   id:p.id,
-   nome:p.nome.toLowerCase()
-
-  }))
-
- },
-
- pesquisar(q){
-
-  q=q.toLowerCase()
-
-  return STATE.produtos.filter(p=>
-   p.nome.toLowerCase().includes(q)
-  )
-
- }
+})
 
 }
 
+/* BUSCA */
 
-/* =====================================================
-CARRINHO
-===================================================== */
+document.addEventListener("input",e=>{
 
-const Carrinho={
+if(e.target.id==="search"){
 
- carregar(){
+const q=e.target.value.toLowerCase()
 
-  const c=Cache.carregar("carrinho")
+STATE.filtrados=STATE.produtos.filter(p=>
+p.nome.toLowerCase().includes(q)
+)
 
-  if(c)STATE.carrinho=c
-
- },
-
- salvar(){
-
-  Cache.salvar("carrinho",STATE.carrinho)
-
- },
-
- adicionar(id){
-
-  const p=STATE.produtos.find(p=>p.id==id)
-
-  if(!p)return
-
-  STATE.carrinho.push(p)
-
-  Carrinho.salvar()
-
-  UI.atualizarCarrinho()
-
- },
-
- remover(i){
-
-  STATE.carrinho.splice(i,1)
-
-  Carrinho.salvar()
-
-  UI.atualizarCarrinho()
-
- }
+renderProdutos()
 
 }
 
+})
 
-/* =====================================================
-CHECKOUT WHATSAPP (NÃO ALTERADO)
-===================================================== */
+/* CARRINHO */
 
-const Checkout={
+function addCart(i){
 
- gerarMensagem(){
+const p=STATE.produtos[i]
 
-  let msg="Pedido:%0A"
+if(!STATE.cart[p.nome]){
 
-  STATE.carrinho.forEach(p=>{
-   msg+=`${p.nome} - ${p.preco}%0A`
-  })
+STATE.cart[p.nome]={...p,qty:1}
 
-  return msg
+}else{
 
- },
-
- finalizar(){
-
-  const url=`https://wa.me/${CONFIG.WHATSAPP}?text=${Checkout.gerarMensagem()}`
-
-  window.open(url)
-
- }
+STATE.cart[p.nome].qty++
 
 }
 
-
-/* =====================================================
-RENDERIZAÇÃO OTIMIZADA
-===================================================== */
-
-const UI={
-
- atualizarCarrinho(){
-
-  const el=Utils.el("#cartCount")
-
-  if(el)el.textContent=STATE.carrinho.length
-
- },
-
- vitrine(){
-
-  const container=Utils.el("#vitrine")
-
-  if(!container)return
-
-  const frag=document.createDocumentFragment()
-
-  STATE.produtos.forEach(p=>{
-
-   const card=document.createElement("div")
-
-   card.className="produto"
-
-   card.innerHTML=`
-
-   <img loading="lazy" src="${p.imagem}">
-
-   <h3>${p.nome}</h3>
-
-   <p>${Utils.moeda(p.preco)}</p>
-
-   <button onclick="Carrinho.adicionar('${p.id}')">
-
-   Comprar
-
-   </button>
-
-   `
-
-   frag.appendChild(card)
-
-  })
-
-  container.innerHTML=""
-
-  container.appendChild(frag)
-
- }
+renderCart()
 
 }
 
+function renderCart(){
 
-/* =====================================================
-PARTÍCULAS
-===================================================== */
+const box=document.getElementById("cartItems")
+const total=document.getElementById("total")
 
-const Particulas={
+if(!box)return
 
- iniciar(){
+box.innerHTML=""
 
-  const canvas=Utils.el("#particles")
+let soma=0
 
-  if(!canvas)return
+Object.values(STATE.cart).forEach(p=>{
 
- }
+soma+=p.preco*p.qty
 
-}
+box.innerHTML+=`
 
+<div>
 
-/* =====================================================
-VITRINE 3D
-===================================================== */
+${p.nome}
 
-const Vitrine3D={
+x${p.qty}
 
- iniciar(){
+</div>
 
-  const v=Utils.el("#vitrine3d")
+`
 
-  if(!v)return
+})
 
- }
-
-}
-
-
-/* =====================================================
-LAZY LOADING
-===================================================== */
-
-const Lazy={
-
- iniciar(){
-
-  const imgs=Utils.els("img[data-src]")
-
-  const obs=new IntersectionObserver(entries=>{
-
-   entries.forEach(e=>{
-
-    if(e.isIntersecting){
-
-     const img=e.target
-
-     img.src=img.dataset.src
-
-     obs.unobserve(img)
-
-    }
-
-   })
-
-  })
-
-  imgs.forEach(i=>obs.observe(i))
-
- }
+total.textContent=Utils.money(soma)
 
 }
 
+/* CHECKOUT */
 
-/* =====================================================
-INICIALIZAÇÃO DO APP
-===================================================== */
+document.addEventListener("click",e=>{
 
-async function iniciarApp(){
+if(e.target.id==="checkout"){
 
- Logger.log("Iniciando loja")
+let msg="🛒 Novo pedido%0A%0A"
 
- Carrinho.carregar()
+let total=0
 
- await API.produtos()
+Object.values(STATE.cart).forEach(p=>{
 
- Busca.indexar()
+msg+=`Produto: ${p.nome}%0AQuantidade: ${p.qty}%0AValor: ${p.preco}%0A%0A`
 
- UI.vitrine()
+total+=p.preco*p.qty
 
- UI.atualizarCarrinho()
+})
 
- Lazy.iniciar()
+msg+=`Total: ${total}`
 
- Particulas.iniciar()
-
- Vitrine3D.iniciar()
+window.open(`https://wa.me/${CONFIG.WHATSAPP}?text=${msg}`)
 
 }
 
-document.addEventListener("DOMContentLoaded",iniciarApp)
+})
+
+/* PARTICLES */
+
+function particles(){
+
+const canvas=document.getElementById("particles")
+if(!canvas)return
+
+const ctx=canvas.getContext("2d")
+
+canvas.width=innerWidth
+canvas.height=innerHeight
+
+let parts=[]
+
+for(let i=0;i<60;i++){
+
+parts.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:2
+})
+
+}
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+parts.forEach(p=>{
+
+ctx.beginPath()
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
+ctx.fillStyle="rgba(255,255,255,.3)"
+ctx.fill()
+
+})
+
+requestAnimationFrame(draw)
+
+}
+
+draw()
+
+}
+
+/* INIT */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+carregarProdutos()
+
+particles()
+
+})
