@@ -1,29 +1,37 @@
-const CACHE="odomaia-cache-v3"
+const CACHE="app-cache-v1"
 
 const ASSETS=[
-"./",
-"./index.html",
-"./produto.html",
-"./css/style.css",
-"./css/animations.css",
-"./logo.png"
+
+"/",
+"/index.html",
+"/produto.html",
+
+"/css/style.css",
+"/css/animations.css",
+
+"/js/app.js",
+
+"/logo.png",
+"/favicon.png"
+
 ]
 
-self.addEventListener("install",event=>{
+self.addEventListener("install",e=>{
 
-event.waitUntil(
-caches.open(CACHE)
-.then(cache=>cache.addAll(ASSETS))
-.catch(()=>{})
-)
+ e.waitUntil(
+
+  caches.open(CACHE).then(c=>c.addAll(ASSETS))
+
+ )
 
 })
 
-self.addEventListener("fetch",event=>{
+self.addEventListener("fetch",e=>{
 
-event.respondWith(
-caches.match(event.request)
-.then(res=>res || fetch(event.request))
-)
+ e.respondWith(
+
+  caches.match(e.request).then(r=>r||fetch(e.request))
+
+ )
 
 })
