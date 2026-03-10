@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Odòmáiyà Artigos Religiosos</title>
 
@@ -17,62 +18,53 @@
 
 <body>
 
-<header class="topo">
+<header class="header">
 
-<div class="logoArea">
-
+<div class="logo-area">
 <img src="logo.png" class="logo">
-
 <h1>Odòmáiyà</h1>
-
 </div>
 
-<nav class="menu">
+<input id="search" placeholder="Buscar produtos...">
 
-<input id="busca" placeholder="Buscar produtos...">
-
-<div class="cart">
-
+<button id="cartBtn">
 🛒 <span id="cartCount">0</span>
-
-</div>
-
-</nav>
+</button>
 
 </header>
 
+<section class="hero">
 
-<section id="banner" class="banner">
-
-<h2>Artigos Religiosos de Axé</h2>
+<h2>Artigos Religiosos</h2>
 <p>Energia • Espiritualidade • Tradição</p>
 
 </section>
 
-
 <main>
 
-<section class="vitrineContainer">
+<div id="products" class="grid"></div>
 
-<h2 class="tituloSecao">Produtos</h2>
-
-<div id="vitrine" class="vitrine"></div>
-
-</section>
+<div id="loading">Carregando produtos...</div>
 
 </main>
 
+<aside id="cart" class="cart">
 
-<footer>
+<h2>Carrinho</h2>
 
-<p>© Odòmáiyà Artigos Religiosos</p>
+<div id="cartItems"></div>
 
-</footer>
+<div class="cartTotal">
+Total: <span id="total">R$0</span>
+</div>
 
+<button id="checkout">Finalizar Pedido</button>
+
+</aside>
 
 <canvas id="particles"></canvas>
 
-<script src="js/app.js" defer></script>
+<script src="js/app.js"></script>
 
 </body>
 </html>
