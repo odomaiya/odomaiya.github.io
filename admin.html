@@ -4,56 +4,77 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Odòmáiyà Artigos Religiosos</title>
+<title>Painel Odòmáiyà</title>
 
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="favicon.png">
+<style>
 
-<link rel="stylesheet" href="css/style.css">
+body{
+font-family:Arial;
+background:#f4f4f4;
+margin:0;
+}
+
+header{
+background:#111;
+color:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,250px);
+gap:20px;
+padding:20px;
+}
+
+.card{
+background:white;
+border-radius:10px;
+padding:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.card img{
+width:100%;
+height:180px;
+object-fit:cover;
+}
+
+button{
+padding:8px 12px;
+border:none;
+background:#0a66ff;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<header class="header">
+<header>
 
-<div class="logo-area">
-<img src="logo.png" id="logoAdmin" class="logo">
-<h1>Odòmáiyà</h1>
-</div>
+<h2>Painel Produtos</h2>
 
-<div class="search-area">
-<input id="busca" placeholder="Buscar produtos">
-</div>
-
-<div class="cart-icon" onclick="abrirCarrinho()">
-🛒 <span id="cartCount">0</span>
-</div>
+<button onclick="novo()">Novo Produto</button>
 
 </header>
 
-
-<main>
-
-<div id="produtos" class="produtos-grid"></div>
-
-</main>
-
+<div class="grid" id="lista"></div>
 
 <script>
 
 const API="SEU_APPS_SCRIPT_URL"
 
-let carrinho=[]
 
-
-/************************
-CARREGAR PRODUTOS
-************************/
-
-async function carregarProdutos(){
+async function carregar(){
 
 const res=await fetch(API,{
 method:"POST",
@@ -69,17 +90,17 @@ render(lista)
 
 function render(lista){
 
-const area=document.getElementById("produtos")
+const area=document.getElementById("lista")
 
 area.innerHTML=""
 
 lista.forEach(p=>{
 
-const card=document.createElement("div")
+const c=document.createElement("div")
 
-card.className="produto"
+c.className="card"
 
-card.innerHTML=`
+c.innerHTML=`
 
 <img src="${p.imagem}">
 
@@ -87,13 +108,15 @@ card.innerHTML=`
 
 <p>R$ ${p.preco}</p>
 
-<button onclick='addCarrinho(${JSON.stringify(p)})'>
-Comprar
+<p>Estoque: ${p.estoque}</p>
+
+<button onclick='editar(${JSON.stringify(p)})'>
+Editar
 </button>
 
 `
 
-area.appendChild(card)
+area.appendChild(c)
 
 })
 
@@ -101,129 +124,61 @@ area.appendChild(card)
 
 
 /************************
-CARRINHO
+NOVO
 ************************/
 
-function addCarrinho(p){
+function novo(){
 
-carrinho.push(p)
+const nome=prompt("Nome produto")
 
-document.getElementById("cartCount").innerText=carrinho.length
-
-}
-
-
-function abrirCarrinho(){
-
-let msg="Pedido Odòmáiyà:%0A%0A"
-
-let total=0
-
-carrinho.forEach(p=>{
-
-msg+=`${p.nome} - R$${p.preco}%0A`
-
-total+=Number(p.preco)
-
-})
-
-msg+=`%0A Total: R$${total}`
-
-window.open(
-"https://wa.me/554996048808?text="+msg
-)
+gerarDescricaoIA(nome)
 
 }
 
 
 /************************
-ADMIN SECRETO
+IA DESCRIÇÃO
 ************************/
 
-const logo=document.getElementById("logoAdmin")
+async function gerarDescricaoIA(nome){
 
-let clicks=0
-let timer
-
-
-function abrirAdmin(){
-
-const u=prompt("Usuário")
-const s=prompt("Senha")
-
-if(u==="adm" && s==="99861309"){
-
-window.location="admin.html"
-
-}
-
-}
-
-
-/* 7 cliques rápidos */
-
-logo.addEventListener("click",()=>{
-
-clicks++
-
-clearTimeout(timer)
-
-timer=setTimeout(()=>clicks=0,800)
-
-if(clicks>=7){
-
-abrirAdmin()
-
-}
-
+const res=await fetch(API,{
+method:"POST",
+body:JSON.stringify({
+action:"descricaoIA",
+nome:nome
+})
 })
 
+const data=await res.json()
 
-/* segurar 3 segundos */
-
-let pressTimer
-
-logo.addEventListener("touchstart",()=>{
-
-pressTimer=setTimeout(()=>{
-
-abrirAdmin()
-
-},3000)
-
-})
-
-logo.addEventListener("touchend",()=>{
-
-clearTimeout(pressTimer)
-
-})
-
-
-/* CTRL SHIFT 1 */
-
-document.addEventListener("keydown",function(e){
-
-if(e.ctrlKey && e.shiftKey && e.key==="!"){
-
-abrirAdmin()
+alert(data.descricao)
 
 }
-
-})
 
 
 /************************
-PWA
+IA IMAGEM
 ************************/
 
-if("serviceWorker" in navigator){
+async function gerarImagemIA(nome){
 
-navigator.serviceWorker.register("sw.js")
+const res=await fetch(API,{
+method:"POST",
+body:JSON.stringify({
+action:"imagemIA",
+nome:nome
+})
+})
+
+const data=await res.json()
+
+return data.url
 
 }
 
-carregarProdutos()
+
+carregar()
 
 </script>
 
