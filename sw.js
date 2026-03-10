@@ -1,4 +1,4 @@
-const CACHE="app-cache-v1"
+const CACHE="odomaia-v3"
 
 const ASSETS=[
 
@@ -11,17 +11,14 @@ const ASSETS=[
 
 "/js/app.js",
 
-"/logo.png",
-"/favicon.png"
+"/logo.png"
 
 ]
 
 self.addEventListener("install",e=>{
 
  e.waitUntil(
-
   caches.open(CACHE).then(c=>c.addAll(ASSETS))
-
  )
 
 })
@@ -29,9 +26,7 @@ self.addEventListener("install",e=>{
 self.addEventListener("fetch",e=>{
 
  e.respondWith(
-
   caches.match(e.request).then(r=>r||fetch(e.request))
-
  )
 
 })
