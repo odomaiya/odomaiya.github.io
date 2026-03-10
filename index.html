@@ -4,14 +4,15 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Odòmáiyà Artigos Religiosos</title>
 
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/animations.css">
+
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon.png">
-
-<link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -20,19 +21,36 @@
 <header class="header">
 
 <div class="logo-area">
-<img src="logo.png" id="logoAdmin" class="logo">
+
+<img src="logo.png" class="logo" id="logoAdmin">
+
 <h1>Odòmáiyà</h1>
+
 </div>
 
 <div class="search-area">
-<input id="busca" placeholder="Buscar produtos">
+<input id="busca" placeholder="Buscar produtos...">
 </div>
 
-<div class="cart-icon" onclick="abrirCarrinho()">
+<div class="cart-icon" onclick="UI.toggleCart()">
 🛒 <span id="cartCount">0</span>
 </div>
 
 </header>
+
+
+
+<section class="filters">
+
+<select id="filtroCategoria">
+<option value="">Todas categorias</option>
+</select>
+
+<button onclick="FILTROS.promocao()">Promoção</button>
+<button onclick="FILTROS.estoque()">Estoque baixo</button>
+
+</section>
+
 
 
 <main>
@@ -42,135 +60,126 @@
 </main>
 
 
-<script>
 
-const API="SEU_APPS_SCRIPT_URL"
+<!-- CARRINHO -->
 
-let carrinho=[]
+<div id="cartDrawer" class="cart-drawer">
 
+<h2>Carrinho</h2>
 
-/************************
-CARREGAR PRODUTOS
-************************/
+<div id="cartItems"></div>
 
-async function carregarProdutos(){
+<div class="cart-total">
+Total: <span id="cartTotal">R$ 0</span>
+</div>
 
-const res=await fetch(API,{
-method:"POST",
-body:JSON.stringify({action:"listarProdutos"})
-})
-
-const lista=await res.json()
-
-render(lista)
-
-}
-
-
-function render(lista){
-
-const area=document.getElementById("produtos")
-
-area.innerHTML=""
-
-lista.forEach(p=>{
-
-const card=document.createElement("div")
-
-card.className="produto"
-
-card.innerHTML=`
-
-<img src="${p.imagem}">
-
-<h3>${p.nome}</h3>
-
-<p>R$ ${p.preco}</p>
-
-<button onclick='addCarrinho(${JSON.stringify(p)})'>
-Comprar
+<button class="checkout-btn" onclick="CHECKOUT.abrir()">
+Finalizar Pedido
 </button>
 
-`
-
-area.appendChild(card)
-
-})
-
-}
+</div>
 
 
-/************************
-CARRINHO
-************************/
 
-function addCarrinho(p){
+<!-- CHECKOUT -->
 
-carrinho.push(p)
+<div id="checkoutModal" class="modal">
 
-document.getElementById("cartCount").innerText=carrinho.length
+<div class="modal-content">
 
-}
+<h2>Finalizar Pedido</h2>
+
+<input id="cliente" placeholder="Seu nome">
+
+<select id="tipoPedido">
+<option value="entrega">Entrega</option>
+<option value="retirada">Retirada</option>
+</select>
+
+<select id="pagamento">
+<option>PIX</option>
+<option>Dinheiro</option>
+<option>Cartão</option>
+</select>
+
+<div id="enderecoArea">
+
+<input id="rua" placeholder="Rua">
+<input id="numero" placeholder="Número">
+<input id="cidade" placeholder="Cidade">
+
+</div>
+
+<button onclick="CHECKOUT.finalizar()">
+Enviar Pedido
+</button>
+
+</div>
+
+</div>
 
 
-function abrirCarrinho(){
 
-let msg="Pedido Odòmáiyà:%0A%0A"
+<!-- SEU SISTEMA PRINCIPAL -->
 
-let total=0
-
-carrinho.forEach(p=>{
-
-msg+=`${p.nome} - R$${p.preco}%0A`
-
-total+=Number(p.preco)
-
-})
-
-msg+=`%0A Total: R$${total}`
-
-window.open(
-"https://wa.me/554996048808?text="+msg
-)
-
-}
+<script src="js/app.js"></script>
 
 
-/************************
+
+<script>
+
+/* =========================
+API Apps Script
+========================= */
+
+const API = "https://script.google.com/macros/s/AKfycbzKW5BVJQBvZAdqV7CVfxgpqJEpp33l-sK-IYphC22AbLxBu04ML8D9l25fB5hktSty/exec"
+
+
+
+/* =========================
 ADMIN SECRETO
-************************/
+========================= */
 
-const logo=document.getElementById("logoAdmin")
+const logo = document.getElementById("logoAdmin")
 
-let clicks=0
-let timer
+let clicks = 0
+let clickTimer
 
 
 function abrirAdmin(){
 
-const u=prompt("Usuário")
-const s=prompt("Senha")
+const user = prompt("Usuário")
+const pass = prompt("Senha")
 
-if(u==="adm" && s==="99861309"){
+if(user === "adm" && pass === "99861309"){
 
-window.location="admin.html"
+window.location = "admin.html"
+
+}else{
+
+alert("Acesso negado")
 
 }
 
 }
+
 
 
 /* 7 cliques rápidos */
 
-logo.addEventListener("click",()=>{
+logo.addEventListener("click", () => {
 
 clicks++
 
-clearTimeout(timer)
+clearTimeout(clickTimer)
 
-timer=setTimeout(()=>clicks=0,800)
+clickTimer = setTimeout(()=>{
 
-if(clicks>=7){
+clicks = 0
+
+},800)
+
+if(clicks >= 7){
 
 abrirAdmin()
 
@@ -179,13 +188,14 @@ abrirAdmin()
 })
 
 
-/* segurar 3 segundos */
+
+/* segurar 3 segundos no celular */
 
 let pressTimer
 
-logo.addEventListener("touchstart",()=>{
+logo.addEventListener("touchstart", () => {
 
-pressTimer=setTimeout(()=>{
+pressTimer = setTimeout(()=>{
 
 abrirAdmin()
 
@@ -193,18 +203,19 @@ abrirAdmin()
 
 })
 
-logo.addEventListener("touchend",()=>{
+logo.addEventListener("touchend", () => {
 
 clearTimeout(pressTimer)
 
 })
 
 
-/* CTRL SHIFT 1 */
+
+/* CTRL SHIFT 1 no computador */
 
 document.addEventListener("keydown",function(e){
 
-if(e.ctrlKey && e.shiftKey && e.key==="!"){
+if(e.ctrlKey && e.shiftKey && e.key === "!"){
 
 abrirAdmin()
 
@@ -213,17 +224,16 @@ abrirAdmin()
 })
 
 
-/************************
+
+/* =========================
 PWA
-************************/
+========================= */
 
 if("serviceWorker" in navigator){
 
 navigator.serviceWorker.register("sw.js")
 
 }
-
-carregarProdutos()
 
 </script>
 
