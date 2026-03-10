@@ -1,1 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Odòmáiyà Artigos Religiosos</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/animations.css">
+
+<link rel="manifest" href="manifest.json">
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="logo-area">
+
+<img src="logo.png" class="logo">
+
+<h1 id="logo">Odòmáiyà</h1>
+
+</div>
+
+<div class="search-area">
+
+<input id="busca" placeholder="Buscar produtos...">
+
+</div>
+
+<div class="cart-icon" onclick="UI.toggleCart()">
+
+🛒 <span id="cartCount">0</span>
+
+</div>
+
+</header>
+
+
+<section class="filters">
+
+<select id="filtroCategoria"></select>
+
+<button onclick="FILTROS.promocao()">Promoção</button>
+
+<button onclick="FILTROS.estoque()">Estoque baixo</button>
+
+</section>
+
+
+<main>
+
+<div id="produtos" class="produtos-grid"></div>
+
+</main>
+
+
+<div id="cartDrawer" class="cart-drawer">
+
+<h2>Carrinho</h2>
+
+<div id="cartItems"></div>
+
+<div class="cart-total">
+
+Total: <span id="cartTotal">R$ 0</span>
+
+</div>
+
+<button onclick="CHECKOUT.abrir()" class="checkout-btn">
+
+Finalizar pedido
+
+</button>
+
+</div>
+
+
+<div id="checkoutModal" class="modal">
+
+<div class="modal-content">
+
+<h2>Finalizar pedido</h2>
+
+<input id="cliente" placeholder="Seu nome">
+
+<select id="tipoPedido">
+
+<option value="entrega">Entrega</option>
+<option value="retirada">Retirada</option>
+
+</select>
+
+<select id="pagamento">
+
+<option>PIX</option>
+<option>Dinheiro</option>
+<option>Cartão</option>
+
+</select>
+
+<div id="enderecoArea">
+
+<input id="rua" placeholder="Rua">
+<input id="numero" placeholder="Número">
+<input id="cidade" placeholder="Cidade">
+
+</div>
+
+<button onclick="CHECKOUT.finalizar()">
+
+Enviar pedido
+
+</button>
+
+</div>
+
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
