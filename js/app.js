@@ -1,175 +1,119 @@
-let produtos=[]
-let carrinho=[]
-
+let carrinho = []
 
 async function carregarProdutos(){
 
-const data=await api("listar")
+const produtos = await apiRequest("listarProdutos")
 
-produtos=data
+const grid = document.getElementById("produtos")
 
-renderProdutos(produtos)
+grid.innerHTML=""
 
-}
+produtos.forEach((p,i)=>{
 
-function renderProdutos(lista){
+const card = document.createElement("div")
 
-const div=document.getElementById("produtos")
+card.className="produto"
 
-div.innerHTML=""
+card.innerHTML=`
 
-lista.forEach(p=>{
+<img src="${p[4]}" class="produto-img">
 
-div.innerHTML+=`
+<h3>${p[0]}</h3>
 
-<div class="produto">
+<p class="preco">R$ ${Number(p[1]).toFixed(2)}</p>
 
-<img src="${p.imagem}" loading="lazy">
-
-<h3>${p.nome}</h3>
-
-<p>${p.descricao}</p>
-
-<div class="preco">
-
-R$ ${p.preco}
-
-</div>
-
-<button onclick='addCarrinho(${JSON.stringify(p)})'>
+<button onclick="addCarrinho(${i},
+'${p[0]}',
+${p[1]} )">
 
 Adicionar
-
 </button>
 
-</div>
+`
+
+grid.appendChild(card)
+
+})
+
+}
+
+function addCarrinho(id,nome,preco){
+
+carrinho.push({
+id,
+nome,
+preco,
+qtd:1
+})
+
+alert("Produto adicionado")
+
+}
+
+function montarMensagem(){
+
+let total=0
+
+let itens=""
+
+carrinho.forEach(p=>{
+
+const subtotal=p.preco*p.qtd
+total+=subtotal
+
+itens+=`
+🛍 ${p.nome}
+Qtd: ${p.qtd}
+💰 R$ ${subtotal.toFixed(2)}
 
 `
 
 })
 
+const nome = document.getElementById("cliente_nome").value
+const tipo = document.getElementById("tipo").value
+const pagamento = document.getElementById("pagamento").value
+const endereco = document.getElementById("endereco").value
+
+let entrega=""
+
+if(tipo==="entrega"){
+entrega=`📍 Endereço:
+${endereco}`
 }
 
+const msg=`
 
-function addCarrinho(p){
+✨ *NOVO PEDIDO* ✨
 
-const item=carrinho.find(i=>i.nome==p.nome)
+👤 Cliente:
+${nome}
 
-if(item){
+${entrega}
 
-item.qtd++
+🛒 *Itens do pedido*
 
-}else{
+${itens}
 
-p.qtd=1
-carrinho.push(p)
+💳 Pagamento:
+${pagamento}
 
-}
+💰 *Total: R$ ${total.toFixed(2)}*
 
-UI.atualizarCarrinho()
-
-}
-
-const UI={
-
-toggleCart(){
-
-document.getElementById("cartDrawer")
-.classList.toggle("open")
-
-},
-
-atualizarCarrinho(){
-
-const div=document.getElementById("cartItems")
-
-div.innerHTML=""
-
-let total=0
-
-carrinho.forEach(p=>{
-
-total+=p.preco*p.qtd
-
-div.innerHTML+=`
-
-<div>
-
-${p.nome} x${p.qtd}
-
-</div>
-
+🙏 Obrigado pela preferência
 `
 
-})
-
-document.getElementById("cartTotal")
-.innerText="R$ "+total.toFixed(2)
-
-document.getElementById("cartCount")
-.innerText=carrinho.length
+return encodeURIComponent(msg)
 
 }
 
-}
+function enviarPedido(){
 
+const msg = montarMensagem()
 
-const CHECKOUT={
+const numero = "554996048808"
 
-abrir(){
-
-document.getElementById("checkoutModal")
-.style.display="flex"
-
-},
-
-finalizar(){
-
-const nome=document.getElementById("cliente").value
-
-const pagamento=document.getElementById("pagamento").value
-
-const tipo=document.getElementById("tipoPedido").value
-
-const rua=document.getElementById("rua").value
-const numero=document.getElementById("numero").value
-const cidade=document.getElementById("cidade").value
-
-let msg="✨ *NOVO PEDIDO — Odòmáiyà* ✨\n\n"
-
-msg+="👤 Cliente: "+nome+"\n\n"
-
-msg+="📦 Tipo: "+tipo+"\n\n"
-
-if(tipo=="entrega"){
-
-msg+="📍 Endereço:\n"
-msg+=rua+", "+numero+"\n"
-msg+=cidade+"\n\n"
-
-}
-
-msg+="💳 Pagamento: "+pagamento+"\n\n"
-
-msg+="🛍 Itens\n\n"
-
-let total=0
-
-carrinho.forEach(p=>{
-
-msg+=p.nome+" x"+p.qtd+"\n"
-
-total+=p.preco*p.qtd
-
-})
-
-msg+="\n💰 Total: R$ "+total.toFixed(2)
-
-const url="https://wa.me/554996048808?text="+encodeURIComponent(msg)
-
-window.open(url)
-
-}
+window.open(`https://wa.me/${numero}?text=${msg}`)
 
 }
 
