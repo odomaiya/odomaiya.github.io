@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Odòmáiyà Artigos Religiosos</title>
 
-<link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon.png">
+<link rel="manifest" href="manifest.json">
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/animations.css">
@@ -18,124 +17,62 @@
 
 <body>
 
-<canvas id="particles"></canvas>
+<header class="topo">
 
-<header>
+<div class="logoArea">
 
-<div class="logo">
-<img src="logo.png">
-<span>Odòmáiyà</span>
+<img src="logo.png" class="logo">
+
+<h1>Odòmáiyà</h1>
+
 </div>
 
-<div class="search">
-<input id="buscaInput" placeholder="Buscar produtos...">
+<nav class="menu">
+
+<input id="busca" placeholder="Buscar produtos...">
+
+<div class="cart">
+
+🛒 <span id="cartCount">0</span>
+
 </div>
 
-<button id="cartButton" class="cart-btn">
-Carrinho
-<span id="cartCount">0</span>
-</button>
+</nav>
 
 </header>
 
-<div id="cartDrawer"></div>
 
-<section>
-<div id="banner"></div>
+<section id="banner" class="banner">
+
+<h2>Artigos Religiosos de Axé</h2>
+<p>Energia • Espiritualidade • Tradição</p>
+
 </section>
 
-<section>
-<h2 class="section-title">Vitrine</h2>
-<div id="vitrine" class="grid"></div>
+
+<main>
+
+<section class="vitrineContainer">
+
+<h2 class="tituloSecao">Produtos</h2>
+
+<div id="vitrine" class="vitrine"></div>
+
 </section>
 
-<section>
-<h2 class="section-title">Destaques</h2>
-<div id="vitrine3d"></div>
-</section>
+</main>
 
-<section>
-<h2 class="section-title">Produtos</h2>
-<div id="listaProdutos" class="grid"></div>
-</section>
 
-<section>
-<h2 class="section-title">Recomendados</h2>
-<div id="recomendacoes" class="grid"></div>
-</section>
+<footer>
 
-<section>
-<h2 class="section-title">Sugestões</h2>
-<div id="sugestoes" class="grid"></div>
-</section>
+<p>© Odòmáiyà Artigos Religiosos</p>
 
-<footer id="rodape">
-© Odòmáiyà Artigos Religiosos
 </footer>
 
-<!-- CORE -->
 
-<script defer src="config.js"></script>
-<script defer src="state.js"></script>
-<script defer src="utils.js"></script>
+<canvas id="particles"></canvas>
 
-<!-- API -->
-
-<script defer src="api.js"></script>
-
-<!-- SISTEMA -->
-
-<script defer src="cart.js"></script>
-<script defer src="checkout.js"></script>
-<script defer src="ui.js"></script>
-<script defer src="busca.js"></script>
-<script defer src="recomendacoes.js"></script>
-<script defer src="sugestoes.js"></script>
-<script defer src="ranking.js"></script>
-<script defer src="estoque.js"></script>
-<script defer src="pedidos.js"></script>
-
-<!-- UI -->
-
-<script defer src="banner.js"></script>
-<script defer src="vitrine.js"></script>
-<script defer src="vitrine3d.js"></script>
-<script defer src="particles.js"></script>
-
-<!-- ADMIN -->
-
-<script defer src="admin.js"></script>
-<script defer src="adminPanel.js"></script>
-<script defer src="dashboard.js"></script>
-<script defer src="auth.js"></script>
-
-<!-- APP -->
-
-<script defer src="app.js"></script>
-
-<script>
-
-document.addEventListener("DOMContentLoaded", () => {
-
-if (typeof iniciarApp === "function") {
-iniciarApp()
-}
-
-})
-
-if ("serviceWorker" in navigator) {
-
-window.addEventListener("load", () => {
-
-navigator.serviceWorker
-.register("sw.js")
-.catch(()=>{})
-
-})
-
-}
-
-</script>
+<script src="js/app.js" defer></script>
 
 </body>
 </html>
