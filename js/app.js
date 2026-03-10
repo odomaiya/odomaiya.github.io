@@ -8,25 +8,20 @@ WHATSAPP:"5554996048808"
 
 }
 
-}
-
-/* STATE GLOBAL */
+/* STATE */
 
 const STATE = {
 
 produtos:[],
-filtrados:[],
 cart:{}
 
 }
 
 /* UTILS */
 
-const Utils = {
+function money(v){
 
-money(v){
-return "R$ "+Number(v).toFixed(2)
-}
+return "R$ " + Number(v).toFixed(2)
 
 }
 
@@ -40,85 +35,55 @@ const data = await r.json()
 
 STATE.produtos = data
 
-STATE.filtrados = data
-
 renderProdutos()
 
 }
 
-/* RENDER */
+/* PRODUTOS */
 
 function renderProdutos(){
 
-const grid = document.getElementById("products")
+const grid = document.getElementById("produtos")
 
-if(!grid)return
+if(!grid) return
 
 grid.innerHTML=""
 
-STATE.filtrados.forEach((p,i)=>{
+STATE.produtos.forEach((p,i)=>{
 
 let cls="card"
 
-if(p.promocao=="true") cls+=" promo"
+if(p.promocao==="true") cls+=" promo"
 
 if(p.estoque<10) cls+=" lowstock"
 
-const card=document.createElement("div")
+const el=document.createElement("div")
 
-card.className=cls
+el.className=cls
 
-let badge=""
-
-if(p.promocao=="true")
-badge+=`<span class="badge promo">🔥 PROMO</span>`
-
-if(p.estoque<10)
-badge+=`<span class="badge stock">⚠ Estoque baixo</span>`
-
-card.innerHTML=`
-
-${badge}
+el.innerHTML=`
 
 <img src="${p.imagem}" loading="lazy">
 
 <h3>${p.nome}</h3>
 
-<p>${Utils.money(p.preco)}</p>
+<p>${money(p.preco)}</p>
 
 <button onclick="addCart(${i})">Adicionar</button>
 
 `
 
-grid.appendChild(card)
+grid.appendChild(el)
 
 })
 
 }
-
-/* BUSCA */
-
-document.addEventListener("input",e=>{
-
-if(e.target.id==="search"){
-
-const q=e.target.value.toLowerCase()
-
-STATE.filtrados=STATE.produtos.filter(p=>
-p.nome.toLowerCase().includes(q)
-)
-
-renderProdutos()
-
-}
-
-})
 
 /* CARRINHO */
 
 function addCart(i){
 
-const p=STATE.produtos[i]
+const p = STATE.produtos[i]
 
 if(!STATE.cart[p.nome]){
 
@@ -137,17 +102,26 @@ renderCart()
 function renderCart(){
 
 const box=document.getElementById("cartItems")
-const total=document.getElementById("total")
 
-if(!box)return
+const totalEl=document.getElementById("cartTotal")
+
+const count=document.getElementById("cartCount")
+
+if(!box) return
 
 box.innerHTML=""
 
-let soma=0
+let total=0
+
+let qtd=0
 
 Object.values(STATE.cart).forEach(p=>{
 
-soma+=p.preco*p.qty
+const subtotal=p.preco*p.qty
+
+total+=subtotal
+
+qtd+=p.qty
 
 box.innerHTML+=`
 
@@ -155,7 +129,11 @@ box.innerHTML+=`
 
 ${p.nome}
 
-x${p.qty}
+<button onclick="changeQty('${p.nome}',-1)">-</button>
+
+${p.qty}
+
+<button onclick="changeQty('${p.nome}',1)">+</button>
 
 </div>
 
@@ -163,78 +141,89 @@ x${p.qty}
 
 })
 
-total.textContent=Utils.money(soma)
+totalEl.textContent=money(total)
+
+count.textContent=qtd
+
+}
+
+function changeQty(nome,n){
+
+STATE.cart[nome].qty+=n
+
+if(STATE.cart[nome].qty<=0) delete STATE.cart[nome]
+
+renderCart()
 
 }
 
 /* CHECKOUT */
 
-document.addEventListener("click",e=>{
+function abrirCheckout(){
 
-if(e.target.id==="checkout"){
+document.getElementById("checkout").classList.remove("hidden")
 
-let msg="🛒 Novo pedido%0A%0A"
+}
+
+/* WHATSAPP */
+
+function finalizarPedido(){
+
+let nome=document.getElementById("clienteNome").value
+
+let tipo=document.getElementById("tipoEntrega").value
+
+let pagamento=document.getElementById("formaPagamento").value
+
+let rua=document.getElementById("rua").value
+
+let numero=document.getElementById("numero").value
+
+let cidade=document.getElementById("cidade").value
 
 let total=0
 
+let msg=""
+
+msg+="🛒 NOVO PEDIDO - ODÒMÁIYÀ\n\n"
+
+msg+="👤 Cliente: "+nome+"\n"
+
+msg+="📅 Data: "+new Date().toLocaleString()+"\n"
+
+msg+="📦 Tipo: "+tipo+"\n"
+
+msg+="💳 Pagamento: "+pagamento+"\n\n"
+
+if(tipo==="entrega"){
+
+msg+="📍 Endereço de entrega\n"
+
+msg+=rua+", "+numero+"\n"+cidade+"\n\n"
+
+}else{
+
+msg+="📍 Retirada na loja\n\n"
+
+}
+
+msg+="🛍️ Itens\n"
+
 Object.values(STATE.cart).forEach(p=>{
 
-msg+=`Produto: ${p.nome}%0AQuantidade: ${p.qty}%0AValor: ${p.preco}%0A%0A`
+const subtotal=p.preco*p.qty
 
-total+=p.preco*p.qty
+total+=subtotal
 
-})
-
-msg+=`Total: ${total}`
-
-window.open(`https://wa.me/${CONFIG.WHATSAPP}?text=${msg}`)
-
-}
+msg+=`• ${p.nome} ${p.qty}x ${money(p.preco)}\n`
 
 })
 
-/* PARTICLES */
+msg+=`\n💰 Total: ${money(total)}\n`
 
-function particles(){
+const url="https://wa.me/"+CONFIG.WHATSAPP+"?text="+encodeURIComponent(msg)
 
-const canvas=document.getElementById("particles")
-if(!canvas)return
-
-const ctx=canvas.getContext("2d")
-
-canvas.width=innerWidth
-canvas.height=innerHeight
-
-let parts=[]
-
-for(let i=0;i<60;i++){
-
-parts.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:2
-})
-
-}
-
-function draw(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height)
-
-parts.forEach(p=>{
-
-ctx.beginPath()
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
-ctx.fillStyle="rgba(255,255,255,.3)"
-ctx.fill()
-
-})
-
-requestAnimationFrame(draw)
-
-}
-
-draw()
+window.open(url)
 
 }
 
@@ -243,7 +232,5 @@ draw()
 document.addEventListener("DOMContentLoaded",()=>{
 
 carregarProdutos()
-
-particles()
 
 })
