@@ -205,3 +205,26 @@ window.open(
 }
 
 carregarProdutos()
+
+let clicks = 0
+let timer
+
+const logo = document.getElementById("logo")
+
+logo.addEventListener("click",()=>{
+
+clicks++
+
+clearTimeout(timer)
+
+timer = setTimeout(()=>{
+clicks = 0
+},4000)
+
+if(clicks === 15){
+
+window.location.href="admin.html"
+
+}
+
+})
