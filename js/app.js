@@ -1,88 +1,72 @@
-const CONFIG={
-API:"https://script.google.com/macros/s/AKfycby6ebTA-y3EvSlwgpeHqiYEL6ilzbVK0nhQUycNXc5QbRoXXhQmPbvg3tEh_5JQIdI0/exec",
-WHATSAPP:"5554996048808"
-}
+let produtos=[]
+let carrinho=[]
 
-const STATE={
-produtos:[],
-carrinho:{}
-}
 
 async function carregarProdutos(){
 
-const res=await fetch(CONFIG.API+"?action=produtos")
-const data=await res.json()
+const data=await api("listar")
 
-STATE.produtos=data
+produtos=data
 
-renderProdutos(data)
+renderProdutos(produtos)
 
 }
 
 function renderProdutos(lista){
 
-const grid=document.getElementById("produtos")
-grid.innerHTML=""
+const div=document.getElementById("produtos")
+
+div.innerHTML=""
 
 lista.forEach(p=>{
 
-let classe="card"
+div.innerHTML+=`
 
-if(p.promocao)classe+=" promo"
-if(p.estoque<10)classe+=" estoque"
-
-grid.innerHTML+=`
-<div class="${classe}">
+<div class="produto">
 
 <img src="${p.imagem}" loading="lazy">
 
 <h3>${p.nome}</h3>
 
-<div class="preco">R$ ${p.preco}</div>
+<p>${p.descricao}</p>
 
-<button class="btn"
-onclick="CART.add('${p.nome}')">
+<div class="preco">
+
+R$ ${p.preco}
+
+</div>
+
+<button onclick='addCarrinho(${JSON.stringify(p)})'>
+
 Adicionar
+
 </button>
 
 </div>
+
 `
 
 })
 
 }
 
-const CART={
 
-add(nome){
+function addCarrinho(p){
 
-if(!STATE.carrinho[nome])
-STATE.carrinho[nome]=0
+const item=carrinho.find(i=>i.nome==p.nome)
 
-STATE.carrinho[nome]++
+if(item){
 
-UI.updateCart()
+item.qtd++
 
-},
+}else{
 
-remove(nome){
-
-delete STATE.carrinho[nome]
-
-UI.updateCart()
-
-},
-
-change(nome,q){
-
-STATE.carrinho[nome]+=q
-
-if(STATE.carrinho[nome]<=0)
-delete STATE.carrinho[nome]
-
-UI.updateCart()
+p.qtd=1
+carrinho.push(p)
 
 }
+
+UI.atualizarCarrinho()
 
 }
 
@@ -90,47 +74,28 @@ const UI={
 
 toggleCart(){
 
-document
-.getElementById("cartDrawer")
-.classList
-.toggle("cart-open")
+document.getElementById("cartDrawer")
+.classList.toggle("open")
 
 },
 
-updateCart(){
+atualizarCarrinho(){
 
-const el=document.getElementById("cartItems")
-el.innerHTML=""
+const div=document.getElementById("cartItems")
+
+div.innerHTML=""
 
 let total=0
-let count=0
 
-Object.keys(STATE.carrinho).forEach(n=>{
+carrinho.forEach(p=>{
 
-const p=STATE.produtos.find(x=>x.nome==n)
+total+=p.preco*p.qtd
 
-const qtd=STATE.carrinho[n]
+div.innerHTML+=`
 
-const preco=p.promocao>0?p.promocao:p.preco
+<div>
 
-total+=preco*qtd
-count+=qtd
-
-el.innerHTML+=`
-
-<div class="cart-item">
-
-<div>${n}</div>
-
-<div class="qty">
-
-<button onclick="CART.change('${n}',-1)">-</button>
-
-${qtd}
-
-<button onclick="CART.change('${n}',1)">+</button>
-
-</div>
+${p.nome} x${p.qtd}
 
 </div>
 
@@ -138,93 +103,74 @@ ${qtd}
 
 })
 
-document.getElementById("cartTotal").innerText="R$ "+total
-document.getElementById("cartCount").innerText=count
+document.getElementById("cartTotal")
+.innerText="R$ "+total.toFixed(2)
+
+document.getElementById("cartCount")
+.innerText=carrinho.length
 
 }
 
 }
+
 
 const CHECKOUT={
 
 abrir(){
 
-document.getElementById("checkoutModal").style.display="flex"
+document.getElementById("checkoutModal")
+.style.display="flex"
 
 },
 
-async finalizar(){
+finalizar(){
 
 const nome=document.getElementById("cliente").value
-const tipo=document.getElementById("tipoPedido").value
+
 const pagamento=document.getElementById("pagamento").value
+
+const tipo=document.getElementById("tipoPedido").value
+
+const rua=document.getElementById("rua").value
+const numero=document.getElementById("numero").value
+const cidade=document.getElementById("cidade").value
+
+let msg="✨ *NOVO PEDIDO — Odòmáiyà* ✨\n\n"
+
+msg+="👤 Cliente: "+nome+"\n\n"
+
+msg+="📦 Tipo: "+tipo+"\n\n"
+
+if(tipo=="entrega"){
+
+msg+="📍 Endereço:\n"
+msg+=rua+", "+numero+"\n"
+msg+=cidade+"\n\n"
+
+}
+
+msg+="💳 Pagamento: "+pagamento+"\n\n"
+
+msg+="🛍 Itens\n\n"
 
 let total=0
 
-Object.keys(STATE.carrinho).forEach(n=>{
+carrinho.forEach(p=>{
 
-const p=STATE.produtos.find(x=>x.nome==n)
-total+=p.preco*STATE.carrinho[n]
+msg+=p.nome+" x"+p.qtd+"\n"
 
-})
-
-await fetch(CONFIG.API,{
-method:"POST",
-body:JSON.stringify({
-
-action:"registrarVenda",
-cliente:nome,
-tipo:tipo,
-pagamento:pagamento,
-itens:JSON.stringify(STATE.carrinho),
-total:total
+total+=p.preco*p.qtd
 
 })
-})
 
-let msg="🛒 NOVO PEDIDO - ODÒMÁIYÀ\n\n"
+msg+="\n💰 Total: R$ "+total.toFixed(2)
 
-msg+="Cliente: "+nome+"\n"
-msg+="Tipo: "+tipo+"\n"
-msg+="Pagamento: "+pagamento+"\n\n"
+const url="https://wa.me/554996048808?text="+encodeURIComponent(msg)
 
-msg+="Itens:\n"
-
-Object.keys(STATE.carrinho).forEach(n=>{
-msg+=n+" x"+STATE.carrinho[n]+"\n"
-})
-
-msg+="\nTotal: R$ "+total
-
-window.open(
-"https://wa.me/"+CONFIG.WHATSAPP+"?text="+encodeURIComponent(msg)
-)
+window.open(url)
 
 }
 
 }
 
 carregarProdutos()
-
-let clicks = 0
-let timer
-
-const logo = document.getElementById("logo")
-
-logo.addEventListener("click",()=>{
-
-clicks++
-
-clearTimeout(timer)
-
-timer = setTimeout(()=>{
-clicks = 0
-},4000)
-
-if(clicks === 15){
-
-window.location.href="admin.html"
-
-}
-
-})
