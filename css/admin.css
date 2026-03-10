@@ -1,44 +1,28 @@
 body{
 font-family:system-ui;
-background:#f5f7fb;
+background:#f4f6fb;
 padding:40px;
 }
 
-#panel{
-display:none;
+.dashboard{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
 }
 
-#dropArea{
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 6px 20px rgba(0,0,0,0.1);
+}
+
+#drop{
+margin-top:30px;
 border:2px dashed #aaa;
 padding:40px;
 text-align:center;
-border-radius:12px;
-cursor:pointer;
 background:white;
-}
-
-.produtoBox{
-background:white;
-padding:20px;
-margin-top:20px;
 border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,.1);
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-input,textarea,select{
-padding:10px;
-border:1px solid #ddd;
-border-radius:6px;
-}
-
-button{
-padding:10px;
-background:#0b5ed7;
-color:white;
-border:none;
-border-radius:6px;
 cursor:pointer;
 }
