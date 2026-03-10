@@ -2,9 +2,11 @@
 
 const CONFIG = {
 
-API:"https://script.google.com/macros/s/AKfycbyNDOjR9YM5JBAU42gUcwGfyZPwSaVdP6T9o73vEf-IuwT3f7qqeOP8CCUZGxv_dANy/exec",
+API:"https://script.google.com/macros/s/AKfycby6ebTA-y3EvSlwgpeHqiYEL6ilzbVK0nhQUycNXc5QbRoXXhQmPbvg3tEh_5JQIdI0/exec",
 
-WHATSAPP:"559999999999"
+WHATSAPP:"5554996048808"
+
+}
 
 }
 
