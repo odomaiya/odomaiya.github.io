@@ -1,97 +1,108 @@
-const API="https://script.google.com/macros/s/AKfycby-ZwdotFx3i40iMY_K3bWDYIPOLWtSS-t8rHUsELZ4AS9uoI8Pzey__In3PCspdFFD/exec"
+const API = "https://script.google.com/macros/s/AKfycbzKW5BVJQBvZAdqV7CVfxgpqJEpp33l-sK-IYphC22AbLxBu04ML8D9l25fB5hktSty/exec"
+/************************************************
+ LISTAR PRODUTOS
+************************************************/
 
-/* carregar dashboard */
+async function carregarProdutos(){
 
-async function carregar(){
-
-const res=await fetch(API,{
+const res = await fetch(API,{
 method:"POST",
-body:JSON.stringify({action:"listarProdutos"})
+body:JSON.stringify({
+action:"listarProdutos"
+})
 })
 
-const data=await res.json()
+const data = await res.json()
 
-totalProdutos.innerText=data.length
+const tabela = document.getElementById("listaProdutos")
 
-let baixo=0
+tabela.innerHTML=""
 
 data.forEach(p=>{
-if(p.estoque<5) baixo++
+
+const tr = document.createElement("tr")
+
+tr.innerHTML=`
+
+<td>
+<img src="${p[4]}" width="60">
+</td>
+
+<td>${p[0]}</td>
+
+<td>${p[3]}</td>
+
+<td>${p[1]}</td>
+
+<td>${p[5]}</td>
+
+`
+
+tabela.appendChild(tr)
+
 })
 
-estoqueBaixo.innerText=baixo
+document.getElementById("totalProdutos").innerText = data.length
 
 }
 
-/* drag drop */
+carregarProdutos()
 
-const drop=document.getElementById("drop")
 
-drop.ondragover=e=>e.preventDefault()
 
-drop.ondrop=e=>{
+/************************************************
+ DRAG DROP
+************************************************/
+
+const dropzone = document.getElementById("dropzone")
+
+dropzone.addEventListener("dragover",e=>{
+e.preventDefault()
+})
+
+dropzone.addEventListener("drop",async e=>{
 
 e.preventDefault()
 
-const file=e.dataTransfer.files[0]
+const file = e.dataTransfer.files[0]
 
-upload(file)
+const reader = new FileReader()
 
-}
+reader.onload = async function(){
 
-function upload(file){
+const base64 = reader.result.split(",")[1]
 
-const reader=new FileReader()
-
-reader.onload=async ()=>{
-
-const base64=reader.result.split(",")[1]
-
-const res=await fetch(API,{
+const res = await fetch(API,{
 method:"POST",
 body:JSON.stringify({
+
 action:"uploadImagem",
 image:base64
+
 })
 })
 
-const data=await res.json()
+const produto = await res.json()
 
-mostrarFormulario(data)
+criarProduto(produto)
 
 }
 
 reader.readAsDataURL(file)
 
-}
+})
 
-function mostrarFormulario(data){
 
-form.innerHTML=`
 
-<h3>${data.analise.nome}</h3>
+/************************************************
+ SALVAR PRODUTO
+************************************************/
 
-<input id="nome" value="${data.analise.nome}">
-<input id="categoria" value="${data.analise.categoria}">
-<textarea id="descricao">${data.analise.descricao}</textarea>
+async function criarProduto(produto){
 
-<button onclick="salvar()">Salvar</button>
-
-`
-
-}
-
-async function salvar(){
-
-const produto={
-
-nome:nome.value,
-categoria:categoria.value,
-descricao:descricao.value,
-preco:0,
-estoque:10
-
-}
+produto.preco = 0
+produto.estoque = 10
+produto.destaque = "nao"
 
 await fetch(API,{
 method:"POST",
@@ -101,7 +112,60 @@ produto:produto
 })
 })
 
-alert("produto salvo")
+carregarProdutos()
+
+}
+
+
+
+/************************************************
+ IMPORTAR DRIVE
+************************************************/
+
+async function importarDrive(){
+
+await fetch(API,{
+method:"POST",
+body:JSON.stringify({
+action:"importarDrive"
+})
+})
+
+alert("Importação concluída")
+
+carregarProdutos()
+
+}
+
+
+
+/************************************************
+ GERAR BANNER IA
+************************************************/
+
+async function gerarBanner(){
+
+const prompt = document.getElementById("promptBanner").value
+
+const res = await fetch(API,{
+method:"POST",
+body:JSON.stringify({
+
+action:"gerarBanner",
+prompt:prompt
+
+})
+})
+
+const data = await res.json()
+
+const img = data.data[0].url
+
+document.getElementById("banner").innerHTML = `
+<img src="${img}" width="100%">
+`
+
+}alert("produto salvo")
 
 }
 
