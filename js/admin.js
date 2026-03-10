@@ -1,106 +1,51 @@
 const API="https://script.google.com/macros/s/AKfycby-ZwdotFx3i40iMY_K3bWDYIPOLWtSS-t8rHUsELZ4AS9uoI8Pzey__In3PCspdFFD/exec"
 
-function login(){
+/* carregar dashboard */
 
-if(
-document.getElementById("user").value=="adm" &&
-document.getElementById("pass").value=="99861309"
-){
+async function carregar(){
 
-login.style.display="none"
-panel.style.display="block"
+const res=await fetch(API,{
+method:"POST",
+body:JSON.stringify({action:"listarProdutos"})
+})
 
-}else{
-alert("Login inválido")
+const data=await res.json()
+
+totalProdutos.innerText=data.length
+
+let baixo=0
+
+data.forEach(p=>{
+if(p.estoque<5) baixo++
+})
+
+estoqueBaixo.innerText=baixo
+
 }
 
-}
+/* drag drop */
 
-const drop=document.getElementById("dropArea")
-const fileInput=document.getElementById("fileInput")
-
-drop.onclick=()=>fileInput.click()
-
-fileInput.onchange=e=>handleFiles(e.target.files)
+const drop=document.getElementById("drop")
 
 drop.ondragover=e=>e.preventDefault()
 
 drop.ondrop=e=>{
+
 e.preventDefault()
-handleFiles(e.dataTransfer.files)
-}
 
-async function handleFiles(files){
+const file=e.dataTransfer.files[0]
 
-for(const file of files){
-
-if(file.size>10*1024*1024){
-alert("Imagem maior que 10MB")
-continue
-}
-
-progress.innerHTML="Comprimindo imagem..."
-
-const blob=await compressImage(file)
-
-const base64=await toBase64(blob)
-
-upload(base64)
+upload(file)
 
 }
 
-}
-
-function compressImage(file){
-
-return new Promise(resolve=>{
-
-const img=new Image()
-const canvas=document.createElement("canvas")
-const ctx=canvas.getContext("2d")
-
-img.onload=()=>{
-
-let w=img.width
-let h=img.height
-
-if(w>800){
-h=h*(800/w)
-w=800
-}
-
-canvas.width=w
-canvas.height=h
-
-ctx.drawImage(img,0,0,w,h)
-
-canvas.toBlob(b=>resolve(b),"image/jpeg",0.8)
-
-}
-
-img.src=URL.createObjectURL(file)
-
-})
-
-}
-
-function toBase64(blob){
-
-return new Promise(resolve=>{
+function upload(file){
 
 const reader=new FileReader()
 
-reader.onloadend=()=>resolve(reader.result.split(",")[1])
+reader.onload=async ()=>{
 
-reader.readAsDataURL(blob)
-
-})
-
-}
-
-async function upload(base64){
-
-progress.innerHTML="Enviando imagem..."
+const base64=reader.result.split(",")[1]
 
 const res=await fetch(API,{
 method:"POST",
@@ -112,67 +57,39 @@ image:base64
 
 const data=await res.json()
 
-progress.innerHTML="IA analisou o produto ✔"
-
-criarFormulario(data)
+mostrarFormulario(data)
 
 }
 
-function criarFormulario(data){
+reader.readAsDataURL(file)
 
-formArea.innerHTML+=`
+}
 
-<div class="produtoBox">
+function mostrarFormulario(data){
 
-<img src="${data.imagem}" width="200">
+form.innerHTML=`
 
-<label>Nome</label>
-<input class="nome" value="${data.nome}">
+<h3>${data.analise.nome}</h3>
 
-<label>Categoria</label>
-<input class="categoria" value="${data.categoria}">
+<input id="nome" value="${data.analise.nome}">
+<input id="categoria" value="${data.analise.categoria}">
+<textarea id="descricao">${data.analise.descricao}</textarea>
 
-<label>Descrição</label>
-<textarea class="descricao">${data.descricao}</textarea>
+<button onclick="salvar()">Salvar</button>
 
-<label>Tags SEO</label>
-<input class="tags" value="${data.tags}">
-
-<label>Preço</label>
-<input class="preco">
-
-<label>Estoque</label>
-<input class="estoque" value="0">
-
-<select class="promocao">
-<option value="false">Sem promoção</option>
-<option value="true">Promoção</option>
-</select>
-
-<button onclick="salvarProduto(this)">
-Salvar Produto
-</button>
-
-</div>
 `
 
 }
 
-async function salvarProduto(btn){
-
-const box=btn.closest(".produtoBox")
+async function salvar(){
 
 const produto={
 
-nome:box.querySelector(".nome").value,
-categoria:box.querySelector(".categoria").value,
-descricao:box.querySelector(".descricao").value,
-tags:box.querySelector(".tags").value,
-preco:box.querySelector(".preco").value,
-estoque:box.querySelector(".estoque").value,
-promocao:box.querySelector(".promocao").value,
-imagem:box.querySelector("img").src,
-destaque:false
+nome:nome.value,
+categoria:categoria.value,
+descricao:descricao.value,
+preco:0,
+estoque:10
 
 }
 
@@ -184,6 +101,8 @@ produto:produto
 })
 })
 
-alert("Produto cadastrado!")
+alert("produto salvo")
 
 }
+
+carregar()
