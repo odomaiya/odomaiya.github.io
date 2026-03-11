@@ -1,18 +1,39 @@
 const api = "https://script.google.com/macros/s/AKfycbzKW5BVJQBvZAdqV7CVfxgpqJEpp33l-sK-IYphC22AbLxBu04ML8D9l25fB5hktSty/exec"
 
-async function apiRequest(action,data={}){
+async function listarProdutos(){
 
-const res = await fetch(api,{
+const res = await fetch(API_URL+"?action=produtos")
+
+return await res.json()
+
+}
+
+async function salvarProduto(produto){
+
+await fetch(API_URL,{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
 body:JSON.stringify({
-action,
-...data
+action:"salvar",
+produto:produto
 })
 })
 
-return res.json()
+}
+
+function enviarWhatsApp(produto){
+
+const numero="5599999999999"
+
+const mensagem =
+`Olá! Tenho interesse no produto:
+
+${produto.nome}
+
+Valor: R$ ${produto.preco}`
+
+window.open(
+`https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`,
+"_blank"
+)
 
 }
